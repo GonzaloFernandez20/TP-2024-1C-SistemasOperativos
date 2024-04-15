@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <utils/hello.h>
-#include <utils/conexionClientes.c>
+#include <utils/conexiones/clientes/clientes.h>
 
 //CREACIÓN DEL CLIENTE (dispatcher)
 
