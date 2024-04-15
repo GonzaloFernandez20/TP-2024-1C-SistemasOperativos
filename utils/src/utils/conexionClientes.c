@@ -1,27 +1,26 @@
-#include <iostream>
 #include <stdlib.h>
 #include <stdio.h>
-#include <utils/clientes.h>
+#include <utils/conexionClientes.h>
 
 
 int conectar_con_CPU(void) {
     char* nombreArchivoConexionConCPU = "cpu.config"; 
-    conexion = conectar_con_modulo(nombreArchivoConexionConCPU);
+    int conexion = conectar_con_modulo(nombreArchivoConexionConCPU);
     return conexion;
 }
 int conectar_con_MEMORIA(void) {
     char* nombreArchivoConexionConMEMORIA = "memoria.config"; 
-    conexion = conectar_con_modulo(nombreArchivoConexionConMEMORIA);
+    int conexion = conectar_con_modulo(nombreArchivoConexionConMEMORIA);
     return conexion;
 }
 int conectar_con_KERNEL(void) {
     char* nombreArchivoConexionConKERNEL = "kernel.config"; 
-    conexion = conectar_con_modulo(nombreArchivoConexionConKERNEL);
+    int conexion = conectar_con_modulo(nombreArchivoConexionConKERNEL);
     return conexion;
 }
 int conectar_con_IO(void) {
     char* nombreArchivoConexionConIO = "io.config"; 
-    conexion = conectar_con_modulo(nombreArchivoConexionConIO);
+    int conexion = conectar_con_modulo(nombreArchivoConexionConIO);
     return conexion;
 }//ojo porque me parece que IO es cliente del kernel
 
@@ -29,7 +28,7 @@ int conectar_con_IO(void) {
 // Esta funcion la utilizamos para conectarnos (como clientes) a todos los demás módulos.
 int conectar_con_modulo(char* nombreArchivoConfigConexion){  
     //Iniciar config
-    config = iniciar_config(nombreArchivoConfigConexion);
+    t_config* config = iniciar_config(nombreArchivoConfigConexion);
     //Obteniendo los datos del config
     char* ip     = config_get_string_value(config,"IP");
     char* puerto = config_get_string_value(config, "PUERTO");
