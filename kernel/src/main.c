@@ -10,7 +10,7 @@ int main(int argc, char *argv[]){
     }
     char *path_config = strdup(argv[1]); // Esto es para pasar el path del config por linea de comandos
 
-    cpu_log = iniciar_logger();
+    kernel_log = iniciar_logger();
     leer_configuracion(path_config);
 
     //----------------------------------------------------------------
