@@ -8,7 +8,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": [],
+      "args": ["/home/utnso/tp-2024-1c-SISTEMAS-INOPERANTES/kernel/kernel.config"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -25,3 +25,30 @@
     }
   ]
 }
+
+/*
+"version": "0.2.0",
+  "configurations": [  
+    {
+      "name": "run",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
+      "args": [ "./una/ruta/a/mi/archivo.cfg" ], 
+      "stopAtEntry": false,
+      "cwd": "${workspaceFolder}", 
+      "environment": [],
+      "externalConsole": false,
+      "MIMode": "gdb",
+      "setupCommands": [
+        {
+          "description": "Enable pretty-printing for gdb",
+          "text": "-enable-pretty-printing",
+          "ignoreFailures": true
+        }
+      ],
+      "preLaunchTask": "build"
+    }
+  ]  
+}
+*/
