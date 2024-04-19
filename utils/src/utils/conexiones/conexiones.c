@@ -97,7 +97,7 @@ return socket_cliente;
 
 //en iniciar servidor memoria log_trace(logger, "%s conectado a %s en %s:%s\n", modulo, IP, PUERTO);
 
-int esperar_cliente(int socket_servidor)
+int esperar_cliente(int socket_servidor,logger)
 {
 	// Aceptamos un nuevo cliente
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
