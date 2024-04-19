@@ -51,7 +51,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
 	return socket_servidor;
 } 
 
-//log_trace(logger, "%s escuchando en %s:%s\n", modulo, IP, PUERTO);
+//log_trace(logger, "%s conectado a %s en %s:%s\n", modulo, IP, PUERTO)
 
 int crear_conexion(char* IP, char* PUERTO)
 {
@@ -95,13 +95,16 @@ freeaddrinfo(server_info);
 return socket_cliente;
 }
 
-//en iniciar servidor memoria log_trace(logger, "%s conectado a %s en %s:%s\n", modulo, IP, PUERTO);
 
-int esperar_cliente(int socket_servidor,logger)
+int esperar_cliente(int socket_servidor)
 {
 	// Aceptamos un nuevo cliente
 	int socket_cliente = accept(socket_servidor, NULL, NULL);
-	log_info(logger, "Se conecto un cliente!");
+
+	if(socket_cliente == -1){
+		fprintf(stderr, "Error al aceptar cliente: \n%s", strerror(errno));
+    	return EXIT_FAILURE;
+	}
 
 	return socket_cliente;
-}
+} 

@@ -2,11 +2,13 @@
 #define ESTRUCTURAS_H_INCLUDED
 // ---------- INCLUSIONES
 
+#include <commons/log.h>
 
 
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct config_memoria
 {
+    char* IP_MEMORIA;
     char* PUERTO_ESCUCHA;
     int TAM_MEMORIA;
     int TAM_PAGINA;

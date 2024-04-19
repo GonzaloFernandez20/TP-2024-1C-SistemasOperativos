@@ -45,14 +45,8 @@ void iniciar_conexiones(){
 void _leer_configuracion(char *path_config){
     t_config* archivo_config = iniciar_config(path_config);
 
-<<<<<<< HEAD
-    configuraciones_kernel.PUERTO_ESCUCHA = strdup(config_get_string_value(archivo_config,"PUERTO_MEMORIA"));
-    configuraciones_kernel.IP_MEMORIA = strdup(config_get_string_value(archivo_config,"IP_MEMORIA"));
-
-=======
     configuraciones_kernel.PUERTO_ESCUCHA = strdup(config_get_string_value(archivo_config, "PUERTO_MEMORIA"));
     configuraciones_kernel.IP_MEMORIA = strdup(config_get_string_value(archivo_config, "IP_MEMORIA"));
         //TODO: strdup hace un malloc, chequear como liberar la memoria pedida...
->>>>>>> origin/RamaGonza
     config_destroy(archivo_config);
 }
