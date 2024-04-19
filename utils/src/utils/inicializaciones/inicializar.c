@@ -17,7 +17,7 @@ t_config* iniciar_config(char* path_config){
 	t_config* nuevo_config = config_create(path_config);
 	
 	if(nuevo_config == NULL){
-		perror(stderr,"Error: No se pudo crear el config\n");
+		perror("Error: No se pudo crear el config\n");
 		exit(EXIT_FAILURE);
 	}
 

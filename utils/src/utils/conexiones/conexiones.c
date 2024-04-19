@@ -1,31 +1,107 @@
 #include <utils/conexiones/conexiones.h>
 
-/* int iniciar_servidor(void)
+int iniciar_servidor(char* IP, char* PUERTO)
 {
 	int socket_servidor;
 
-	struct addrinfo hints, *servinfo, *p;
+	struct addrinfo hints, *servinfo;
 
 	memset(&hints, 0, sizeof(hints));
 	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	getaddrinfo(NULL, PUERTO, &hints, &servinfo);
+	int error;	
+
+	error = getaddrinfo(IP, PUERTO, &hints, &servinfo);
+	// chequeo valor de retorno
+	if(error){
+		fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
+		return EXIT_FAILURE;
+	}
 
 	// Creamos el socket de escucha del servidor
 	socket_servidor = socket(servinfo->ai_family,
                     		servinfo->ai_socktype,
                     		servinfo->ai_protocol);
+	// chequeo valor de retorno
+	if(socket_servidor == -1){
+		fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
+        return EXIT_FAILURE;
+	}
 
 	// Asociamos el socket a un puerto
-	bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+	error = bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
+	// chequeo valor de retorno
+	if (error == -1) {
+        fprintf(stderr, "Error al hacer bind: \n%s", strerror(errno));
+        return EXIT_FAILURE;
+    }
 
 	// Escuchamos las conexiones entrantes
-	listen(socket_servidor, SOMAXCONN);
+	error = listen(socket_servidor, SOMAXCONN);
+	// chequeo valor de retorno
+	if(error == -1){
+		fprintf(stderr, "Error el servidor no esta escuchando: \n%s", strerror(errno));
+        return EXIT_FAILURE;
+	}
 
 	freeaddrinfo(servinfo);
-	log_trace(logger, "Listo para escuchar a mi cliente");
 
 	return socket_servidor;
-} */
+} 
+
+//log_trace(logger, "%s escuchando en %s:%s\n", modulo, IP, PUERTO);
+
+int crear_conexion(char* IP, char* PUERTO)
+{
+struct addrinfo hints;
+struct addrinfo *server_info;
+
+
+memset(&hints, 0, sizeof(hints));
+hints.ai_family = AF_UNSPEC;
+hints.ai_socktype = SOCK_STREAM;
+hints.ai_flags = AI_PASSIVE;
+
+int error;
+error = getaddrinfo(IP, PUERTO, &hints, &server_info);
+// chequeo valor de retorno
+if(error){
+	fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
+	return EXIT_FAILURE;
+}
+
+// Ahora vamos a crear el socket.
+int socket_cliente = socket(server_info->ai_family, 
+							server_info->ai_socktype, 
+							server_info->ai_protocol);
+
+// chequeo valor de retorno
+if(socket_cliente == -1){
+	fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
+    return EXIT_FAILURE;
+}
+
+error = connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
+// chequeo valor de retorno
+if(error == -1){
+		fprintf(stderr, "Error al conectarse: \n%s", strerror(errno));
+        return EXIT_FAILURE;
+	}
+
+freeaddrinfo(server_info);
+
+return socket_cliente;
+}
+
+//en iniciar servidor memoria log_trace(logger, "%s conectado a %s en %s:%s\n", modulo, IP, PUERTO);
+
+int esperar_cliente(int socket_servidor)
+{
+	// Aceptamos un nuevo cliente
+	int socket_cliente = accept(socket_servidor, NULL, NULL);
+	log_info(logger, "Se conecto un cliente!");
+
+	return socket_cliente;
+}

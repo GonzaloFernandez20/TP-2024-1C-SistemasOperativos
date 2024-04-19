@@ -7,7 +7,6 @@
 #include <stdio.h>
 
 // ---------------- Librerias Propias
-#include <utils/hello.h>
 #include <utils/conexiones/clientes/clientes.h>
 #include <include/estructuras.h>
 
