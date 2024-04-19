@@ -25,4 +25,8 @@ typedef struct config_kernel
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
 t_config_kernel configuraciones_kernel;
 
+
+// ---------- DEFINICIONES DE LAS VARIABLES
+
+
 #endif
