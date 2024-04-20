@@ -14,6 +14,9 @@
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>
 #include <utils/conexiones/conexiones.h>
+#include <utils/serializacion/serializacion.h>
+
+
 
 // ---------------- Definiciones de variables
 t_log* memoria_log;

@@ -36,16 +36,17 @@ void iniciar_servidor_memoria(void){
 }
 
 void gestionar_conexiones_clientes(void){
-    atender_cpu();
-    atender_kernel();
-    atender_entradaSalida();
+   // atender_cpu();
+    //atender_kernel();
+    //atender_entradaSalida();
 }
 
-void atender_cpu(void){
-    int fd_cpu = esperar_cliente(fd_server_memoria);
-    recibir_handshake(fd_cpu);
+//void atender_cpu(void){
+    //int fd_cpu = esperar_cliente(fd_server_memoria);
+    //recibir_handshake(fd_cpu);
+    
 
-}
+
 
 // void procesar_operacion_kernel()
 // void procesar_operacion_cpu()
