@@ -6,7 +6,12 @@ void iniciar_servidor_kernel(void){
 
     fd_server_kernel = iniciar_servidor(IP , PUERTO);
 
-    log_info(kernel_log_debugg, "Servidor iniciado! KERNEL escuchando en %s:%s\n", IP, PUERTO);
+    if(fd_server_kernel == -1){
+        log_error(kernel_log_debugg,"No se pudo iniciar servidor KERNEL");
+    }
+    else{
+        log_info(kernel_log_debugg, "Servidor iniciado! KERNEL escuchando en %s:%s\n", IP, PUERTO);
+    }
 
     free(IP);
     free(PUERTO);
@@ -17,26 +22,24 @@ void atender_entradasalida(){
 }
 
 
-// ---------------------- CONEXIONES CON LOS CLIENTES ---------------------------
-
 void establecer_conexiones(void){
     conectar_memoria();
     conectar_dispatch();
     conectar_interrupt();
 }
 
-void conectar_memoria(void){ //? Conexion con memoria
+void conectar_memoria(void){ 
     char* IP = strdup(config_kernel.IP_MEMORIA);
     char* PUERTO = strdup(config_kernel.PUERTO_MEMORIA);
 
     fd_conexion_memoria = crear_conexion(config_kernel.IP_MEMORIA, config_kernel.PUERTO_MEMORIA);
 
-    if(fd_conexion_memoria != -1){
-        log_info(kernel_log_debugg, "KERNEL conectado a MEMORIA en %s:%s", IP, PUERTO);
-        enviar_handshake(fd_conexion_memoria, "KERNEL", kernel_log_debugg);
+    if(fd_conexion_memoria == -1){
+        log_error(kernel_log_debugg,"KERNEL no se conecto a MEMORIA\n");
     }
     else{
-        log_error(kernel_log_debugg,"KERNEL no se conecto a MEMORIA\n");
+        log_info(kernel_log_debugg, "KERNEL conectado a MEMORIA en %s:%s", IP, PUERTO);
+        enviar_handshake(fd_conexion_memoria, "KERNEL", kernel_log_debugg);
     }
     
     free(IP);
@@ -49,12 +52,12 @@ void conectar_dispatch(void){
 
     fd_conexion_dispatch = crear_conexion(IP, PUERTO);
 
-    if(fd_conexion_dispatch != -1){
-        log_info(kernel_log_debugg, "KERNEL conectado a CPU DISPATCH  en %s:%s", IP, PUERTO);
-        enviar_handshake(fd_conexion_dispatch, "KERNEL", kernel_log_debugg);
+    if(fd_conexion_dispatch == -1){
+        log_error(kernel_log_debugg,"KERNEL no se conecto a CPU DISPATCH\n");
     }
     else{
-        log_error(kernel_log_debugg,"KERNEL no se conecto a CPU DISPATCH\n");
+        log_info(kernel_log_debugg, "KERNEL conectado a CPU DISPATCH en %s:%s", IP, PUERTO);
+        enviar_handshake(fd_conexion_dispatch, "KERNEL", kernel_log_debugg);
     }
     
     free(IP);
@@ -67,16 +70,15 @@ void conectar_interrupt(void){
 
     fd_conexion_interrupt = crear_conexion(IP, PUERTO);
 
-    if(fd_conexion_interrupt != -1){
-        log_info(kernel_log_debugg, "KERNEL conectado a CPU INTERRUPT  en %s:%s", IP, PUERTO);
-        enviar_handshake(fd_conexion_interrupt, "KERNEL", kernel_log_debugg);
+    if(fd_conexion_interrupt == -1){
+        log_error(kernel_log_debugg,"KERNEL no se conecto a CPU INTERRUPT\n");
     }
     else{
-        log_error(kernel_log_debugg,"KERNEL no se conecto a CPU INTERRUPT\n");
+        log_info(kernel_log_debugg, "KERNEL conectado a CPU INTERRUPT  en %s:%s", IP, PUERTO);
+        enviar_handshake(fd_conexion_interrupt, "KERNEL", kernel_log_debugg);
     }
 
     free(IP);
     free(PUERTO);
 }
 
-// -------------------------------------------------------------------------------

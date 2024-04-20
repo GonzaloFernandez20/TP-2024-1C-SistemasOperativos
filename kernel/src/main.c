@@ -4,21 +4,21 @@ int main(int argc, char *argv[]){
 
     path_config = chequear_parametros(argc, argv);
 
-    init(); // Seteamos las configuraciones iniciales de logs y configs
+    init(); 
     iniciar_servidor_kernel();
     establecer_conexiones();
-    //atender_entradasalida();
-
+    atender_entradasalida();
     liberar_kernel();
+    
     return 0;
 }
 
 
 
-// ----------------------------- Funciones auxiliares
 
 
-void liberar_kernel(void){ //? Aca deberia liberarse toda la memoria asignada durante la ejecucion.
+/*Se libera toda la memoria asignada durante la ejecucion de kernel.*/
+void liberar_kernel(void){ 
     free(config_kernel.IP_KERNEL);
     free(config_kernel.PUERTO_ESCUCHA);
     free(config_kernel.IP_MEMORIA);

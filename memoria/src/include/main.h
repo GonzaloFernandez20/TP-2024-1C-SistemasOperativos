@@ -9,10 +9,11 @@
 #include <commons/config.h>
 
 // ---------------- Librerias Propias
-
+// ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h>
 
+// ---- EXTERNAS
 #include <utils/hilos/hilos.h>
 
 
@@ -24,7 +25,6 @@ char *path_config;
 t_config_memoria config_memoria;
 
 int fd_server_memoria;
-
 
 // ---------------- Definiciones de funciones
 void liberar_memoria(void);

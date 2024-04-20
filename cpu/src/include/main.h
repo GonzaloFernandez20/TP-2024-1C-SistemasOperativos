@@ -8,9 +8,11 @@
 #include <commons/config.h>
 
 // ---------------- Librerias Propias
+// ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
 
+// ---- EXTERNAS
 #include <utils/hilos/hilos.h>
 
 // ---------------- Definiciones de variables globales

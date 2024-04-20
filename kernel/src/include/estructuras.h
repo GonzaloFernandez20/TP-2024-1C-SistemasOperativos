@@ -1,11 +1,13 @@
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
-// ---------- INCLUSIONES
 
+// ---------- INCLUSIONES
+#include <stdio.h>
+#include <string.h>
 #include <commons/log.h>
 
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
-typedef struct config_kernel
+typedef struct configuraciones_kernel
 {
     char* IP_KERNEL;
     char* PUERTO_ESCUCHA; 
@@ -19,22 +21,19 @@ typedef struct config_kernel
     char* RECURSOS;
     char* INSTANCIAS_RECURSOS;
     int GRADO_MULTIPROGRAMACION;
+
 } t_config_kernel;
 
 
-
-// ---------- DEFINICIONES DE LAS ESTRUCTURAS
-extern t_config_kernel config_kernel;
-
-// ---------- DEFINICIONES DE LAS VARIABLES 
+// ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
 extern t_log* kernel_log_debugg;
 
 extern char *path_config;
+extern t_config_kernel config_kernel;
 
 extern int fd_server_kernel;
 extern int fd_conexion_memoria;
-
 extern int fd_conexion_dispatch; 
 extern int fd_conexion_interrupt;
 

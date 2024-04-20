@@ -16,7 +16,7 @@ void *procesar_operacion_entradaSalida(void *fd_ent_sal_casteado){
 			break;
 		
 		case -1:
-			log_error(memoria_log_debugg, "E/S se desconecto");
+			log_error(memoria_log_debugg, "E/S se desconecto\n");
             cliente_conectado = 0;
 			break;
 			

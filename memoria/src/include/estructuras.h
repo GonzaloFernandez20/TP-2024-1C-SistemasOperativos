@@ -25,9 +25,11 @@ typedef struct configuraciones_memoria
 // ---------- VARIABLES GLOBALES
 extern t_log* memoria_log;
 extern t_log* memoria_log_debugg;
+
 extern char *path_config;
-extern int fd_server_memoria;
 extern t_config_memoria config_memoria;
+
+extern int fd_server_memoria;
 
 
 #endif

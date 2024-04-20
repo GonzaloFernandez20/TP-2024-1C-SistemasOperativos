@@ -19,7 +19,8 @@
 
 // ---- EXTERNAS
 #include <utils/inicializaciones/inicializar.h>
-// ---------------- Definiciones de variables
+
+// ---------------- Definiciones de variables globales
 
 t_log* kernel_log;
 t_log* kernel_log_debugg;

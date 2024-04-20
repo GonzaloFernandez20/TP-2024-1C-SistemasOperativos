@@ -20,16 +20,15 @@ typedef struct configuraciones_cpu
     
 }t_config_cpu;
 
-
-
 // ---------- VARIABLES GLOBALES
 extern t_log* cpu_log;
 extern t_log* cpu_log_debug;
+
 extern char *path_config;
+extern t_config_cpu config_cpu;
+
 extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
-extern t_config_cpu config_cpu;
-
 
 #endif

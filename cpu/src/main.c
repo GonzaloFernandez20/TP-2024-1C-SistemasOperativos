@@ -9,12 +9,13 @@ int main(int argc,char* argv[]) {
     conectar_memoria();
     gestionar_conexiones_kernel();
     liberar_cpu();
+    
 	return 0;
 }
 
 
 /*Se libera toda la memoria asignada durante la ejecucion de Cpu.*/
-void liberar_memoria(void){
+void liberar_cpu(void){
     free(config_cpu.IP_CPU);
     free(config_cpu.IP_MEMORIA);
     free(config_cpu.PUERTO_MEMORIA);
