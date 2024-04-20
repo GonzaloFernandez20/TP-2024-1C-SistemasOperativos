@@ -17,13 +17,14 @@ void *procesar_operacion_cpu(void *fd_cpu_casteado){
 		case -1:
 			log_error(memoria_log_debugg, "CPU se desconecto");
             cliente_conectado = 0;
-			return EXIT_FAILURE;
+			break;
+
 		default:
 			log_warning(memoria_log_debugg,"Operacion desconocida de CPU");
 			break;
 		}
 	}
-	
+	return (void *)EXIT_FAILURE;
 }
 
 

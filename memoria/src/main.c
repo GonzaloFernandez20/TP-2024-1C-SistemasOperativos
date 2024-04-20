@@ -15,8 +15,8 @@ int main(int argc, char* argv[]) {
 
 
 
-
-void liberar_memoria(void){ //? Aca deberia liberarse toda la memoria asignada durante la ejecucion.
+/*Se libera toda la memoria asignada durante la ejecucion de memoria.*/
+void liberar_memoria(void){ 
     free(config_memoria.IP_MEMORIA);
     free(config_memoria.PUERTO_ESCUCHA);
     free(config_memoria.PATH_INSTRUCCIONES);
@@ -25,4 +25,6 @@ void liberar_memoria(void){ //? Aca deberia liberarse toda la memoria asignada d
 
     log_destroy(memoria_log);
     log_destroy(memoria_log_debugg);
+    liberar_conexion(fd_server_memoria);
+
 }

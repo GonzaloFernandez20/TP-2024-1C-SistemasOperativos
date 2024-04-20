@@ -15,7 +15,7 @@
 // Protocolos de comunicacion
 typedef enum
 {
-	HANDSHAKE = 1
+	HANDSHAKE = 1,
 	MENSAJE
 
 }op_code; 
