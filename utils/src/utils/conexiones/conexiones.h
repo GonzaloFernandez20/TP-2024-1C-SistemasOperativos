@@ -10,13 +10,10 @@
 #include<sys/socket.h>
 
 
-/** Crea el socket servidor, lo bindea al puerto y lo pone a escuchar **/
 int iniciar_servidor(char* IP, char* PUERTO);
 
-/************ Crea el socket cliente y lo conecta al servidor **********/
 int crear_conexion(char* IP, char* PUERTO);
 
-/******* Servidor acepta a un cliente y chequea valor de retorno *******/
 int esperar_cliente(int socket_servidor);
 
 #endif
