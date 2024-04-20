@@ -7,7 +7,6 @@ int main(int argc, char *argv[]){
     //iniciar_conexiones();
     conectar_kernel();
     //----------------------------------------------------------------
-    //liberar_memoria();
     return 0;
 }
 
