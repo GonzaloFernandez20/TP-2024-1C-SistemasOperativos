@@ -16,7 +16,7 @@ int main(int argc, char *argv[]){
     printf("Puerto de escucha: %s\n", configuraciones_kernel.PUERTO_ESCUCHA);
 
     //----------------------------------------------------------------
-
+    //Coment
     return 0;
 }
 
