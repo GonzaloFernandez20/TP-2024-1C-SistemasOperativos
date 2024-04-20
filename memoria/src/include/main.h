@@ -27,13 +27,8 @@ char *path_config;
 int fd_server_memoria;
 t_config_memoria config_memoria;
 
-pthread_t thread_cpu;
-pthread_t thread_kernel;
 
 // ---------------- Definiciones de funciones
-
-
-
 void liberar_memoria(void);
 
 #endif

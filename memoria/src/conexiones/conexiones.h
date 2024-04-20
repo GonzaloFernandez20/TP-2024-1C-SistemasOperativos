@@ -2,7 +2,7 @@
 #define MEMORIA_CONEXIONES_H_
 
 #include <include/estructuras.h>
-#include <inicializar/inicializar.h> //puede que no sea necesaria aca
+#include <inicializar/inicializar.h> 
 #include <protocolos/protocoloCpu.h>
 #include <protocolos/protocoloKernel.h>
 #include <protocolos/protocoloIO.h>

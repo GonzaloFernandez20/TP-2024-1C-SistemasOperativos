@@ -14,6 +14,8 @@ int iniciar_servidor(char* IP, char* PUERTO);
 
 int crear_conexion(char* IP, char* PUERTO);
 
-int esperar_cliente(int socket_servidor);
+int esperar_cliente(int fd_servidor);
+
+void liberar_conexion(int fd_cliente);
 
 #endif

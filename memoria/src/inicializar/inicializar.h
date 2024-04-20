@@ -8,10 +8,6 @@
 
 
 
-
-// ---------- DEFINICIONES DE LAS ESTRUCTURAS
-
-
 /*Seteamos las configuraciones iniciales de logs y configs*/ 
 void init(void);
 
