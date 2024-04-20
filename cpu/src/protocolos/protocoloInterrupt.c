@@ -17,6 +17,7 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 		case -1:
 			log_error(cpu_log_debug, "KERNEL-INTERRUPT se desconecto");
             cliente_conectado = 0;
+			interrupt_conectado = 0;
 			break;
 
 		default:

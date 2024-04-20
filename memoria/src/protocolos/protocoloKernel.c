@@ -17,6 +17,7 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 		case -1:
 			log_error(memoria_log_debugg, "KERNEL se desconecto\n");
             cliente_conectado = 0;
+			kernel_conectado = 0;
 			break;
 			
 		default:

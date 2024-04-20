@@ -19,6 +19,12 @@ void iniciar_servidor_kernel(void){
 
 void atender_entradasalida(){
     atender_cliente(fd_server_kernel, (void *)procesar_conexion_es, kernel_log_debugg, "ENTRADA/SALIDA");
+    
+    entrada_salida_conectada = 1;
+    while(entrada_salida_conectada){
+        // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
+        // es temporal para que el hilo main no finalice el programa
+    }
 }
 
 

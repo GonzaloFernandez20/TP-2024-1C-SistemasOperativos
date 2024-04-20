@@ -37,4 +37,6 @@ extern int fd_conexion_memoria;
 extern int fd_conexion_dispatch; 
 extern int fd_conexion_interrupt;
 
+extern int entrada_salida_conectada;
+
 #endif

@@ -57,17 +57,25 @@ void conectar_memoria(void){
 
     free(IP);
     free(PUERTO);
+
 }
 
 void gestionar_conexiones_kernel(void){
     atender_dispatch();
     atender_interrupt();
+
+    while(dispatch_conectado || interrupt_conectado){
+        // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
+        // es temporal para que el hilo main no finalice el programa
+    }
 }
 
 void atender_dispatch(void){
     atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
+    dispatch_conectado = 1;
 }
 
 void atender_interrupt(void){
     atender_cliente(fd_interrupt_server, (void *)procesar_operacion_interrupt, cpu_log_debug,"KERNEL-INTERRUPT");
+    interrupt_conectado = 1;
 }

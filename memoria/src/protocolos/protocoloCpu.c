@@ -17,6 +17,7 @@ void *procesar_operacion_cpu(void *fd_cpu_casteado){
 		case -1:
 			log_error(memoria_log_debugg, "CPU se desconecto\n");
             cliente_conectado = 0;
+			cpu_conectada = 0;
 			break;
 
 		default:

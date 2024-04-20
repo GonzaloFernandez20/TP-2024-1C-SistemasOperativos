@@ -31,4 +31,7 @@ extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
 
+extern int dispatch_conectado;
+extern int interrupt_conectado;
+
 #endif

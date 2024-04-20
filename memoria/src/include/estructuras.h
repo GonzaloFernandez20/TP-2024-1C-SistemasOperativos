@@ -31,5 +31,8 @@ extern t_config_memoria config_memoria;
 
 extern int fd_server_memoria;
 
+extern int cpu_conectada;
+extern int kernel_conectado;
+extern int IO_conectado;
 
 #endif

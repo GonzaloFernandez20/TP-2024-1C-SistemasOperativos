@@ -17,6 +17,7 @@ void *procesar_operacion_dispatch(void *fd_dispatch_casteado){
 		case -1:
 			log_error(cpu_log_debug, "KERNEL-DISPATCH se desconecto");
             cliente_conectado = 0;
+			dispatch_conectado = 0;
 			break;
 
 		default:

@@ -15,8 +15,9 @@ void *procesar_conexion_es(void *fd_es_casteado){
 			break;
 		
 		case -1:
-			log_error(kernel_log_debugg, "ENTRADA/SALIDA se desconecto");
+			log_error(kernel_log_debugg, "ENTRADA/SALIDA se desconecto\n");
             cliente_conectado = 0;
+			entrada_salida_conectada = 0;
 			break;
 
 		default:

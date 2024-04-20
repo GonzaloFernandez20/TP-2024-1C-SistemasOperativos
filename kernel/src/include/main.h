@@ -31,6 +31,8 @@ int fd_conexion_memoria;
 int fd_conexion_dispatch; 
 int fd_conexion_interrupt;
 
+int entrada_salida_conectada;
+
 // ---------------- Definiciones de funciones
 void liberar_kernel(void);
 

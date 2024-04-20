@@ -26,6 +26,9 @@ int fd_dispatch_server;
 int fd_interrupt_server;
 int fd_conexion_memoria; 
 
+int dispatch_conectado;
+int interrupt_conectado;
+
 // ---------------- Definiciones de funciones
 void liberar_cpu(void);
 
