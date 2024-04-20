@@ -13,7 +13,7 @@ int main(int argc,char* argv[]) {
 }
 
 
-/*Se libera toda la memoria asignada durante la ejecucion de memoria.*/
+/*Se libera toda la memoria asignada durante la ejecucion de Cpu.*/
 void liberar_memoria(void){
     free(config_cpu.IP_CPU);
     free(config_cpu.IP_MEMORIA);

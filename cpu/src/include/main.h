@@ -8,9 +8,8 @@
 #include <commons/config.h>
 
 // ---------------- Librerias Propias
-//#include <utils/conexiones/clientes/clientes.h>
 #include <include/estructuras.h>
-#include <conexiones/conexiones.h> //Libreria propia del modulo
+#include <conexiones/conexiones.h> 
 
 #include <utils/hilos/hilos.h>
 

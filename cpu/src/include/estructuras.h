@@ -1,7 +1,7 @@
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
-// ---------- INCLUSIONES
 
+// ---------- INCLUSIONES
 #include <stdio.h>
 #include <string.h>
 #include <commons/log.h>
