@@ -6,7 +6,12 @@ void iniciar_servidor_memoria(void){
 
     fd_server_memoria = iniciar_servidor(IP , PUERTO);
 
-    log_info(memoria_log_debugg, "Servidor iniciado! MEMORIA escuchando en %s:%s\n", IP, PUERTO);
+    if(fd_server_memoria == -1){
+        log_error(memoria_log_debugg,"No se pudo iniciar servidor MEMORIA");
+    }
+    else{
+        log_info(memoria_log_debugg, "Servidor iniciado! MEMORIA escuchando en %s:%s\n", IP, PUERTO);
+    }
 
     free(IP);
     free(PUERTO);

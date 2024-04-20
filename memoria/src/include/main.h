@@ -5,10 +5,8 @@
 // ---------------- Librerias Standard
 #include <stdlib.h>
 #include <stdio.h>
-#include <commons/config.h>
-
 #include <string.h>
-
+#include <commons/config.h>
 
 // ---------------- Librerias Propias
 
@@ -18,14 +16,14 @@
 #include <utils/hilos/hilos.h>
 
 
-
-
 // ---------------- Definiciones de variables globales
 t_log* memoria_log;
 t_log* memoria_log_debugg;
+
 char *path_config;
-int fd_server_memoria;
 t_config_memoria config_memoria;
+
+int fd_server_memoria;
 
 
 // ---------------- Definiciones de funciones
