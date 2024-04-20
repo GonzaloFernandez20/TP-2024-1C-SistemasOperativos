@@ -2,15 +2,22 @@
 
 int main(int argc, char *argv[]){
 
-    chequear_parametros(argc, argv);
+    path_config = chequear_parametros(argc, argv);
 
     init(); // Seteamos las configuraciones iniciales de logs y configs
     iniciar_servidor_kernel();
-    atender_entradasalida();
+    //atender_entradasalida();
     gestionar_conexiones();
 
+    liberar_memoria();
     return 0;
 }
+
+
+
+
+
+
 
 
 

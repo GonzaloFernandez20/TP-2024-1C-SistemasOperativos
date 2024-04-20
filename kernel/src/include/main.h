@@ -19,12 +19,16 @@
 
 // ---- EXTERNAS
 #include <utils/inicializaciones/inicializar.h>
-#include <utils/conexiones/conexiones.h>
 // ---------------- Definiciones de variables
+
 t_log* kernel_log;
 t_log* kernel_log_debugg;
-
 char *path_config;
+t_config_kernel config_kernel;
+int fd_server_kernel;
+int fd_conexion_memoria;
+int fd_conexion_dispatch; 
+int fd_conexion_interrupt;
 
 // ---------------- Definiciones de funciones
 void liberar_memoria(void);

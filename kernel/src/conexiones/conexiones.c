@@ -1,7 +1,7 @@
 #include <conexiones/conexiones.h>
 
 void iniciar_servidor_kernel(void){
-    char* IP = strdup(config_kernel.IP_MEMORIA);
+    char* IP = strdup(config_kernel.IP_KERNEL);
     char* PUERTO = strdup(config_kernel.PUERTO_ESCUCHA);
 
     fd_server_kernel = iniciar_servidor(IP , PUERTO);
@@ -21,8 +21,8 @@ void atender_entradasalida(){
 
 void gestionar_conexiones(void){
     conectar_memoria();
-    conectar_dispatch();
-    conectar_interrupt();
+    //conectar_dispatch();
+    //conectar_interrupt();
 }
 
 void conectar_memoria(void){ //? Conexion con memoria
@@ -31,7 +31,13 @@ void conectar_memoria(void){ //? Conexion con memoria
 
     fd_conexion_memoria = crear_conexion(config_kernel.IP_MEMORIA, config_kernel.PUERTO_MEMORIA);
 
-    enviar_handshake(fd_conexion_memoria, "KERNEL", kernel_log_debugg);
+    if(fd_conexion_memoria != -1){
+        log_info(kernel_log_debugg, "KERNEL conectado a MEMORIA en %s:%s\n", IP, PUERTO);
+        enviar_handshake(fd_conexion_memoria, "KERNEL", kernel_log_debugg);
+    }
+    else{
+        log_error(kernel_log_debugg,"KERNEL no se conecto a MEMORIA\n");
+    }
     
     free(IP);
     free(PUERTO);
@@ -43,9 +49,13 @@ void conectar_dispatch(void){
 
     fd_conexion_dispatch = crear_conexion(IP, PUERTO);
 
-    enviar_handshake(fd_conexion_dispatch, "KERNEL", kernel_log_debugg);
-
-    log_trace(kernel_log_debugg, "KERNEL conectado a CPU DISPATCH %s en %s:%s\n", IP, PUERTO);
+    if(fd_conexion_dispatch != -1){
+        log_info(kernel_log_debugg, "KERNEL conectado a CPU DISPATCH  en %s:%s\n", IP, PUERTO);
+        enviar_handshake(fd_conexion_dispatch, "KERNEL", kernel_log_debugg);
+    }
+    else{
+        log_error(kernel_log_debugg,"KERNEL no se conecto a MEMORIA\n");
+    }
     
     free(IP);
     free(PUERTO);
@@ -57,9 +67,13 @@ void conectar_interrupt(void){
 
     fd_conexion_interrupt = crear_conexion(IP, PUERTO);
 
-    enviar_handshake(fd_conexion_interrupt, "KERNEL", kernel_log_debugg);
-
-    log_trace(kernel_log_debugg, "KERNEL conectado a CPU INTERRUPT %s en %s:%s\n", IP, PUERTO);
+    if(fd_conexion_interrupt != -1){
+        log_info(kernel_log_debugg, "KERNEL conectado a CPU INTERRUPT  en %s:%s\n", IP, PUERTO);
+        enviar_handshake(fd_conexion_interrupt, "KERNEL", kernel_log_debugg);
+    }
+    else{
+        log_error(kernel_log_debugg,"KERNEL no se conecto a MEMORIA\n");
+    }
 
     free(IP);
     free(PUERTO);

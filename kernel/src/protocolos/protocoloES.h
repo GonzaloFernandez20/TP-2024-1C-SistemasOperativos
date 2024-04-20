@@ -5,8 +5,10 @@
 // ---------------- Librerias Standard
 
 // ---------------- Librerias Propias
+#include <include/estructuras.h>
+
 #include <utils/hilos/hilos.h>
-#include <include/main.h>
+#include <utils/serializacion/serializacion.h>
 // ---------------- Definiciones de variables
 
 // ---------------- Definiciones de funciones

@@ -1,15 +1,8 @@
 #ifndef MEMORIA_INICIALIZAR_H_INCLUDED
 #define MEMORIA_INICIALIZAR_H_INCLUDED
 
-#include <include/main.h>
-
-
-#include <commons/log.h>
-#include <commons/config.h>
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>
-
-
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
 
 
