@@ -21,7 +21,7 @@ int fd_conexion_interrupt; */
 void iniciar_servidor_kernel(void);
 void atender_entradasalida();
 
-void gestionar_conexiones(void);
+void establecer_conexiones(void);
 void conectar_memoria(void);
 void conectar_dispatch(void);
 void conectar_interrupt(void);

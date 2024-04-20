@@ -8,13 +8,13 @@ int main(int argc,char* argv[]) {
     iniciar_servidores();
     conectar_memoria();
     gestionar_conexiones_kernel();
-    liberar_memoria();
+    liberar_cpu();
 	return 0;
 }
 
 
 /*Se libera toda la memoria asignada durante la ejecucion de memoria.*/
-void liberar_memoria(void){
+void liberar_cpu(void){
     free(config_cpu.IP_CPU);
     free(config_cpu.IP_MEMORIA);
     free(config_cpu.PUERTO_MEMORIA);
