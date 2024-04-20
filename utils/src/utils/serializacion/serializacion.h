@@ -16,6 +16,7 @@
 typedef enum
 {
 	HANDSHAKE = 1
+	MENSAJE
 
 }op_code; 
 

@@ -1,12 +1,15 @@
 #ifndef ESTRUCTURAS_H_INCLUDED
 #define ESTRUCTURAS_H_INCLUDED
+
 // ---------- INCLUSIONES
 
+#include <stdio.h>
+#include <string.h>
 #include <commons/log.h>
 
 
-// ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
-typedef struct config_memoria
+// ---------- ESTRUCTURAS 
+typedef struct configuraciones_memoria
 {
     char* IP_MEMORIA;
     char* PUERTO_ESCUCHA;
@@ -19,12 +22,12 @@ typedef struct config_memoria
 
 
 
-// ---------- DEFINICIONES DE LAS ESTRUCTURAS
-t_config_memoria configuraciones_memoria;
-
-
-// ---------- DEFINICIONES DE LAS VARIABLES
-t_log* log_memoria;
+// ---------- VARIABLES GLOBALES
+extern t_log* memoria_log;
+extern t_log* memoria_log_debugg;
+extern char *path_config;
+extern int fd_server_memoria;
+extern t_config_memoria config_memoria;
 
 
 #endif

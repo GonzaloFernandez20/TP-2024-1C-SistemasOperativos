@@ -5,7 +5,7 @@
 
 
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
-typedef struct cpu_kernel
+typedef struct config_cpu
 {
     char* IP_MEMORIA;
     char* PUERTO_MEMORIA;
@@ -18,7 +18,7 @@ typedef struct cpu_kernel
 
 
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
-t_config_kernel configuraciones_kernel;
+t_config_cpu config_cpu;
 
 
 // ---------- DEFINICIONES DE LAS VARIABLES

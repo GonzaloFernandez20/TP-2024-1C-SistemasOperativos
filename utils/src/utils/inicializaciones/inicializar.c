@@ -13,6 +13,15 @@ t_log* iniciar_logger(char* archivo_Log, char *modulo, bool consola_activa, t_lo
 	return nuevo_logger;
 }
 
+char* chequear_parametros(int argc, char* argv[]){ 
+    if(argc < 1) {
+        printf("Faltan parametros de entrada\n");
+    }
+    char* path_config = strdup(argv[1]); 
+    
+    return path_config;
+}
+
 t_config* iniciar_config(char* path_config){
 	t_config* nuevo_config = config_create(path_config);
 	
