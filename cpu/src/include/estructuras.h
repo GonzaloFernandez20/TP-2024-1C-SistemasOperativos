@@ -6,7 +6,8 @@
 
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct config_cpu
-{
+{   
+    char* IP_CPU;
     char* IP_MEMORIA;
     char* PUERTO_MEMORIA;
     char* PUERTO_ESCUCHA_DISPATCH;

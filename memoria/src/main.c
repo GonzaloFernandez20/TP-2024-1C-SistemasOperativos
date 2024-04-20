@@ -7,6 +7,8 @@ int main(int argc, char* argv[]) {
     iniciar_servidor_memoria();
     gestionar_conexiones_clientes();
 
+
+    liberar_memoria();
     return 0;
 }
 
@@ -35,7 +37,7 @@ void gestionar_conexiones_clientes(void){
 }
 
 void atender_cpu(void){
-    pthread_t thread_cpu;
+    
 
     int *fd_cpu = malloc(sizeof(int));
         *fd_cpu = esperar_cliente(fd_server_memoria);
@@ -48,7 +50,6 @@ void atender_cpu(void){
 	pthread_detach(thread_cpu);
 }
 void atender_kernel(void){
-    pthread_t thread_kernel;
 
     int *fd_kernel = malloc(sizeof(int));
         *fd_kernel = esperar_cliente(fd_server_memoria);
@@ -56,9 +57,9 @@ void atender_kernel(void){
     //recibir_handshake(fd_kernel);
 
 	pthread_create(&thread_kernel, NULL, (void*) procesar_operacion_kernel, (void *)fd_kernel);
-	//log_info(memoria_log_debugg, "hilo [%lu] listo para atender al cliente", thread_kernel);
+	log_info(memoria_log_debugg, "hilo [%lu] recibio a KERNEL\n", thread_kernel);
 
-	pthread_detach(thread_kernel);
+	pthread_detach(thread_kernel); //TODO: Como matar al hilo cuando termina su ejecucion
 }
 void atender_entradaSalida(void){
     pthread_t thread_ent_sal;
@@ -79,22 +80,25 @@ void *procesar_operacion_cpu(void *fd_cpu_casteado){
     int fd_cpu = _deshacer_casting(fd_cpu_casteado);
 
     // TODO: Implementacion de las operaciones que puede hacer el cpu
+    free(fd_cpu_casteado);
+    pthread_exit(NULL); 
 
-    
 }
 void *procesar_operacion_kernel(void *fd_kernel_casteado){
     int fd_kernel = _deshacer_casting(fd_kernel_casteado);
 
     // TODO: Implementacion de las operaciones que puede hacer el kernel
 
-    
+    free(fd_kernel_casteado);
+    pthread_exit(NULL); 
 }
 void *procesar_operacion_entradaSalida(void *fd_ent_sal_casteado){
     int fd_ent_sal = _deshacer_casting(fd_ent_sal_casteado);
 
     // TODO: Implementacion de las operaciones que puede hacer entrada/salida
 
-    
+    free(fd_ent_sal_casteado);
+    pthread_exit(NULL); 
 }
 
 // ----------------------------- Funciones auxiliares
@@ -125,4 +129,13 @@ void _chequear_parametros(int argc, char* argv[]){ //! Esta funcion deberia ir e
         printf("Faltan parametros de entrada\n");
     }
     path_config = strdup(argv[1]); // Esto es para pasar el path del config por linea de comandos
+}
+
+void liberar_memoria(void){ //? Aca deberia liberarse toda la memoria asignada durante la ejecucion.
+    free(configuraciones_memoria.IP_MEMORIA);
+    free(configuraciones_memoria.PUERTO_ESCUCHA);
+    free(configuraciones_memoria.TAM_MEMORIA);
+    free(configuraciones_memoria.TAM_PAGINA);
+    free(configuraciones_memoria.PATH_INSTRUCCIONES);
+    free(configuraciones_memoria.RETARDO_RESPUESTA);
 }

@@ -9,7 +9,7 @@ typedef struct config_kernel
 {
     char* PUERTO_ESCUCHA;
     char* IP_MEMORIA;
-    //char* PUERTO_MEMORIA;
+    char* PUERTO_MEMORIA;
     //char* IP_CPU;
     //char* PUERTO_CPU_DISPATCH;
     //char* PUERTO_CPU_INTERRUPT;
@@ -23,7 +23,7 @@ typedef struct config_kernel
 
 
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
-t_config_kernel configuraciones_kernel;
+t_config_kernel config_kernel;
 
 
 // ---------- DEFINICIONES DE LAS VARIABLES

@@ -4,7 +4,8 @@
 		"files.associations": {
 			"*.h": "c",
 			"cstdlib": "c",
-			"cerrno": "c"
+			"cerrno": "c",
+			"*.tcc": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},

@@ -22,6 +22,9 @@ t_log* memoria_log_debugg;
 char *path_config;
 int fd_server_memoria;
 
+pthread_t thread_cpu;
+pthread_t thread_kernel;
+
 // ---------------- Definiciones de funciones
 void init(void);
 void _leer_configuracion(char *path_config);
@@ -40,5 +43,5 @@ void *procesar_operacion_entradaSalida(void *fd_ent_sal_casteado);
 int _deshacer_casting(void *fd_cpu_casteado);
 void _chequear_parametros(int argc, char* argv[]);
 
-
+void liberar_memoria(void);
 #endif
