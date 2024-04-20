@@ -1,8 +1,12 @@
+#ifndef MEMORIA_PROTOCOLO_IO_H_
+#define MEMORIA_PROTOCOLO_IO_H_
 
-void *procesar_operacion_entradaSalida(void *fd_ent_sal_casteado){
-    int fd_ent_sal = _deshacer_casting(fd_ent_sal_casteado);
+#include <include/estructuras.h>
 
-    // TODO: Implementacion de las operaciones que puede hacer entrada/salida
+#include <utils/serializacion/serializacion.h>
+#include <utils/hilos/hilos.h>
 
-    
-}
+
+void *procesar_operacion_entradaSalida(void *fd_ent_sal_casteado);
+
+#endif

@@ -6,6 +6,7 @@
 			"cstdlib": "c",
 			"cerrno": "c",
 			"functional": "c"
+			//"*.tcc": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},

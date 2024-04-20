@@ -7,6 +7,7 @@
 #include <protocolos/protocoloKernel.h>
 #include <protocolos/protocoloIO.h>
 
+#include <utils/hilos/hilos.h>
 #include <utils/conexiones/conexiones.h>
 #include <utils/serializacion/serializacion.h>
 

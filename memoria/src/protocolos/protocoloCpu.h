@@ -4,6 +4,8 @@
 #include <include/estructuras.h>
 
 #include <utils/serializacion/serializacion.h>
-//agregar la de hilos
+#include <utils/hilos/hilos.h>
+
+void *procesar_operacion_cpu(void *fd_cpu_casteado);
 
 #endif

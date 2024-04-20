@@ -19,17 +19,7 @@ void gestionar_conexiones_clientes(void){
 }
 
 void atender_cpu(void){
-   
-    int *fd_cpu = malloc(sizeof(int));
-        *fd_cpu = esperar_cliente(fd_server_memoria);
-
-    //recibir_handshake(fd_cpu);
-
-    pthread_t thread_cpu;
-	pthread_create(&thread_cpu, NULL, (void*) procesar_operacion_cpu, (void *)fd_cpu);
-	log_info(memoria_log_debugg, "hilo [%lu] recibio a CPU\n", thread_cpu);
-
-	pthread_detach(thread_cpu);
+    void atender_cliente(int *fd_servidor, void (*procesar_conexion)(void*), t_log* logger, char* modulo)
 }
 void atender_kernel(void){
     pthread_t thread_kernel;

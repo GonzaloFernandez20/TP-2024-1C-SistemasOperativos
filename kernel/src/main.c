@@ -1,22 +1,12 @@
 #include <include/main.h>
 
 int main(int argc, char *argv[]){
-
-    if(argc < 1) {
-        printf("Faltan parametros de entrada\n");
-        return EXIT_FAILURE;
-    }
-    path_config = strdup(argv[1]); // Esto es para pasar el path del config por linea de comandos
+    _chequear_parametros(argc, argv);
 
     init(); // Seteamos las configuraciones iniciales de logs y configs
-    iniciar_conexiones();
-
-
-    printf("IP Memoria: %s\n", configuraciones_kernel.IP_MEMORIA);
-    printf("Puerto de escucha: %s\n", configuraciones_kernel.PUERTO_ESCUCHA);
-
+    //iniciar_conexiones();
+    conectar_kernel();
     //----------------------------------------------------------------
-
     return 0;
 }
 
@@ -38,15 +28,18 @@ void iniciar_conexiones(){
 	//iberar_recursos(conexionDispatcher, logger, configDispatcher);
 }
 
-
-
+void conectar_kernel(void){
+    fd_kernel = crear_conexion(config_kernel.IP_MEMORIA, config_kernel.PUERTO_MEMORIA);
+    if(fd_kernel != (-1)){ puts("Me conecte"); }
+}
 
 // ----------------------------- Funciones auxiliares
 void _leer_configuracion(char *path_config){
     t_config* archivo_config = iniciar_config(path_config);
 
-    configuraciones_kernel.PUERTO_ESCUCHA = strdup(config_get_string_value(archivo_config, "PUERTO_MEMORIA"));
-    configuraciones_kernel.IP_MEMORIA = strdup(config_get_string_value(archivo_config, "IP_MEMORIA"));
-        //TODO: strdup hace un malloc, chequear como liberar la memoria pedida...
+    config_kernel.PUERTO_ESCUCHA = strdup(config_get_string_value(archivo_config, "PUERTO_ESCUCHA"));
+    config_kernel.IP_MEMORIA = strdup(config_get_string_value(archivo_config, "IP_MEMORIA"));
+    config_kernel.PUERTO_MEMORIA = strdup(config_get_string_value(archivo_config, "PUERTO_MEMORIA"));
+
     config_destroy(archivo_config);
 }
