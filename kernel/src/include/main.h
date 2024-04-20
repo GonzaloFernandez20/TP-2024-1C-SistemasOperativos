@@ -9,25 +9,24 @@
 #include <commons/config.h>
 #include <commons/log.h>
 #include <string.h>
-
+#include <pthread.h>
 // ---------------- Librerias Propias
-//#include <utils/conexiones/clientes/clientes.h>
+// ---- INTERNAS
 #include <include/estructuras.h>
+#include <inicializar/inicializar.h>
+#include <conexiones/conexiones.h>
+#include <protocolos/protocoloES.h>
+
+// ---- EXTERNAS
 #include <utils/inicializaciones/inicializar.h>
 #include <utils/conexiones/conexiones.h>
-
 // ---------------- Definiciones de variables
 t_log* kernel_log;
+t_log* kernel_log_debugg;
+
 char *path_config;
-int fd_kernel;
-
-
-
 
 // ---------------- Definiciones de funciones
-void init(void);
-void _leer_configuracion(char *path_config);
-
-void conectar_kernel(void);
+void liberar_memoria(void);
 
 #endif

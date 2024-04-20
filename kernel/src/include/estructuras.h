@@ -7,17 +7,18 @@
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct config_kernel
 {
+    char* IP_KERNEL;
     char* PUERTO_ESCUCHA;
     char* IP_MEMORIA;
     char* PUERTO_MEMORIA;
-    //char* IP_CPU;
-    //char* PUERTO_CPU_DISPATCH;
-    //char* PUERTO_CPU_INTERRUPT;
-    //char* ALGORITMO_PLANIFICACION;
-    //int QUANTUM;
-    //char* RECURSOS;
-    //char* INSTANCIAS_RECURSOS;
-    //int GRADO_MULTIPROGRAMACION;
+    char* IP_CPU;
+    char* PUERTO_CPU_DISPATCH;
+    char* PUERTO_CPU_INTERRUPT;
+    char* ALGORITMO_PLANIFICACION;
+    int QUANTUM;
+    char* RECURSOS;
+    char* INSTANCIAS_RECURSOS;
+    int GRADO_MULTIPROGRAMACION;
 } t_config_kernel;
 
 
