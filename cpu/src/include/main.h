@@ -25,6 +25,6 @@ int fd_interrupt_server;
 int fd_conexion_memoria; 
 
 // ---------------- Definiciones de funciones
-void liberar_memoria(void);
+void liberar_cpu(void);
 
 #endif

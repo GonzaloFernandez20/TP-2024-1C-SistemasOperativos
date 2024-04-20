@@ -12,7 +12,7 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
     recv(fd_conexion, &respuesta_servidor, sizeof(int), MSG_WAITALL);
 
     if (respuesta_servidor == 0) {
-        log_info(logger, "Handshake exitoso: comunicacion con servidor establecida");
+        log_info(logger, "Handshake exitoso: comunicacion con servidor establecida\n");
     } 
     else {
         log_error(logger, "Error handshake: no se establecio comunicacion con servidor");
@@ -94,7 +94,7 @@ int recibir_operacion(int fd_cliente){
 void recibir_presentacion(int fd_cliente, t_log* logger){
 	int size;
 	char* buffer = recibir_buffer(&size, fd_cliente);
-	log_info(logger, "Establecida comunicacion con %s", buffer);
+	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", buffer);
 	free(buffer);
 }
 

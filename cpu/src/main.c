@@ -8,7 +8,7 @@ int main(int argc,char* argv[]) {
     iniciar_servidores();
     conectar_memoria();
     gestionar_conexiones_kernel();
-    liberar_memoria();
+    liberar_cpu();
 	return 0;
 }
 
