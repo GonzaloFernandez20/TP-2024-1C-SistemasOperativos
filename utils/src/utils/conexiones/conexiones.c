@@ -17,7 +17,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
 	// chequeo valor de retorno
 	if(error){
 		fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
-		return EXIT_FAILURE;
+		return -1;
 	}
 
 	// Creamos el socket de escucha del servidor
@@ -27,7 +27,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
 	// chequeo valor de retorno
 	if(socket_servidor == -1){
 		fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
-        return EXIT_FAILURE;
+        return -1;
 	}
 
 	// Asociamos el socket a un puerto
@@ -35,7 +35,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
 	// chequeo valor de retorno
 	if (error == -1) {
         fprintf(stderr, "Error al hacer bind: \n%s", strerror(errno));
-        return EXIT_FAILURE;
+        return -1;
     }
 
 	// Escuchamos las conexiones entrantes
@@ -43,7 +43,7 @@ int iniciar_servidor(char* IP, char* PUERTO)
 	// chequeo valor de retorno
 	if(error == -1){
 		fprintf(stderr, "Error el servidor no esta escuchando: \n%s", strerror(errno));
-        return EXIT_FAILURE;
+        return -1;
 	}
 
 	freeaddrinfo(servinfo);
@@ -68,7 +68,7 @@ error = getaddrinfo(IP, PUERTO, &hints, &server_info);
 // chequeo valor de retorno
 if(error){
 	fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
-	return EXIT_FAILURE;
+	return -1;
 }
 
 // Ahora vamos a crear el socket.
@@ -79,14 +79,14 @@ int socket_cliente = socket(server_info->ai_family,
 // chequeo valor de retorno
 if(socket_cliente == -1){
 	fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
-    return EXIT_FAILURE;
+    return -1;
 }
 
 error = connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
 // chequeo valor de retorno
 if(error == -1){
 		fprintf(stderr, "Error al conectarse: \n%s", strerror(errno));
-        return EXIT_FAILURE;
+        return -1;
 	}
 
 freeaddrinfo(server_info);

@@ -1,25 +1,29 @@
-#ifndef CONEXIONES_H_INCLUDED
-#define CONEXIONES_H_INCLUDED
+#ifndef CPU_CONEXIONES_H_
+#define CPU_CONEXIONES_H_
 
+#include <include/estructuras.h>
+#include <inicializar/inicializar.h> 
+#include <protocolos/protocoloDispatch.h>
+#include <protocolos/protocoloInterrupt.h>
 
-// ---------------- Librerias Standard
-#include <stdlib.h>
-#include <stdio.h>
-
-#include <commons/config.h>
-#include <commons/log.h>
-#include <string.h>
-
-// ---------------- Librerias Propias
 #include <utils/hilos/hilos.h>
+#include <utils/conexiones/conexiones.h>
+#include <utils/serializacion/serializacion.h>
 
-// ---------------- Definiciones de variables
 
+void iniciar_servidores(void);
 
-// ---------------- Definiciones de funciones
-void atender_dispatch(void);
-void atender_interrupt(void);
+void iniciar_servidor_dispatch(void);
+
+void iniciar_servidor_interrupt(void);
+
+void conectar_memoria(void);
+
 void gestionar_conexiones_kernel(void);
+
+void atender_dispatch(void);
+
+void atender_interrupt(void);
 
 
 #endif
