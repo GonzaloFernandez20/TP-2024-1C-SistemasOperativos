@@ -6,13 +6,40 @@ int main(int argc, char* argv[]) {
 
     init();
     establecer_conexiones();
+    manos_a_la_obra_interfaces();
     liberar_entradaSalida();
 
     return 0;
 }
 
+void manos_a_la_obra_interfaces(void){
+     while(1){//no me gustan estos pero por ahora queda para probar
+    	interfaz_code que_hago = recibir_operacion(fd_conexion_kernel);
+        t_list* datos_recibidos;//no lo liberé
+		switch (que_hago) {
+		case IO_GEN_SLEEP://NECESARIA PARA LA ENTREGA 2
+            datos_recibidos = recibir_paquete(fd_conexion_kernel);
+            log_info(IO_log, "El kernel dice:\n");
+			list_iterate(datos_recibidos, (void*) iterator);
+            enviar_code_op_y_datos(IO_GEN_SLEEP,"DORMIMOS 5 segundos",fd_conexion_kernel);
+			break;
+		case IO_STDIN_READ:
 
+			break;
+    	case IO_STDOUT_WRITE:
 
+			break;
+
+		default:
+			log_warning(IO_log_debug,"Operacion desconocida de ENTRADA/SALIDA");
+			break;
+		}
+	}
+}
+
+void iterator(char* value) {
+	log_info(IO_log,"%s", value);
+}
 
 
 /*Se libera toda la memoria asignada durante la ejecucion de Entrada/Salida.*/

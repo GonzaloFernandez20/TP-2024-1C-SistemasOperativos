@@ -7,5 +7,7 @@
 #include <utils/serializacion/serializacion.h>
 
 void *procesar_conexion_es(void *fd_cpu_casteado);
+extern que_hace_kernel que_hago
+
 
 #endif

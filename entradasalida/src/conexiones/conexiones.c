@@ -1,7 +1,7 @@
 #include <conexiones/conexiones.h>
 
 void establecer_conexiones(void){
-    conectar_memoria();
+//    conectar_memoria(); //desabilitado para mis pruebas
     conectar_kernel();
 }
 

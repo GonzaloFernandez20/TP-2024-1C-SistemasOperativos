@@ -10,7 +10,7 @@
 //#include <errno.h>
 #include <sys/socket.h>
 #include <commons/log.h>
-
+#include<commons/collections/list.h>
 
 // Protocolos de comunicacion
 typedef enum
@@ -49,5 +49,9 @@ int recibir_operacion(int fd_cliente);
 void recibir_presentacion(int fd_cliente, t_log* logger);
 
 void* recibir_buffer(int* size, int socket_cliente);
+
+void enviar_code_op_y_datos(int op_code,char* info, int socket_cliente);
+
+t_list* recibir_paquete(int socket_cliente);
 
 #endif

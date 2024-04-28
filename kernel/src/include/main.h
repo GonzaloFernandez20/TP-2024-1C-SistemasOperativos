@@ -8,6 +8,7 @@
 
 #include <commons/config.h>
 #include <commons/log.h>
+#include <commons/list.h>
 #include <string.h>
 #include <pthread.h>
 // ---------------- Librerias Propias
@@ -21,12 +22,12 @@
 #include <utils/inicializaciones/inicializar.h>
 
 // ---------------- Definiciones de variables globales
-
+t_list paquetes_leidos;
 t_log* kernel_log;
 t_log* kernel_log_debugg;
 char *path_config;
 t_config_kernel config_kernel;
-int fd_server_kernel;
+int fd_server_kernel_interface;
 int fd_conexion_memoria;
 int fd_conexion_dispatch; 
 int fd_conexion_interrupt;
@@ -35,5 +36,7 @@ int entrada_salida_conectada;
 
 // ---------------- Definiciones de funciones
 void liberar_kernel(void);
+
+//------------------Enums
 
 #endif

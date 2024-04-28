@@ -27,4 +27,12 @@ int fd_conexion_kernel;
 // ---------------- Definiciones de funciones
 void liberar_entradaSalida(void);
 
+//----------------- Enum
+typedef enum{
+    IO_GEN_SLEEP = 0,
+    IO_STDIN_READ = 1,
+    IO_STDOUT_WRITE = 2
+}interfaz_code;
+
+
 #endif

@@ -1,12 +1,12 @@
 #include <conexiones/conexiones.h>
 
-void iniciar_servidor_kernel(void){
+void iniciar_servidor_kernel_interface(void){
     char* IP = strdup(config_kernel.IP_KERNEL);
     char* PUERTO = strdup(config_kernel.PUERTO_ESCUCHA);
 
-    fd_server_kernel = iniciar_servidor(IP , PUERTO);
+    fd_server_kernel_interface = iniciar_servidor(IP , PUERTO);
 
-    if(fd_server_kernel == -1){
+    if(fd_server_kernel_interface == -1){
         log_error(kernel_log_debugg,"No se pudo iniciar servidor KERNEL");
     }
     else{
@@ -18,8 +18,9 @@ void iniciar_servidor_kernel(void){
 }
 
 void atender_entradasalida(){
-    atender_cliente(fd_server_kernel, (void *)procesar_conexion_es, kernel_log_debugg, "ENTRADA/SALIDA");
-    
+    //la duda acá sería cómo hacer para que el servidor siempre esté 
+    //preparado para aceptar a un cliente sin espera activa
+    atender_cliente(fd_server_kernel_interface, (void *)procesar_conexion_es, kernel_log_debugg, "ENTRADA/SALIDA");
     entrada_salida_conectada = 1;
     while(entrada_salida_conectada){
         // CONTINGENCIA: se borra en cuanto veamos señales y semaforos

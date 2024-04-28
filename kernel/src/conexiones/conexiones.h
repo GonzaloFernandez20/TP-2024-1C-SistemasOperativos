@@ -10,7 +10,7 @@
 #include <utils/serializacion/serializacion.h>
 
 
-void iniciar_servidor_kernel(void);
+void iniciar_servidor_kernel_interface(void);
 
 void atender_entradasalida();
 

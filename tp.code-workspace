@@ -5,8 +5,14 @@
 			"*.h": "c",
 			"cstdlib": "c",
 			"cerrno": "c",
-			"functional": "c"
-			//"*.tcc": "c"
+			"functional": "c",
+			"array": "c",
+			"deque": "c",
+			"string": "c",
+			"unordered_map": "c",
+			"vector": "c",
+			"string_view": "c",
+			"initializer_list": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},
