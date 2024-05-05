@@ -44,7 +44,13 @@ void fetch(){
     PCB.registros.PC += 1;
 }
 
-int decode(char* operacion_str) {
+void decode(char* operacion_str) { 
+    /* 
+        Interpretamos el nombre de la operación y 
+        asignamos el opCode correspondiente a la 
+        variable global "operacion".
+    */
+
     // El Switch-case no funciona con tipo char*
     if (strcmp(operacion_str, "SET") == 0) {
         operacion = SET;
