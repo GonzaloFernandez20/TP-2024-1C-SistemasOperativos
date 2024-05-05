@@ -35,52 +35,52 @@ void atenderInterrupcion(void){
     acomodarRegistrosDeCPU(PCB.registros); // Actualizar PCB
 }
 void execute(int operacion, char* instruccion[6]){
-//ignorar el elemento instruccion[0] pues es la operacion sin decodificar
-switch (operacion){
-    case SET:
-        set(instruccion[1],instruccion[2]);
-    case MOV_IN:
-        move_in(instruccion[1],instruccion[2]);
-    case MOV_OUT:
-        move_out(instruccion[1],instruccion[2]); 
-    case SUM:
-        sum(instruccion[1],instruccion[2]);
-    case SUB:
-        sub(instruccion[1],instruccion[2]);
-    case JNZ:
-        jnz(instruccion[1],instruccion[2]);
-    case RESIZE:
-        rezize(instruccion[1]);
-    case COPY_STRING:
-        copy_string(instruccion[1]);
-    case WAIT:
-        wait(instruccion[1]);
-    case SIGNAL:
-        signal(instruccion[1]);
-    case IO_GEN_SLEEP:
-        io_gen_sleep(instruccion[1],instruccion[2]);
-    case IO_STDIN_READ:
-        io_stdin_read(instruccion[1],instruccion[2],instruccion[3]);
-    case IO_STDOUT_WRITE:
-        io_stdout_write(instruccion[1],instruccion[2],instruccion[3]);
-    case IO_FS_CREATE:
-        io_fs_create(instruccion[1],instruccion[2]);
-    case IO_FS_DELETE:
-        io_fs_delete(instruccion[1],instruccion[2]);
-    case IO_FS_TRUNCATE: 
-        io_fs_truncate(instruccion[1],instruccion[2],instruccion[3]);
-    case IO_FS_WRITE:
-        io_fs_write(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
-    case IO_FS_READ:
-        io_fs_read(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
-    case EXIT_SSOO:
-        exit();
-}
+    //ignorar el elemento instruccion[0] pues es la operacion sin decodificar
+    switch (operacion){
+        case SET:
+            set(instruccion[1],instruccion[2]);
+        case MOV_IN:
+            move_in(instruccion[1],instruccion[2]);
+        case MOV_OUT:
+            move_out(instruccion[1],instruccion[2]); 
+        case SUM:
+            sum(instruccion[1],instruccion[2]);
+        case SUB:
+            sub(instruccion[1],instruccion[2]);
+        case JNZ:
+            jnz(instruccion[1],instruccion[2]);
+        case RESIZE:
+            rezize(instruccion[1]);
+        case COPY_STRING:
+            copy_string(instruccion[1]);
+        case WAIT:
+            wait(instruccion[1]);
+        case SIGNAL:
+            signal(instruccion[1]);
+        case IO_GEN_SLEEP:
+            io_gen_sleep(instruccion[1],instruccion[2]);
+        case IO_STDIN_READ:
+            io_stdin_read(instruccion[1],instruccion[2],instruccion[3]);
+        case IO_STDOUT_WRITE:
+            io_stdout_write(instruccion[1],instruccion[2],instruccion[3]);
+        case IO_FS_CREATE:
+            io_fs_create(instruccion[1],instruccion[2]);
+        case IO_FS_DELETE:
+            io_fs_delete(instruccion[1],instruccion[2]);
+        case IO_FS_TRUNCATE: 
+            io_fs_truncate(instruccion[1],instruccion[2],instruccion[3]);
+        case IO_FS_WRITE:
+            io_fs_write(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
+        case IO_FS_READ:
+            io_fs_read(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
+        case EXIT_SSOO:
+            exit();
+    }
 
 }
 
 //Definiciones de las operaciones necesarias para el checkpoint 2
-void set(char* registro, char* valor){//asigna al registro seleccionado el valor pasado
+void set(char* registro, char* valor){//asigna al registro seleccionado el valor pasado como argumento
     void* ptr_registroCPU;
 
     ptr_registroCPU = direccionDelRegistro(registro);
