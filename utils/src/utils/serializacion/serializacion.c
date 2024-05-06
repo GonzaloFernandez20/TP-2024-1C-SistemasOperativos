@@ -20,6 +20,18 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
 
 }
 
+/**
+ * @brief Envía un mensaje de presentación al servidor.
+ * 
+ * Esta función crea un paquete que contiene el nombre del módulo y lo envía al servidor
+ * identificado por el descriptor de archivo 'socket_cliente'.
+ * 
+ * @param nombre_modulo El nombre del módulo que se está presentando.
+ * @param socket_cliente El descriptor de archivo del socket de cliente conectado al servidor.
+ * 
+ * @note La función crea un paquete que incluye el código de operación para el handshake y el nombre del módulo.
+ *       Este paquete se serializa antes de ser enviado al servidor.
+ */
 void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 

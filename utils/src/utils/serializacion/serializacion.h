@@ -33,7 +33,16 @@ typedef struct
 	t_buffer* buffer;
 } t_paquete;
 
-
+/**
+ * @brief Envía un mensaje de saludo (handshake) a un servidor y espera su respuesta.
+ * 
+ * Esta función envía un mensaje de saludo al servidor identificado por el descriptor de archivo 'fd_conexion'.
+ * Espera la respuesta del servidor y registra el resultado utilizando el logger proporcionado.
+ * 
+ * @param fd_conexion El file descriptor de la conexión de socket al servidor.
+ * @param modulo Un string del nombre del módulo que realiza la solicitud de saludo.
+ * @param logger Un puntero al logger
+ */
 void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);
 
 void enviar_presentacion(char* nombre_modulo, int socket_cliente);
@@ -42,6 +51,21 @@ void* serializar_paquete(t_paquete* paquete, int bytes);
 
 void eliminar_paquete(t_paquete* paquete);
 
+/**
+ * @brief Recibe y procesa un mensaje de handshake de un cliente.
+ * 
+ * Esta función recibe el mensaje de handshake del cliente identificado por el descriptor de archivo 'fd_cliente'.
+ * Basado en el mensaje recibido, envía una respuesta al cliente y procesa la presentación del cliente si el handshake es exitoso.
+ * Los resultados de la operación se registran utilizando el logger proporcionado.
+ * 
+ * @param fd_cliente El descriptor de archivo del socket del cliente.
+ * @param logger Un puntero al objeto logger utilizado para registrar mensajes.
+ * 
+ * @note La función asume que `recibir_operacion` y `recibir_presentacion` están definidas en otro lugar y se utilizan para recibir la operación y la presentación del cliente respectivamente.
+ * 
+ * @note Si el mensaje de handshake indica un éxito (valor 1), se envía una respuesta de handshake exitoso al cliente y se procesa la presentación del cliente utilizando la función `recibir_presentacion`.
+ *       Si el mensaje de handshake indica un error (valor distinto de 1), se envía una respuesta de handshake fallido al cliente y se registra un error utilizando el logger.
+ */
 void recibir_handshake(int fd_cliente, t_log* logger);
 
 int recibir_operacion(int fd_cliente);

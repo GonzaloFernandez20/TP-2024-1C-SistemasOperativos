@@ -20,6 +20,31 @@ void fetch(){
     pedirAMemoria(PCB.registros.PC + 1); // actualiza variable global instruccion
     PCB.registros.PC += 1;
 }
+
+void decode(char* operacion_str) { 
+    /* 
+        Interpretamos el nombre de la operación y 
+        asignamos el opCode correspondiente a la 
+        variable global "operacion".
+    */
+
+    // El Switch-case no funciona con tipo char*
+    if (strcmp(operacion_str, "SET") == 0) {
+        operacion = SET;
+    } else if (strcmp(operacion_str, "SUM") == 0) {
+        operacion = SUM;
+    } else if (strcmp(operacion_str, "SUB") == 0) {
+        operacion = SUB;
+    } else if (strcmp(operacion_str, "JNZ") == 0) {
+        operacion = JNZ;
+    } else if (strcmp(operacion_str, "IO_GEN_SLEEP") == 0) {
+        operacion = IO_GEN_SLEEP;
+    }else {
+        // Si la cadena no coincide con ninguna operación válida, retorna -1
+        return -1;
+    }
+}
+
 void checkInterrupt() {
     if(hayInterrupcion()){
         atenderInterrupcion();
