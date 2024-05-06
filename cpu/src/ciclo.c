@@ -21,7 +21,7 @@ void fetch(){
     PCB.registros.PC += 1;
 }
 
-void decode(char* operacion_str) { 
+int decode(char* operacion_str) { 
     /* 
         Interpretamos el nombre de la operación y 
         asignamos el opCode correspondiente a la 
@@ -30,15 +30,15 @@ void decode(char* operacion_str) {
 
     // El Switch-case no funciona con tipo char*
     if (strcmp(operacion_str, "SET") == 0) {
-        operacion = SET;
+        return SET;
     } else if (strcmp(operacion_str, "SUM") == 0) {
-        operacion = SUM;
+        return SUM;
     } else if (strcmp(operacion_str, "SUB") == 0) {
-        operacion = SUB;
+        return SUB;
     } else if (strcmp(operacion_str, "JNZ") == 0) {
-        operacion = JNZ;
+        return JNZ;
     } else if (strcmp(operacion_str, "IO_GEN_SLEEP") == 0) {
-        operacion = IO_GEN_SLEEP;
+        return IO_GEN_SLEEP;
     }else {
         // Si la cadena no coincide con ninguna operación válida, retorna -1
         return -1;
