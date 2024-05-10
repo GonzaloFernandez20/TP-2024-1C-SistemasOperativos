@@ -37,7 +37,7 @@ typedef enum{
     IO_FS_TRUNCATE, 
     IO_FS_WRITE,
     IO_FS_READ,
-    EXIT_SSOO//EXIT pelado en C es una palabra reservada
+    EXIT_OS //EXIT pelado en C es una palabra reservada
 } opCode_instrucciones; //19
 
 //Declaraciones de todas las operaciones
@@ -78,8 +78,8 @@ void acomodarRegistrosDePCB(struct_registros* registros);
 void arranque();
 void ciclo();
 void fetch();
-void decode(char* instruccion[6]);
-coid execute(int operacion, char* instruccion[6]);
+void decode();
+coid execute();
 void checkInterrupt();
 
 
