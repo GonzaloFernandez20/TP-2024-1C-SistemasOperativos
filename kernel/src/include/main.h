@@ -16,6 +16,7 @@
 #include <inicializar/inicializar.h>
 #include <conexiones/conexiones.h>
 #include <protocolos/protocoloES.h>
+#include <consola/consola.h>
 
 // ---- EXTERNAS
 #include <utils/inicializaciones/inicializar.h>
