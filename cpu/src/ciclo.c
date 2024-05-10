@@ -4,19 +4,6 @@
 // De memoria se recibe siempre éste struct, si no se usan ciertos argumentos se envían vacíos 
 // y el switch del execute se asegure de que cada operacion use los argumentos correspondientes
 */
-typedef struct{
-    char* operacion_str;
-    char* arg1;
-    char* arg2;
-    char* arg3;
-    char* arg4;
-    char* arg5;    
-}t_instruccion;
-
-// variables globales
-t_instruccion instruccion;  // la utilizamos durante el fetch
-int op_code;                // código de operación a ejecutar
-
 
 
 void arranque(){
@@ -26,10 +13,10 @@ void arranque(){
 }
 void ciclo() {
     while(1) {
-        fetch();        // busca la siguiente instrucción.
-        decode();          // interpreta la operación de la instrucción.
-        execute();                    // ejecuta la operación correspondiente al op_code dadp, junto a los parámetros dados por la instrucción.
-        checkInterrupt();             // se fija si hay interrupciones.
+        fetch();              // busca la siguiente instrucción.
+        decode();             // interpreta la operación de la instrucción.
+        execute();            // ejecuta la operación correspondiente al op_code dadp, junto a los parámetros dados por la instrucción.
+        checkInterrupt();     // se fija si hay interrupciones.
     }
 }
 t_instruccion fetch(){
@@ -158,8 +145,12 @@ void set(char* registro, char* valor){//asigna al registro seleccionado el valor
 
     int valorFinal = atoi(valor);
     //necesito hacer el cast a uint8_t o uint32_t por el void* que no se puede desreferenciar
-    if(tamanioDeRegistro(registro) == sizeof(uint8_t)){*(uint8_t*)ptr_registroCPU = valorFinal;}
-    else{*(uint32_t*)ptr_registroCPU = valorFinal;}
+    if(tamanioDeRegistro(registro) == sizeof(uint8_t)) {
+        *(uint8_t*)ptr_registroCPU = valorFinal;
+    }
+    else {
+        *(uint32_t*)ptr_registroCPU = valorFinal;
+    }
 
     free(ptr_registroCPU);
 }
@@ -172,8 +163,12 @@ void sum(char* registroDestino, char* registroOrigen){//Vale sumar un registro d
 
 //  *ptr_registroDestino += *ptr_registroOrigen; no se puede hacer por que son void*
 //  entonces tengo que hacer el if else para castearlos
-    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){*(uint8_t*)ptr_registroDestino += *(uint8_t*)ptr_registroOrigen;}
-    else{*(uint32_t*)ptr_registroDestino += *(uint32_t*)ptr_registroOrigen;}
+    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){
+        *(uint8_t*)ptr_registroDestino += *(uint8_t*)ptr_registroOrigen;
+    }
+    else{
+        *(uint32_t*)ptr_registroDestino += *(uint32_t*)ptr_registroOrigen;
+    }
 
     free(ptr_registroDestino);
     free(ptr_registroOrigen);
@@ -186,12 +181,15 @@ void sub(char* registroDestino, char* registroOrigen){
     ptr_registroDestino = direccionDelRegistro(registroDestino);
     ptr_registroOrigen = direccionDelRegistro(registroOrigen);
 
-    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){*(uint8_t*)ptr_registroDestino -= *(uint8_t*)ptr_registroOrigen;}
-    else{*(uint32_t*)ptr_registroDestino -= *(uint32_t*)ptr_registroOrigen;}
+    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){
+        *(uint8_t*)ptr_registroDestino -= *(uint8_t*)ptr_registroOrigen;
+    }
+    else{
+        *(uint32_t*)ptr_registroDestino -= *(uint32_t*)ptr_registroOrigen;
+    }
 
     free(ptr_registroDestino);
     free(ptr_registroOrigen);
-
 }
 void jnz(char* registro, char* numDeInstruccion){
     void* ptr_registroCPU;
