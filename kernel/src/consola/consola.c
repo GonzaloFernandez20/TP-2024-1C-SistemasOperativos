@@ -63,7 +63,7 @@ void *iniciar_Consola(){
             break;
         }
 
-		
+		free(array_del_comando);
 	} while(1);
 }
 

@@ -22,10 +22,6 @@ int main(int argc, char *argv[]){
     return 0;
 }
 
-
-
-
-
 /*Se libera toda la memoria asignada durante la ejecucion de kernel.*/
 void liberar_kernel(void){ 
     free(config_kernel.IP_KERNEL);

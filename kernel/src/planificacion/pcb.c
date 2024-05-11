@@ -16,4 +16,3 @@ t_pcb *crear_pcb(int pid){
 void _inicializar_registros_cpu(t_registros_cpu *registro){
     *registro = (t_registros_cpu){0};
 }
-
