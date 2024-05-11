@@ -25,6 +25,28 @@ typedef struct configuraciones_kernel
 } t_config_kernel;
 
 
+// ---------- ESTADOS DE UN PROCESO
+
+/* typedef enum nombre_estado
+{   
+    NEW,
+    READY,
+    EXEC,
+    EXIT,
+    BLOCKED
+}t_nombre_estado; */
+
+/* struct estado //? ESTO TODAVIA NO SE PARA QUE SIRVE
+{
+    t_nombre_estado nombreEstado;
+    t_list *listaProcesos;
+    sem_t *semaforoEstado;
+    pthread_mutex_t *mutexEstado;
+};
+typedef struct estado t_estado; */
+
+//t_nombre_estado estado_de_proceso;
+
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
 extern t_log* kernel_log_debugg;
@@ -38,5 +60,13 @@ extern int fd_conexion_dispatch;
 extern int fd_conexion_interrupt;
 
 extern int entrada_salida_conectada;
+
+
+// Estados
+/* extern t_estado *estadoNew;
+extern t_estado *estadoReady;
+extern t_estado *estadoExecute;
+extern t_estado *estadoBlocked; 
+extern t_estado *estadoExit; */
 
 #endif
