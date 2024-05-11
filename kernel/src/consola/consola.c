@@ -15,17 +15,24 @@ void *iniciar_Consola(){
 
         switch (opCode_Comando_Ingresado)
         {
-        case EJECUTAR_SCRIPT:
+        case EJECUTAR_SCRIPT: // EJECUTAR_SCRIPT [PATH]
             printf("Ejecutando comando: EJECUTAR_SCRIPT\n");
             /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
             break;
 
-        case INICIAR_PROCESO:
+        case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
             printf("Ejecutando comando: INICIAR_PROCESO\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+            // ? Este mensaje se encargará de la creación del proceso (PCB) en estado NEW.
+
+            char * path_proceso = array_del_comando[1];
+            crear_proceso(path_proceso);
+            
+            //! Kernel envía a memoria la dirección del archivo de pseudocódigo que contiene las instrucciones del proceso que se pidió crear.
+            //log_info(kernel_log, "Solicitud aceptada, creando nuevo proceso. ");
+            free(path_proceso);
             break;
 
-        case FINALIZAR_PROCESO:
+        case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
             printf("Ejecutando comando: FINALIZAR_PROCESO\n");
             /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
             break;
@@ -40,14 +47,16 @@ void *iniciar_Consola(){
             /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
             break;
 
-        case MULTIPROGRAMACION:
+        case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
             printf("Ejecutando comando: MULTIPROGRAMACION\n");
             /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
             break;
 
         case PROCESO_ESTADO:
             printf("Ejecutando comando: PROCESO_ESTADO\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+ 
+            _imprimir_estados_procesos();
+
             break;
 
         default:
@@ -60,6 +69,16 @@ void *iniciar_Consola(){
 }
 
 
+// --------------------------------------------------------------------- FUNCIONES AUXILIARES
+/**
+ * @brief Esta funcion recibe un comando por teclado y lo interpreta.
+ *
+ * La utilizamos para interpretar los comando que se ingresen, obteniendo su enum para luego utilizarlo en el 
+ * switch principal de la consola, que sabe luego que operaciones tiene que ejecutar para cada comando.
+ *
+ * @param param1 Comando ingresado por teclado.
+ * @return Enum correspondiente a dicho comando.
+ */
 t_comandos_consola _obtener_enum_comando(char *comando_ingresado){
 
     /*     Uso esta funcion de las commons para comparar los strings
@@ -81,6 +100,21 @@ t_comandos_consola _obtener_enum_comando(char *comando_ingresado){
 
 char **_interpretar(char *comando){
     return string_split(comando, " ");
+}
+
+void _imprimir_estados_procesos(void){
+
+    puts("Cola NEW: ");
+    list_iterate(new, _mostrar_pcbs);
+
+    puts("Cola READY: ");
+    list_iterate(ready, _mostrar_pcbs);
+
+    puts("Cola EXECUTE: ");
+    list_iterate(exec, _mostrar_pcbs);
+    
+    puts("Cola BLOCKED: ");
+    list_iterate(blocked, _mostrar_pcbs);
 }
 
 

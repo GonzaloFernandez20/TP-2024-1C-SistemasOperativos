@@ -8,6 +8,7 @@ int main(int argc, char *argv[]){
     //iniciar_servidor_kernel();
     //establecer_conexiones();
     //atender_entradasalida();
+    iniciar_colas_planificacion();
 
 
     // -------------------------------------------------

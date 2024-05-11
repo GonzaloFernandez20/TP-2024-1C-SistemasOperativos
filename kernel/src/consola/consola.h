@@ -3,10 +3,13 @@
 
 // ------------- LIBRERIAS INCLUIDAS
 #include <include/estructuras.h>
+#include <planificacion/planificador.h>
 
 #include <commons/log.h>
 #include <commons/string.h>
 #include<readline/readline.h>
+
+#include <stdlib.h>
 
 // ------------- COMANDOS DE CONSOLA
 
@@ -24,7 +27,7 @@ typedef enum comandos_consola{
 
 
 
-// ------------- VARAIBLES
+// ------------- VARIABLES
 
 
 // ------------- FUNCIONES DE CONSOLA
@@ -32,6 +35,7 @@ typedef enum comandos_consola{
 void *iniciar_Consola(void);
 t_comandos_consola _obtener_enum_comando(char *comando_ingresado);
 char **_interpretar(char *comando);
+void _imprimir_estados_procesos(void);
 
 
 #endif
