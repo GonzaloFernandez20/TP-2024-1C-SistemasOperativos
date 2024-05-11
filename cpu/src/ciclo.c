@@ -1,49 +1,80 @@
 #include <include/ciclo.h>
 
+/*
+// De memoria se recibe siempre éste struct, si no se usan ciertos argumentos se envían vacíos 
+// y el switch del execute se asegure de que cada operacion use los argumentos correspondientes
+*/
+
+
 void arranque(){
     PCB = recibirPCB();
     acomodarRegistrosDeCPU(PCB.registros);
     ciclo();
 }
 void ciclo() {
-    while(1) {                 //el primer elemento del array es la opercion en sí, los otros 5 son argumentos
-        char* instruccion[6] ;//la mayor cantidad de argumentos posibles para una operacion es 5
-                             //si hubiera una con más se aumenta el tamaño del array y listo
-        int operacion;
-        instruccion = fetch(); // busca la instrucción y la guarda
-        operacion = decode(instruccion[0]); 
-        execute(operacion, instruccion);
-        checkInterrupt();
+    while(1) {
+        fetch();              // busca la siguiente instrucción.
+        decode();             // interpreta la operación de la instrucción.
+        execute();            // ejecuta la operación correspondiente al op_code dadp, junto a los parámetros dados por la instrucción.
+        checkInterrupt();     // se fija si hay interrupciones.
     }
 }
-void fetch(){
-    pedirAMemoria(PCB.registros.PC + 1); // actualiza variable global instruccion
+t_instruccion fetch(){
+    instruccion = pedirAMemoria(PCB.registros.PC + 1);
     PCB.registros.PC += 1;
 }
 
-int decode(char* operacion_str) { 
-    /* 
-        Interpretamos el nombre de la operación y 
-        asignamos el opCode correspondiente a la 
-        variable global "operacion".
-    */
+/* 
+Interpretamos la instrucción a ejecutar. 
+Asignamos el opCode correspondiente a la variable global "op_code".
+*/
+void decode() {
+    char* operacion_str = instruccion.operacion_str;
 
-    // El Switch-case no funciona con tipo char*
     if (strcmp(operacion_str, "SET") == 0) {
-        return SET;
+        op_code = SET;
+    } else if (strcmp(operacion_str, "MOV_IN") == 0) {
+        op_code = MOV_IN;
+    } else if (strcmp(operacion_str, "MOV_OUT") == 0) {
+        op_code = MOV_OUT;
     } else if (strcmp(operacion_str, "SUM") == 0) {
-        return SUM;
+        op_code = SUM;
     } else if (strcmp(operacion_str, "SUB") == 0) {
-        return SUB;
+        op_code = SUB;
     } else if (strcmp(operacion_str, "JNZ") == 0) {
-        return JNZ;
+        op_code = JNZ;
+    } else if (strcmp(operacion_str, "RESIZE") == 0) {
+        op_code = RESIZE;
+    } else if (strcmp(operacion_str, "COPY_STRING") == 0) {
+        op_code = COPY_STRING;
+    } else if (strcmp(operacion_str, "WAIT") == 0) {
+        op_code = WAIT;
+    } else if (strcmp(operacion_str, "SIGNAL") == 0) {
+        op_code = SIGNAL;
     } else if (strcmp(operacion_str, "IO_GEN_SLEEP") == 0) {
-        return IO_GEN_SLEEP;
-    }else {
-        // Si la cadena no coincide con ninguna operación válida, retorna -1
-        return -1;
+        op_code = IO_GEN_SLEEP;
+    } else if (strcmp(operacion_str, "IO_STDIN_READ") == 0) {
+        op_code = IO_STDIN_READ;
+    } else if (strcmp(operacion_str, "IO_STDOUT_WRITE") == 0) {
+        op_code = IO_STDOUT_WRITE;
+    } else if (strcmp(operacion_str, "IO_FS_CREATE") == 0) {
+        op_code = IO_FS_CREATE;
+    } else if (strcmp(operacion_str, "IO_FS_DELETE") == 0) {
+        op_code = IO_FS_DELETE;
+    } else if (strcmp(operacion_str, "IO_FS_TRUNCATE") == 0) {
+        op_code = IO_FS_TRUNCATE;
+    } else if (strcmp(operacion_str, "IO_FS_WRITE") == 0) {
+        op_code = IO_FS_WRITE;
+    } else if (strcmp(operacion_str, "IO_FS_READ") == 0) {
+        op_code = IO_FS_READ;
+    } else if (strcmp(operacion_str, "EXIT_OS") == 0) {
+        op_code = EXIT_OS;
+    } else {
+        // Si la cadena no coincide con ninguna operación válida
+        op_code = -1;
     }
 }
+
 
 void checkInterrupt() {
     if(hayInterrupcion()){
@@ -59,49 +90,51 @@ void atenderInterrupcion(void){
     PCB = recibirPCB();
     acomodarRegistrosDeCPU(PCB.registros); // Actualizar PCB
 }
-void execute(int operacion, char* instruccion[6]){
-    //ignorar el elemento instruccion[0] pues es la operacion sin decodificar
-    switch (operacion){
+
+/*
+Ejecutamos la operación junto con los argumentos que extrajimos de la instrucción
+*/
+void execute() {
+    switch (op_code){
         case SET:
-            set(instruccion[1],instruccion[2]);
+            set(instruccion.arg1,instruccion.arg2);
         case MOV_IN:
-            move_in(instruccion[1],instruccion[2]);
+            move_in(instruccion.arg1,instruccion.arg2);
         case MOV_OUT:
-            move_out(instruccion[1],instruccion[2]); 
+            move_out(instruccion.arg1,instruccion.arg2); 
         case SUM:
-            sum(instruccion[1],instruccion[2]);
+            sum(instruccion.arg1,instruccion.arg2);
         case SUB:
-            sub(instruccion[1],instruccion[2]);
+            sub(instruccion.arg1,instruccion.arg2);
         case JNZ:
-            jnz(instruccion[1],instruccion[2]);
+            jnz(instruccion.arg1,instruccion.arg2);
         case RESIZE:
-            rezize(instruccion[1]);
+            rezize(instruccion.arg1);
         case COPY_STRING:
-            copy_string(instruccion[1]);
+            copy_string(instruccion.arg1);
         case WAIT:
-            wait(instruccion[1]);
+            wait(instruccion.arg1);
         case SIGNAL:
-            signal(instruccion[1]);
+            signal(instruccion.arg1);
         case IO_GEN_SLEEP:
-            io_gen_sleep(instruccion[1],instruccion[2]);
+            io_gen_sleep(instruccion.arg1,instruccion.arg2);
         case IO_STDIN_READ:
-            io_stdin_read(instruccion[1],instruccion[2],instruccion[3]);
+            io_stdin_read(instruccion.arg1,instruccion.arg2,instruccion.arg3);
         case IO_STDOUT_WRITE:
-            io_stdout_write(instruccion[1],instruccion[2],instruccion[3]);
+            io_stdout_write(instruccion.arg1,instruccion.arg2,instruccion.arg3);
         case IO_FS_CREATE:
-            io_fs_create(instruccion[1],instruccion[2]);
+            io_fs_create(instruccion.arg1,instruccion.arg2);
         case IO_FS_DELETE:
-            io_fs_delete(instruccion[1],instruccion[2]);
+            io_fs_delete(instruccion.arg1,instruccion.arg2);
         case IO_FS_TRUNCATE: 
-            io_fs_truncate(instruccion[1],instruccion[2],instruccion[3]);
+            io_fs_truncate(instruccion.arg1,instruccion.arg2,instruccion.arg3);
         case IO_FS_WRITE:
-            io_fs_write(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
+            io_fs_write(instruccion.arg1,instruccion.arg2,instruccion.arg3,instruccion.arg4,instruccion.arg5);
         case IO_FS_READ:
-            io_fs_read(instruccion[1],instruccion[2],instruccion[3],instruccion[4],instruccion[5]);
-        case EXIT_SSOO:
+            io_fs_read(instruccion.arg1,instruccion.arg2,instruccion.arg3,instruccion.arg4,instruccion.arg5);
+        case EXIT_OS:
             exit();
     }
-
 }
 
 //Definiciones de las operaciones necesarias para el checkpoint 2
@@ -112,8 +145,12 @@ void set(char* registro, char* valor){//asigna al registro seleccionado el valor
 
     int valorFinal = atoi(valor);
     //necesito hacer el cast a uint8_t o uint32_t por el void* que no se puede desreferenciar
-    if(tamanioDeRegistro(registro) == sizeof(uint8_t)){*(uint8_t*)ptr_registroCPU = valorFinal;}
-    else{*(uint32_t*)ptr_registroCPU = valorFinal;}
+    if(tamanioDeRegistro(registro) == sizeof(uint8_t)) {
+        *(uint8_t*)ptr_registroCPU = valorFinal;
+    }
+    else {
+        *(uint32_t*)ptr_registroCPU = valorFinal;
+    }
 
     free(ptr_registroCPU);
 }
@@ -126,8 +163,12 @@ void sum(char* registroDestino, char* registroOrigen){//Vale sumar un registro d
 
 //  *ptr_registroDestino += *ptr_registroOrigen; no se puede hacer por que son void*
 //  entonces tengo que hacer el if else para castearlos
-    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){*(uint8_t*)ptr_registroDestino += *(uint8_t*)ptr_registroOrigen;}
-    else{*(uint32_t*)ptr_registroDestino += *(uint32_t*)ptr_registroOrigen;}
+    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){
+        *(uint8_t*)ptr_registroDestino += *(uint8_t*)ptr_registroOrigen;
+    }
+    else{
+        *(uint32_t*)ptr_registroDestino += *(uint32_t*)ptr_registroOrigen;
+    }
 
     free(ptr_registroDestino);
     free(ptr_registroOrigen);
@@ -140,12 +181,15 @@ void sub(char* registroDestino, char* registroOrigen){
     ptr_registroDestino = direccionDelRegistro(registroDestino);
     ptr_registroOrigen = direccionDelRegistro(registroOrigen);
 
-    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){*(uint8_t*)ptr_registroDestino -= *(uint8_t*)ptr_registroOrigen;}
-    else{*(uint32_t*)ptr_registroDestino -= *(uint32_t*)ptr_registroOrigen;}
+    if(tamanioDeRegistro(registroDestino) == sizeof(uint8_t)){
+        *(uint8_t*)ptr_registroDestino -= *(uint8_t*)ptr_registroOrigen;
+    }
+    else{
+        *(uint32_t*)ptr_registroDestino -= *(uint32_t*)ptr_registroOrigen;
+    }
 
     free(ptr_registroDestino);
     free(ptr_registroOrigen);
-
 }
 void jnz(char* registro, char* numDeInstruccion){
     void* ptr_registroCPU;
@@ -163,7 +207,7 @@ void io_gen_sleep(char* interfaz, char* unidadesDeTrabajo){
     enviarleAkernel(interfaz_para_kernel, unidadesDeSleep);//hablar con gonza por protocolo de comunicacion
 }
 
-//Funciones auxiliares para checkInterrupo()
+//Funciones auxiliares para checkInterrupt()
 void acomodarRegistrosDeCPU(struct_registros registros){
     registrosCPU.PC  = registros.PC;
     registrosCPU.AX  = registros.AX;

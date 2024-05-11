@@ -18,6 +18,16 @@ typedef struct {
     struct_registros registros; 
 } struct_PCB;
 
+
+typedef struct{
+    char* operacion_str;
+    char* arg1;
+    char* arg2;
+    char* arg3;
+    char* arg4;
+    char* arg5;    
+}struct_instruccion;
+
 typedef enum{
     SET,
     MOV_IN,
@@ -37,7 +47,7 @@ typedef enum{
     IO_FS_TRUNCATE, 
     IO_FS_WRITE,
     IO_FS_READ,
-    EXIT_SSOO//EXIT pelado en C es una palabra reservada
+    EXIT_OS //EXIT pelado en C es una palabra reservada
 } opCode_instrucciones; //19
 
 //Declaraciones de todas las operaciones
@@ -67,7 +77,7 @@ int tamanioDeRegistro(char* registro);
 int contiene(char *unArrayDeStrings[],int sizeOfArray,char* unElemento);
 void* direccionDelRegistro(char* registro);
 
-//Funciones auxiliares para checkInterrupo()
+//Funciones auxiliares para checkInterrupt()
 void hayInterrupcion();
 void atenderInterrupcion(void);
 void acomodarRegistrosDeCPU(struct_registros registros);
@@ -78,11 +88,13 @@ void acomodarRegistrosDePCB(struct_registros* registros);
 void arranque();
 void ciclo();
 void fetch();
-void decode(char* instruccion[6]);
-coid execute(int operacion, char* instruccion[6]);
+void decode();
+void execute();
 void checkInterrupt();
 
 
 //Variables globales
 struct_PCB PCB;
 struct_registros registrosCPU;
+struct_instruccion instruccion;  // la utilizamos durante el fetch
+int op_code;                     // código de operación a ejecutar
