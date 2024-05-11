@@ -58,7 +58,6 @@ void *iniciar_Consola(){
             _imprimir_estados_procesos();
 
             break;
-
         default:
             printf("El comando que ingresaste no es valido\n");
             break;

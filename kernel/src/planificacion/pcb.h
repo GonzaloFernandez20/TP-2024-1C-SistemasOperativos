@@ -3,18 +3,10 @@
 
 // ------------- LIBRERIAS
 #include <stdlib.h>
-
+#include <stdint.h>
 
 // ------------- ESTRUCTURAS
 // TODO: TENDRIA QUE TENER TODA LA INFO DEL CONTEXTO NECESARIO DE UN PROCESO
-typedef struct pcb
-{
-    int pid;
-    int PC;
-    int quantum;
-    t_registros_cpu registros_cpu;
-}t_pcb;
-
 typedef struct registros_cpu{
     uint32_t PC;    // Program Counter, indica la próxima instrucción a ejecutar
     uint8_t AX;     // Registro Numérico de propósito general
@@ -28,6 +20,14 @@ typedef struct registros_cpu{
     uint32_t SI;    // Contiene la dirección lógica de memoria de origen desde donde se va a copiar un string.
     uint32_t DI;    // Contiene la dirección lógica de memoria de destino a donde se va a copiar un string.
 } t_registros_cpu;
+typedef struct pcb
+{
+    int pid;
+    int PC;
+    int quantum;
+    t_registros_cpu registros_cpu;
+}t_pcb;
+
 
 // ---------- DECLARACIONES DE FUNCIONES
 
