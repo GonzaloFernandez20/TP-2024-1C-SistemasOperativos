@@ -31,3 +31,22 @@ void liberar_cpu(void){
     liberar_conexion(fd_interrupt_server);
     liberar_conexion(fd_conexion_memoria);
 }
+
+/*
+En este momento, se deberá chequear si el Kernel nos envió una interrupción al PID que se está
+ejecutando, en caso afirmativo, se devuelve el Contexto de Ejecución actualizado al Kernel con
+motivo de la interrupción. Caso contrario, se descarta la interrupción.
+
+Cabe aclarar que en todos los casos el Contexto de Ejecución debe ser devuelto a través de la
+conexión de dispatch, quedando la conexión de interrupt dedicada solamente a recibir mensajes de
+interrupción.
+*/
+
+int hayInterrupcion(){
+
+}
+
+exportarPCB(){}
+
+
+recibirPCB(){}

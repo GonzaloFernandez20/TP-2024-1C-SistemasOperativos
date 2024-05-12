@@ -19,7 +19,7 @@ void ciclo() {
         checkInterrupt();     // se fija si hay interrupciones.
     }
 }
-t_instruccion fetch(){
+void fetch(){
     instruccion = pedirAMemoria(PCB.registros.PC + 1);
     PCB.registros.PC += 1;
 }
@@ -87,8 +87,8 @@ void hayInterrupcion(){
 void atenderInterrupcion(void){
     // ATENDER INTERRUPCIÓN.
     exportarPCB();
-    PCB = recibirPCB();
-    acomodarRegistrosDeCPU(PCB.registros); // Actualizar PCB
+    PCB = recibirPCB();                     // Actualizar PCB
+    acomodarRegistrosDeCPU(PCB.registros); 
 }
 
 /*

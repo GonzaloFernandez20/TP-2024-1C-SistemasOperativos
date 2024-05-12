@@ -26,7 +26,7 @@ typedef struct{
     char* arg3;
     char* arg4;
     char* arg5;    
-}struct_instruccion;
+}t_instruccion;
 
 typedef enum{
     SET,
@@ -96,5 +96,5 @@ void checkInterrupt();
 //Variables globales
 struct_PCB PCB;
 struct_registros registrosCPU;
-struct_instruccion instruccion;  // la utilizamos durante el fetch
+t_instruccion instruccion;  // la utilizamos durante el fetch
 int op_code;                     // código de operación a ejecutar
