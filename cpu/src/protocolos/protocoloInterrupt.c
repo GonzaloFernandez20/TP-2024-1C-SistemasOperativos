@@ -1,5 +1,19 @@
 #include <protocolos/protocoloInterrupt.h>
 
+
+/**
+ * @brief Maneja las operaciones entrantes desde un descriptor de archivo de servicio de interrupción en un hilo separado.
+ *
+ * La función `procesar_operacion_interrupt` procesa las operaciones recibidas desde el descriptor de archivo
+ * asociado con el servicio de interrupción. Funciona en un bucle, manejando continuamente las operaciones hasta
+ * que la conexión se termina. Esta función está diseñada para ser utilizada como una función de hilo.
+ *
+ * @param fd_interrupt_casteado Un puntero void que se espera sea un descriptor de archivo casteado.
+ * Este descriptor de archivo se utiliza para comunicarse con el servicio de interrupción.
+ *
+ * @return void* Esta función retorna (void *)EXIT_FAILURE para indicar que el hilo ha completado
+ * su ejecución debido a la desconexión o un error.
+ */
 void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
     int fd_interrupt = _deshacer_casting(fd_interrupt_casteado);
@@ -11,7 +25,8 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
 		switch (cod_op) {
 		case MENSAJE:
-			//
+			// Qué pasa cuando se recibe un interrupt desde KERNEL ? 
+			
 			break;
 		
 		case -1:

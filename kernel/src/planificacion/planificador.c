@@ -56,3 +56,59 @@ Pareceria venir al pelo, pero si llegan dos procesos en el mismo instante, uno v
 
 De todas formas no se si se nos va a dar esta situacion jajaj pero me surgio la duda.
 */
+
+/*
+Lucas: 
+
+hola :p
+
+Comparando queue.h y list.h,
+
+/usr/include/commons/collections/queue.h
+/usr/include/commons/collections/list.h
+
+    typedef struct {
+		t_list* elements;
+	} t_queue;
+
+
+	typedef struct {
+		t_link_element *head;
+		int elements_count;
+	} t_list;
+
+	typedef struct {
+		t_list *list;
+		t_link_element **actual;
+		t_link_element **next;
+		int index;
+	} t_list_iterator;
+
+
+Con listas podemos interar y hacer cosas del 
+paradgima funcional que están muy buenas, 
+si realmente es necesario, entonces 
+nos usamos list.h,
+si no es así vamos con queue.h
+
+veo que list.h ayuda mucho para implementar:
+
+void _imprimir_estados_procesos(void){
+
+    puts("Cola NEW: ");
+    list_iterate(new, _mostrar_pcbs);
+
+    puts("Cola READY: ");
+    list_iterate(ready, _mostrar_pcbs);
+
+    puts("Cola EXECUTE: ");
+    list_iterate(exec, _mostrar_pcbs);
+    
+    puts("Cola BLOCKED: ");
+    list_iterate(blocked, _mostrar_pcbs);
+}
+
+con queue.h no podríamos observar facilmente los elementos, 
+pero devuelta, ¿ realmente necesitaríamos conocer los elementos si no es por temas de debug ? 
+
+*/

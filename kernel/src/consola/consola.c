@@ -75,7 +75,7 @@ void *iniciar_Consola(){
  * La utilizamos para interpretar los comando que se ingresen, obteniendo su enum para luego utilizarlo en el 
  * switch principal de la consola, que sabe luego que operaciones tiene que ejecutar para cada comando.
  *
- * @param param1 Comando ingresado por teclado.
+ * @param comando_ingresado Comando ingresado por teclado.
  * @return Enum correspondiente a dicho comando.
  */
 t_comandos_consola _obtener_enum_comando(char *comando_ingresado){

@@ -28,3 +28,21 @@ void liberar_memoria(void){
     liberar_conexion(fd_server_memoria);
 
 }
+
+
+/* CREACIÓN DE PROCESO */
+
+void crear_proceso() {
+    
+    
+    return;
+}
+
+/*FINALIZACIÓN DE PROCESO*/
+
+/*ACCESO A TABLA DE PÁGINAS*/
+
+/*AJUSTAR TAMAÑO DE UN PROCESO*/
+
+/*ACCESO A ESPACIO DE USUARIO*/
+
