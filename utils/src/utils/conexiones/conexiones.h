@@ -51,8 +51,8 @@ int esperar_cliente(int fd_servidor);
 
 /**
  * @brief Libera los recursos asociados con una conexión de cliente.
- *
- * Esta función cierra el socket asociado con la conexión de cliente.
+ * 
+ * Simplemente hace un close(fd_cliente);
  *
  * @param fd_cliente El descriptor de archivo de socket de la conexión de cliente que se va a liberar.
  */

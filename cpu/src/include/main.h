@@ -11,6 +11,7 @@
 // ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
+#include <include/ciclo.h>
 
 // ---- EXTERNAS
 #include <utils/hilos/hilos.h>

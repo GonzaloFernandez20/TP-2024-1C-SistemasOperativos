@@ -1,3 +1,6 @@
+#ifndef CICLO_H_INCLUDED
+#define CICLO_H_INCLUDED
+
 typedef struct {
     uint32_t PC;    // Program Counter, indica la próxima instrucción a ejecutar
     uint8_t AX;     // Registro Numérico de propósito general
@@ -95,6 +98,15 @@ void checkInterrupt();
 
 //Variables globales
 struct_PCB PCB;
-struct_registros registrosCPU;
-t_instruccion instruccion;  // la utilizamos durante el fetch
-int op_code;                     // código de operación a ejecutar
+struct_registros registrosCPU;   
+t_instruccion instruccion;       // La utilizamos durante el fetch
+int op_code;                     // Código de operación a ejecutar
+bool hayInterrupt;                  // Flag de interrupción. CPU recibe, desde Kernel y 
+                                 //a través de la conexión Interrupt, PIDs que se quieran interrumpir.
+                                 //Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir,
+                                 //entonces seteamos el flag en 1. Luego de procesar la solicitud,
+                                 //se debe setear nuevamente el flag en 0 (estado default).
+
+
+
+#endif

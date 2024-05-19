@@ -4,6 +4,7 @@
 /**
  * @brief Maneja las operaciones entrantes desde un descriptor de archivo de servicio de interrupción en un hilo separado.
  *
+ *
  * La función `procesar_operacion_interrupt` procesa las operaciones recibidas desde el descriptor de archivo
  * asociado con el servicio de interrupción. Funciona en un bucle, manejando continuamente las operaciones hasta
  * que la conexión se termina. Esta función está diseñada para ser utilizada como una función de hilo.
@@ -25,8 +26,17 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
 		switch (cod_op) {
 		case MENSAJE:
-			// Qué pasa cuando se recibe un interrupt desde KERNEL ? 
-			
+			/** 
+			 * Qué pasa cuando se recibe un interrupt desde KERNEL ?  
+			 * Actualiza el flag Interrupt de CPU
+			 * 
+			 * Evaluar durante el ciclo checkInterrupt():
+			 * Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
+			 * 
+			 */
+
+
+
 			break;
 		
 		case -1:
@@ -41,4 +51,9 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 		}
 	}
 	return (void *)EXIT_FAILURE;
+}
+
+
+void recibir(int fd_dispatch) {
+
 }

@@ -58,6 +58,7 @@ void conectar_memoria(void){
     free(IP);
     free(PUERTO);
 
+    
 }
 
 void gestionar_conexiones_kernel(void){

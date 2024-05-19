@@ -77,6 +77,15 @@ void decode() {
 
 
 void checkInterrupt() {
+    /**
+     * Verificar si el flag interrupt está en 1. 
+     * Si es así entonces atenderInterrupcion().
+     * 
+     * Si la PID del proceso en ejecución coincide con 
+     * el PID solicitado a interrumpir, entonces se realiza lo solicitado.
+     * 
+     */
+
     if(hayInterrupcion()){
         atenderInterrupcion();
     }
