@@ -1,5 +1,7 @@
 #include <consola/consola.h>
 
+int planificacion_pausada = false; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
+
 void *iniciar_Consola(){
     //pthread_mutex_lock(SEMAFORO DE LOG DE CONSOLA);
 	log_info(kernel_log, "iniciando consola...");
@@ -34,18 +36,28 @@ void *iniciar_Consola(){
 
         case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
             printf("Ejecutando comando: FINALIZAR_PROCESO\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+            
+            int pid_proceso = atoi(array_del_comando[1]);
+
+            //pthread_mutex_lock(SEMAFORO DE PROCESOS);
+	        //log_info(kernel_log, "Finaliza el proceso <%d> - Motivo: <INTERRUPTED_BY_USER>", pid_proceso);
+	        //pthread_mutex_unlock(SEMAFORO DE PROCESOS);
+
+            extraer_proceso(pid_proceso);
+
             break;
 
         case DETENER_PLANIFICACION:
             printf("Ejecutando comando: DETENER_PLANIFICACION\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+            //pausar_planificacion();
             break;
 
         case INICIAR_PLANIFICACION:
             printf("Ejecutando comando: INICIAR_PLANIFICACION\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
-            break;
+            if (planificacion_pausada)
+            {
+                //retomar_planificacion();
+            }            break;
 
         case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
             printf("Ejecutando comando: MULTIPROGRAMACION\n");
@@ -104,16 +116,16 @@ char **_interpretar(char *comando){
 void _imprimir_estados_procesos(void){
 
     puts("Cola NEW: ");
-    list_iterate(new, _mostrar_pcbs);
+    imprimir_cola(new, _mostrar_pcbs);
 
     puts("Cola READY: ");
-    list_iterate(ready, _mostrar_pcbs);
+    imprimir_cola(ready, _mostrar_pcbs);
 
     puts("Cola EXECUTE: ");
-    list_iterate(exec, _mostrar_pcbs);
+    imprimir_cola(exec, _mostrar_pcbs);
     
     puts("Cola BLOCKED: ");
-    list_iterate(blocked, _mostrar_pcbs);
+    imprimir_cola(blocked, _mostrar_pcbs);
 }
 
 

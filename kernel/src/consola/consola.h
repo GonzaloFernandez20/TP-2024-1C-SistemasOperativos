@@ -10,6 +10,7 @@
 #include<readline/readline.h>
 
 #include <stdlib.h>
+#include <stdbool.h>
 
 // ------------- COMANDOS DE CONSOLA
 
@@ -28,6 +29,8 @@ typedef enum comandos_consola{
 
 
 // ------------- VARIABLES
+
+extern int planificacion_pausada;
 
 
 // ------------- FUNCIONES DE CONSOLA

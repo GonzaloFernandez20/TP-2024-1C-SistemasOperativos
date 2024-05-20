@@ -7,6 +7,10 @@ t_list *exec;
 t_list *estado_exit;
 t_list *blocked;
 
+
+
+// ----------- FUNCIONES PRINCIPALES
+
 void* crear_proceso(char *path_proceso){
     // LOG MINIMO: Creación de Proceso: "Se crea el proceso <PID> en NEW"
 
@@ -30,9 +34,42 @@ void* crear_proceso(char *path_proceso){
     return NULL;
 } 
 
-int _asignar_PID(void){
-    return pid_nuevo_proceso++;
-}//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
+void extraer_proceso(int pid){
+
+    /*
+    TIENE QUE: 
+                ENCONTRAR AL PROCESO EN LA COLA QUE ESTE
+                SACARLO DE LA COLA
+                BORRARLO DE LA MEMORIA
+    */
+
+    t_list *array_colas[] = {new, ready, exec, blocked};
+    
+    int cant_elementos = (int)(sizeof(array_colas) / sizeof(array_colas[0]));
+
+    for (int i = 0; i < cant_elementos; i++)
+    {
+        if(_buscar_y_eliminar_pid(array_colas[i], pid) != (-1)){
+            break;
+        }
+    }
+}
+
+int _buscar_y_eliminar_pid(t_list *cola, int pid_buscado){
+    int size = list_size(cola);
+    int encontro = (-1);
+
+    for (int i = 0; i < size; i++) {
+        t_pcb *pcb = list_get(cola, i);
+        if (pcb->pid == pid_buscado)
+        {
+            list_remove(cola, i);
+            encontro = 1;
+            break;
+        }
+    }
+    return encontro;
+}
 
 void iniciar_colas_planificacion(void){
     new = list_create();
@@ -43,16 +80,25 @@ void iniciar_colas_planificacion(void){
     // list_create hace malloc, guarda con eso
 }
 
+// ----------- FUNCIONES SECUNDARIAS
+
+void imprimir_cola(t_list *cola, void(*_mostrar_pcbs)(void*)) {
+    /* int size = queue_size(cola);
+
+    for (int i = 0; i < size; i++) {
+        void *pcb = list_get(cola->elements, i);
+        _mostrar_pcbs(pcb);
+    } */
+    list_iterate(cola, _mostrar_pcbs);
+}
+
+// ----------- FUNCIONES AUXILIARES
+
+int _asignar_PID(void){
+    return pid_nuevo_proceso++;
+}//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
+
 void _mostrar_pcbs(void *pcbDeLista) {
     t_pcb *pcb = (t_pcb *)pcbDeLista;
     printf("\t\tPID: %d\n", pcb->pid);
 }
-/*  DUDA:
-Deberian ser colas? 
-
-La cola (queue) es también una estructura lineal restrictiva en la que solo podremos poner y sacar elementos respetando la siguiente restricción: el primer elemento en llegar a la cola será también el primero en salir (FIFO, First In First Out).
-
-Pareceria venir al pelo, pero si llegan dos procesos en el mismo instante, uno viene de Fin de Quantumm y otro viene de NEW, y por esas cosas de la vida queda primero el que llega de NEW, yo deberia sacar el que llego de quantum, pero como esta segundo no puedo. 
-
-De todas formas no se si se nos va a dar esta situacion jajaj pero me surgio la duda.
-*/
