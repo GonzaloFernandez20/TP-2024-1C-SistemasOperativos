@@ -38,6 +38,8 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 			
 			hayInterrupt = 1;
 			recv(fd_conexion, &PCB, sizeof(int), MSG_WAITALL); // actualizamos la PCB.
+			
+
 
 			break;
 		

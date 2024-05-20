@@ -9,21 +9,21 @@
 
 // ---------- ESTRUCTURAS 
 
-/**
+/** 
  * Todos estos tipos de dato char* no guardarán String Literals 
- * (que son gestionados por el programa como cualquier otro tipo de dato primitivo; aunque char* no es dato primitivo)
+ * (que son gestionados por el programa como cualquier int, bool o char; es decir, no tenemos que preocuparnos de liberar memoria manualmente)
  * sino que van a recibir punteros a bloques de memoria asignadas dinámicamente
  * a través de strdup() que duplicará los valores leidos de los archivos de config.
  * 
- * t_config_cpu es alias de configuraciones_cpu. 
+ * t_config_cpu es alias de configuraciones_cpu.
  * 
  * Formas de usar esto para declarar variables:
  *      struct configuraciones_cpu nombre_de_mi_variable;
  *      t_config_cpu nombre_de_mi_variable;
  * Ambas opciones son válidas. Obviamente la segunda es la más práctica.
  * 
- * Including the original structure name (struct configuraciones_cpu) makes it clear what the alias (t_config_cpu) refers to, which can be helpful for others reading your code or for maintaining large codebases.
- * 
+ * Incluir el nombre original de la estructura (struct configuraciones_cpu) aclara el significado del alias (t_config_cpu), 
+ * es útil para la legibilidad y mantenibilidad.
 */
 typedef struct configuraciones_cpu
 {   
@@ -38,6 +38,12 @@ typedef struct configuraciones_cpu
 }t_config_cpu;
 
 // ---------- VARIABLES GLOBALES
+
+/**
+ * El uso del keyword "extern" permite decirle al compilador 
+ * que las variables ya fueron definidas en otro archivo.
+ * */
+
 extern t_log* cpu_log;
 extern t_log* cpu_log_debug;
 

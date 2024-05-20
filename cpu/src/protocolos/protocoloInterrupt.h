@@ -7,6 +7,7 @@
 #include <utils/hilos/hilos.h>
 #include <include/ciclo.h>
 
+// Traemos estas variables globales de ciclo.h
 extern struct_PCB PCB;
 extern bool hayInterrupt;
 

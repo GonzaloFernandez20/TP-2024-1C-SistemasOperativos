@@ -33,6 +33,9 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
  *       Este paquete se serializa antes de ser enviado al servidor.
  */
 void enviar_presentacion(char* nombre_modulo, int socket_cliente){
+
+	// es el crear_paquete, agregar_paquete() y enviar_paquete()del tp0 todo fusionado.
+
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 
 	paquete->codigo_operacion = HANDSHAKE;
