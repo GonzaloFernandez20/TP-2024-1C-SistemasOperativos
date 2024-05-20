@@ -15,6 +15,10 @@
  * 
 */
 
+typedef struct {
+    int codigo_operacion;
+    t_buffer* buffer;
+} t_paquete;
 
 void *procesar_operacion_dispatch(void *fd_casteado){
 
@@ -23,14 +27,22 @@ void *procesar_operacion_dispatch(void *fd_casteado){
     int cliente_conectado = 1;
 
     while(cliente_conectado){
-        int cod_op = recibir_operacion(fd);
+		t_paquete* paquete = malloc(sizeof(t_paquete));
+		paquete->buffer = malloc(sizeof(t_buffer));
 
-		switch (cod_op) {
-		case MENSAJE:		
+        // Primero recibimos el codigo de operacion
+		recibir_operacion(fd,paquete->codigo_operacion);
+		// Después ya podemos recibir el buffer. Primero su tamaño seguido del contenido
+		recibir_buffer(paquete);
+
+		switch (paquete->codigo_operacion) {
+		case un_PCB:		
 			// Se recibe el PCB desde Kernel, lo cual interpretamos como una orden para ejecutar el proceso identificado por el PCB.
-			
+			struct_PCB* PCB_recibido = deserializar_PCB(paquete->buffer);
 			// Se devuelve el Contexto de Ejecución (guardado en el PCB) actualizado al Kernel con motivo de la interrupción.
+			enviar_PCB(PCB);
 
+			free(PCB_recibido);
 			break;
 		
 		case -1: 
@@ -44,38 +56,35 @@ void *procesar_operacion_dispatch(void *fd_casteado){
 			log_warning(cpu_log_debug,"Operacion desconocida de KERNEL-DISPATCH");
 			break;
 		}
+
+		// Liberamos memoria
+		free(paquete->buffer->stream);
+		free(paquete->buffer);
+		free(paquete);
 	}
 	return (void *)EXIT_FAILURE;
 }
 
-int recibir_operacion(int socket_cliente)
+void recibir_buffer(t_paquete* t_paquete){
+		recv(fd, &(paquete->buffer->size), sizeof(uint32_t), 0);
+		paquete->buffer->stream = malloc(paquete->buffer->size);
+		recv(fd, paquete->buffer->stream, paquete->buffer->size, 0);
+}
+
+void recibir_operacion(int socket_cliente, int* cod_op_pauete)
 {
 	int cod_op;
 	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
-		return cod_op;
+		*cod_op_pauete = cod_op;
 	else
 	{
 		close(socket_cliente);
-		return -1;
+		*cod_op_pauete = -1;
 	}
 }
 
-void* recibir_buffer(int* size, int socket_cliente)
+struct_PCB* deserializar_PCB(t_buffer* buffer)
 {
-	void * buffer;
-
-	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(*size);
-	recv(socket_cliente, buffer, *size, MSG_WAITALL);
-
-	return buffer;
-}
-
-
-
-struct_PCB* deserializar_PCB(t_buffer* )
-{
-	t_buffer* buffer;
 	struct_PCB* PCB_recibido = malloc(sizeof(struct_PCB));
 	int* size = read_buffer_unint32_t(buffer);
 	//EL CODIGO DE OPERACION TUVO QUE HABER SIDO LEIDO DEL BUFFER DE ANTEMANO
@@ -92,8 +101,6 @@ struct_PCB* deserializar_PCB(t_buffer* )
     PCB_recibido->registros->EDX = read_buffer_uint32_t(buffer); 
     PCB_recibido->registros->SI  = read_buffer_uint32_t(buffer);
     PCB_recibido->registros->DI  = read_buffer_uint32_t(buffer);
-
-	free(buffer);
 	return PCB_recibido;
 }
 unint32_t read_buffer_unint_t(t_buffer* buffer){
@@ -108,4 +115,3 @@ unint8_t read_buffer_unint_t(t_buffer* buffer){
     buffer->stream += sizeof(uint8_t);
 	return datoEnBuffer;
 }
-

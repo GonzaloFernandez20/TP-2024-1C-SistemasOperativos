@@ -3,10 +3,10 @@
 
 typedef struct {
     uint32_t PC;    // Program Counter, indica la próxima instrucción a ejecutar
-    uint8_t AX;     // Registro Numérico de propósito general
-    uint8_t BX;     // idem
-    uint8_t CX;     // idem 
-    uint8_t DX;     // idem
+    uint8_t  AX;     // Registro Numérico de propósito general
+    uint8_t  BX;     // idem
+    uint8_t  CX;     // idem 
+    uint8_t  DX;     // idem
     uint32_t EAX;   // idem
     uint32_t EBX;   // idem
     uint32_t ECX;   // idem
