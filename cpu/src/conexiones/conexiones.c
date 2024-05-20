@@ -41,6 +41,18 @@ void iniciar_servidor_interrupt(void){
     free(PUERTO);
 }
 
+void iniciar_servidor(char* IP, char* PUERTO, char* nombre_server)  {
+    fd_server = iniciar_servidor(IP , PUERTO);
+
+    if(fd_server == -1){
+        log_error(cpu_log_debug,"No se pudo iniciar servidor %s", nombre_server);
+    }
+    else{
+        log_info(cpu_log_debug, "Servidor iniciado! %s escuchando en %s:%s\n", nombre_server, IP, PUERTO);
+    }
+}
+
+
 void conectar_memoria(void){ 
     char* IP = strdup(config_cpu.IP_MEMORIA);
     char* PUERTO = strdup(config_cpu.PUERTO_MEMORIA);

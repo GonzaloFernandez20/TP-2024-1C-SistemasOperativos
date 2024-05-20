@@ -52,17 +52,18 @@ void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 } 
 
 void* serializar_paquete(t_paquete* paquete, int bytes){
-	void * magic = malloc(bytes);
-	int desplazamiento = 0;
+	void* paquete_serializado = malloc(bytes); 	// Reservamos espacio de memoria para armar un paquete serializado. 
+											   	// Este puntero comienza (obviamente) apuntando a la primera dirección (en bytes) del espacio reservado.
+	int desplazamiento = 0;						// Lo utilizamos para movernos dentro del espacio de memoria asignado.
 
-	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
-	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, &(paquete->buffer->size), sizeof(int));
-	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
+	memcpy(paquete_serializado + desplazamiento, &(paquete->codigo_operacion), sizeof(int)); // copiamos los datos de un lado al otro
+	desplazamiento+= sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "codigo_operacion")
+	memcpy(paquete_serializado + desplazamiento, &(paquete->buffer->size), sizeof(int)); 
+	desplazamiento+= sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "size")
+	memcpy(paquete_serializado + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
 	desplazamiento+= paquete->buffer->size;
 
-	return magic;
+	return paquete_serializado;
 }
 
 void eliminar_paquete(t_paquete* paquete){
@@ -76,7 +77,7 @@ void eliminar_paquete(t_paquete* paquete){
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void recibir_handshake(int fd_cliente, t_log* logger){
-   
+    
     int handshake_ok = 0;
     int handshake_error = -1;
     

@@ -29,13 +29,15 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 			/** 
 			 * Qué pasa cuando se recibe un interrupt desde KERNEL ?  
 			 * Actualiza el flag Interrupt de CPU
+			 * Recv PID del proceso que se quiere interrumpir
 			 * 
 			 * Evaluar durante el ciclo checkInterrupt():
 			 * Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
 			 * 
 			 */
-
-
+			
+			hayInterrupt = 1;
+			recv(fd_conexion, &PCB, sizeof(int), MSG_WAITALL); // actualizamos la PCB.
 
 			break;
 		

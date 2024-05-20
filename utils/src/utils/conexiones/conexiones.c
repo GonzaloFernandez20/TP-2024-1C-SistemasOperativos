@@ -94,7 +94,9 @@ freeaddrinfo(server_info);
 return socket_cliente;
 }
 
-
+/* 
+Espera conexiones de clientes. El accept() es bloqueante. 
+*/
 int esperar_cliente(int fd_servidor)
 {
 	// Aceptamos un nuevo cliente

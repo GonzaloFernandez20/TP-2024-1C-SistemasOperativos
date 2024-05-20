@@ -27,6 +27,8 @@ void *procesar_operacion_dispatch(void *fd_casteado){
 
 		switch (cod_op) {
 		case MENSAJE:		
+			// Se recibe el PCB desde Kernel, lo cual interpretamos como una orden para ejecutar el proceso identificado por el PCB.
+			
 			// Se devuelve el Contexto de Ejecución (guardado en el PCB) actualizado al Kernel con motivo de la interrupción.
 
 			break;
@@ -46,4 +48,64 @@ void *procesar_operacion_dispatch(void *fd_casteado){
 	return (void *)EXIT_FAILURE;
 }
 
+int recibir_operacion(int socket_cliente)
+{
+	int cod_op;
+	if(recv(socket_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
+		return cod_op;
+	else
+	{
+		close(socket_cliente);
+		return -1;
+	}
+}
+
+void* recibir_buffer(int* size, int socket_cliente)
+{
+	void * buffer;
+
+	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
+	buffer = malloc(*size);
+	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+
+	return buffer;
+}
+
+
+
+struct_PCB* deserializar_PCB(t_buffer* )
+{
+	t_buffer* buffer;
+	struct_PCB* PCB_recibido = malloc(sizeof(struct_PCB));
+	int* size = read_buffer_unint32_t(buffer);
+	//EL CODIGO DE OPERACION TUVO QUE HABER SIDO LEIDO DEL BUFFER DE ANTEMANO
+	PCB_recibido->PID = read_buffer_unint32_t(buffer);
+	PCB_recibido->CPU = read_buffer_unint32_t(buffer);
+	PCB_recibido->registros->PC  = read_buffer_uint32_t(buffer);  
+    PCB_recibido->registros->AX  = read_buffer_uint8_t (buffer);   
+    PCB_recibido->registros->BX  = read_buffer_uint8_t (buffer);
+    PCB_recibido->registros->CX  = read_buffer_uint8_t (buffer);
+    PCB_recibido->registros->DX  = read_buffer_uint8_t (buffer);
+    PCB_recibido->registros->EAX = read_buffer_uint32_t(buffer);
+    PCB_recibido->registros->EBX = read_buffer_uint32_t(buffer);
+    PCB_recibido->registros->ECX = read_buffer_uint32_t(buffer); 
+    PCB_recibido->registros->EDX = read_buffer_uint32_t(buffer); 
+    PCB_recibido->registros->SI  = read_buffer_uint32_t(buffer);
+    PCB_recibido->registros->DI  = read_buffer_uint32_t(buffer);
+
+	free(buffer);
+	return PCB_recibido;
+}
+unint32_t read_buffer_unint_t(t_buffer* buffer){
+	unint32_t datoEnBuffer;
+	memcpy(&datoEnBuffer, stream, sizeof(uint32_t));
+    buffer->stream += sizeof(uint32_t);
+	return datoEnBuffer;
+}
+unint8_t read_buffer_unint_t(t_buffer* buffer){
+	unint8_t datoEnBuffer;
+	memcpy(&datoEnBuffer, stream, sizeof(uint8_t));
+    buffer->stream += sizeof(uint8_t);
+	return datoEnBuffer;
+}
 
