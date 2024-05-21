@@ -127,7 +127,7 @@ void* recibir_buffer(int* size, int socket_cliente){
 
 /* FUNCIONES DEL BUFFER PARA GUARDAR ESTRUCTURAS DINÁMICAS*/
 
-t_buffer *buffer_create(void) {
+t_buffer *buffer_create() {
 	t_buffer* buffer = malloc(sizeof(t_buffer));
 	buffer->size = 0;
 	buffer->offset = 0;		
