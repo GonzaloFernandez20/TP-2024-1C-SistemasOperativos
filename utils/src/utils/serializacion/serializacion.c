@@ -59,12 +59,21 @@ void* serializar_paquete(t_paquete* paquete, int bytes){
 											   	// Este puntero comienza (obviamente) apuntando a la primera dirección (en bytes) del espacio reservado.
 	int offset = 0;						// Lo utilizamos para movernos dentro del espacio de memoria asignado.
 
-	memcpy(paquete_serializado + offset, &(paquete->codigo_operacion), sizeof(int)); // copiamos los datos de un lado al otro
-	offset += sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "codigo_operacion")
-	memcpy(paquete_serializado + offset, &(paquete->buffer->size), sizeof(int)); 
-	offset += sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "size")
-	memcpy(paquete_serializado + offset, paquete->buffer->stream, paquete->buffer->size);
+	memcpy(paquete_serializado + offset, &(paquete->codigo_operacion), sizeof(int)); 		// guardamos primero el codigo de operación
+	offset += sizeof(int); 																	// nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "codigo_operacion")
+	memcpy(paquete_serializado + offset, &(paquete->buffer->size), sizeof(int)); 			// guardamos el tamaño del buffer (servirá luego para poder recibir el buffer xq hay que hacer un malloc)
+	offset += sizeof(int); 																	// nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "size")
+	memcpy(paquete_serializado + offset, paquete->buffer->stream, paquete->buffer->size);	// guardamos el stream
 	// offset += paquete->buffer->size;
+
+	/**
+	 * Quedaría entonces un paquete que sigue la estructura siguiente:
+	 * 1) codigo de operacion (paquete) 
+	 * 2) tamaño de buffer (para hacer un malloc) 
+	 * 3) stream de buffer (los datos en sí)
+	 * 
+	*/ 
+	
 
 	return paquete_serializado;
 }
@@ -105,10 +114,6 @@ void recibir_presentacion(int fd_cliente, t_log* logger){
 	free(buffer);
 }
 
-t_paquete* recibir_paquete() {
-	
-}
-
 
 int recibir_operacion(int fd_cliente){
 	int cod_op;
@@ -124,9 +129,9 @@ int recibir_operacion(int fd_cliente){
 void* recibir_buffer(int* size, int socket_cliente){
 	void * buffer;
 
-	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
+	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);   // recibe el tamaño
 	buffer = malloc(*size);
-	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+	recv(socket_cliente, buffer, *size, MSG_WAITALL);		// recibe el buffer en sí
 
 	return buffer;
 }

@@ -69,6 +69,19 @@ void eliminar_paquete(t_paquete* paquete);
  */
 void recibir_handshake(int fd_cliente, t_log* logger);
 
+
+/**
+ * @brief Recibe el código de operación desde un cliente.
+ *
+ * Esta función recibe un entero (código de operación) desde un socket
+ * conectado al cliente especificado por el descriptor de archivo `fd_cliente`.
+ *
+ * @param fd_cliente El descriptor de archivo del cliente.
+ * @return El código de operación recibido si la operación tiene éxito, -1 si hay un error.
+ *
+ * @note Esta función utiliza la función recv() de sockets.
+ * @note La conexión con el cliente debe estar establecida antes de llamar a esta función.
+ */
 int recibir_operacion(int fd_cliente);
 
 void recibir_presentacion(int fd_cliente, t_log* logger);
