@@ -125,11 +125,12 @@ void* recibir_buffer(int* size, int socket_cliente){
 }
 
 
+/* FUNCIONES DEL BUFFER PARA GUARDAR ESTRUCTURAS DINÁMICAS*/
 
-t_buffer *buffer_create(uint32_t size) {
+t_buffer *buffer_create(void) {
 	t_buffer* buffer = malloc(sizeof(t_buffer));
-	buffer->size = size;
-	buffer->offset = 0;		// creo que no va a ser necesario.
+	buffer->size = 0;
+	buffer->offset = 0;		
 	return buffer;
 }
 
@@ -151,15 +152,22 @@ void buffer_add(t_buffer *buffer, void *data, uint32_t size) {
 
 	buffer->stream = realloc(buffer->stream, buffer->size); 		// reasignamos espacio de memoria con el nuevo tamaño. Los datos ya existentes se conservan.
 	memcpy(buffer->stream + offset, &size, sizeof(uint32_t));		// guardamos en el stream esta especie de mini header de "data" que nos dice su tamaño.
-	offset += sizeof(uint32_t)										// movemos el offset los bytes que ocupa el anterior dato.
+	offset += sizeof(uint32_t);										// movemos el offset los bytes que ocupa el anterior dato.
 	memcpy(buffer->stream + offset, data, size);					// guardamos en el stream el "data" en sí.
 }
 
 // Guarda "size" bytes del principio del buffer en la dirección "read_data" (dato leido) y avanza el offset
-void buffer_read(t_buffer *buffer, void *read_data, uint32_t size) {
-	memcpy(read_data, buffer->stream + buffer->offset, size);	//	
-	buffer->offset += size;										// avanza el offset la cantidad de bytes leidos.
+void buffer_read(t_buffer *buffer, void *read_data) {
+	uint32_t size;
+	memcpy(&size, buffer->stream + buffer->offset, sizeof(uint32_t));
+	memcpy(read_data, buffer->stream + buffer->offset + sizeof(uint32_t), size);		
+
+	buffer->offset += sizeof(uint32_t) + size;										// avanza el offset la cantidad de bytes leidos.
 }
+
+
+/**
+ * 
 
 // Agrega un uint32_t al buffer
 void buffer_add_uint32(t_buffer *buffer, uint32_t data) {
@@ -175,12 +183,16 @@ void buffer_add_uint8(t_buffer *buffer, uint8_t data) {
 }
 
 // Lee un uint8_t del buffer y avanza el offset
-uint8_t buffer_read_uint8(t_buffer *buffer);
+uint8_t buffer_read_uint8(t_buffer *buffer) {
+	buffer_read(t_buffer *buffer, void *read_data)
+}
 
 // Agrega string al buffer con un uint32_t adelante indicando su longitud
 void buffer_add_string(t_buffer *buffer, char *string) {
-	buffer_add(buffer, data, strlen(string)+1);
+	buffer_add(buffer, string, strlen(string)+1);
 }
 
 // Lee un string y su longitud del buffer y avanza el offset
 char *buffer_read_string(t_buffer *buffer, uint32_t *length);
+
+*/

@@ -78,7 +78,7 @@ void* recibir_buffer(int* size, int socket_cliente);
 
 
 // Crea un buffer vacío de tamaño size y offset 0
-t_buffer *buffer_create(uint32_t size);
+t_buffer *buffer_create(void);
 
 // Libera la memoria asociada al buffer
 void buffer_destroy(t_buffer *buffer);
