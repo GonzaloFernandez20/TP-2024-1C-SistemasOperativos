@@ -87,7 +87,7 @@ void buffer_destroy(t_buffer *buffer);
 void buffer_add(t_buffer *buffer, void *data, uint32_t size);
 
 // Guarda size bytes del principio del buffer en la dirección data y avanza el offset
-void buffer_read(t_buffer *buffer, void *read_data, uint32_t size);
+void buffer_read(t_buffer *buffer, void *read_data);
 
 // // Agrega un uint32_t al buffer
 // void buffer_add_uint32(t_buffer *buffer, uint32_t data);

@@ -57,17 +57,19 @@ void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 void* serializar_paquete(t_paquete* paquete, int bytes){
 	void* paquete_serializado = malloc(bytes); 	// Reservamos espacio de memoria para armar un paquete serializado. 
 											   	// Este puntero comienza (obviamente) apuntando a la primera dirección (en bytes) del espacio reservado.
-	int desplazamiento = 0;						// Lo utilizamos para movernos dentro del espacio de memoria asignado.
+	int offset = 0;						// Lo utilizamos para movernos dentro del espacio de memoria asignado.
 
-	memcpy(paquete_serializado + desplazamiento, &(paquete->codigo_operacion), sizeof(int)); // copiamos los datos de un lado al otro
-	desplazamiento+= sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "codigo_operacion")
-	memcpy(paquete_serializado + desplazamiento, &(paquete->buffer->size), sizeof(int)); 
-	desplazamiento+= sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "size")
-	memcpy(paquete_serializado + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
-	desplazamiento+= paquete->buffer->size;
+	memcpy(paquete_serializado + offset, &(paquete->codigo_operacion), sizeof(int)); // copiamos los datos de un lado al otro
+	offset += sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "codigo_operacion")
+	memcpy(paquete_serializado + offset, &(paquete->buffer->size), sizeof(int)); 
+	offset += sizeof(int); // nos movemos sizeof(int) bytes (es decir lo que ocupa el tipo de dato de "size")
+	memcpy(paquete_serializado + offset, paquete->buffer->stream, paquete->buffer->size);
+	// offset += paquete->buffer->size;
 
 	return paquete_serializado;
 }
+
+void* deserializar_paquete()
 
 void eliminar_paquete(t_paquete* paquete){
 	free(paquete->buffer->stream);
@@ -96,6 +98,18 @@ void recibir_handshake(int fd_cliente, t_log* logger){
     }
 }
 
+void recibir_presentacion(int fd_cliente, t_log* logger){
+	int size;
+	char* buffer = recibir_buffer(&size, fd_cliente);
+	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", buffer);
+	free(buffer);
+}
+
+t_paquete* recibir_paquete() {
+	
+}
+
+
 int recibir_operacion(int fd_cliente){
 	int cod_op;
 	if(recv(fd_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
@@ -105,13 +119,6 @@ int recibir_operacion(int fd_cliente){
 		close(fd_cliente);
 		return -1;
 	}
-}
-
-void recibir_presentacion(int fd_cliente, t_log* logger){
-	int size;
-	char* buffer = recibir_buffer(&size, fd_cliente);
-	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", buffer);
-	free(buffer);
 }
 
 void* recibir_buffer(int* size, int socket_cliente){
@@ -136,9 +143,9 @@ t_buffer *buffer_create() {
 
 // Libera la memoria asociada al buffer
 void buffer_destroy(t_buffer *buffer) {
-	free(buffer->size);
+	// free(buffer->size);
+	// free(buffer->offset);		// creo que no es necesario para estos xq no son punteros
 	free(buffer->stream);
-	free(buffer->offset);
 	free(buffer);
 }
 
