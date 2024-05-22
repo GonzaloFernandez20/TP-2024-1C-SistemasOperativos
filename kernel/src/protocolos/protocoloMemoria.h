@@ -1,5 +1,5 @@
-#ifndef SERIALIZACION_H_INCLUDED
-#define SERIALIZACION_H_INCLUDED
+#ifndef PROT_MEMORIA_H_INCLUDED
+#define PROT_MEMORIA_H_INCLUDED
 
 // ---------------- LIBRERIAS 
 #include <utils/serializacion/serializacion.h>

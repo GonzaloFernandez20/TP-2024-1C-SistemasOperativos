@@ -7,8 +7,36 @@ t_list *exec;
 t_list *estado_exit;
 t_list *blocked;
 
-
+// ----------- SEMAFOROS
 pthread_mutex_t mutex_cola;
+pthread_mutex_t cola_ready;
+sem_t hay_proceso_ready;
+
+
+// ----------- PLANIFICADOR CORTO PLAZO
+
+void *planificador_corto_plazo(){
+    //desalojadoAntes = true;
+    //pcbInicial = true;
+    t_pcb *pcbExecute;
+
+    while (1)
+    {
+        sem_wait(&hay_proceso_ready);
+        sem_wait(&execute_libre);
+        //sem_wait(&planificacionPausada);
+        //sem_post(&planificacionPausada);
+       
+        pcbExecute = pop_estado(ready);
+        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
+        enviar_pcb(pcbExecute);
+
+        //recibirPCB modificado y motivo de desalojo
+        //asignar tarea, algo tiene que hacer ahora, capaz conviene q siga otro hilo por la suya
+        
+        sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
+    }
+}
 
 // ----------- FUNCIONES PRINCIPALES
 
@@ -44,7 +72,7 @@ void* crear_proceso(void *path_proceso_void){
     pthread_mutex_unlock(&mutex_cola);
 
     // ------------------ PROCESO CREADO CON EXITO
-    pthread_mutex_destroy(&mutex_cola);
+    //pthread_mutex_destroy(&mutex_cola);
     return NULL;
 } 
 
@@ -69,6 +97,11 @@ void iniciar_colas_planificacion(void){
     estado_exit = list_create();
     blocked = list_create();
     // list_create hace malloc, guarda con eso
+
+    pthread_mutex_init(&mutex_cola, NULL);
+    pthread_mutex_init(&cola_ready, NULL);
+
+    sem_init(&hay_proceso_ready,0,0);
 }
 
 // ----------- FUNCIONES SECUNDARIAS
@@ -85,11 +118,18 @@ void trasladar(int pid_buscado,  t_list *cola_origen, t_list *cola_destino){
         if (pcb->pid == pid_buscado)
         {
             list_remove(cola_origen, i);
-            list_add(cola_destino, pcb);
+            _enviar_ready(pcb);
             break;
         }
     }
 }
+
+t_pcb *pop_estado(t_list* lista){
+    t_pcb* pcb = list_get(lista, 0);
+    list_remove(lista, 0);
+    return pcb;
+}
+
 
 // ----------- FUNCIONES AUXILIARES
 
@@ -100,4 +140,11 @@ int _asignar_PID(void){
 void _mostrar_pcbs(void *pcbDeLista) {
     t_pcb *pcb = (t_pcb *)pcbDeLista;
     printf("\t\tPID: %d\n", pcb->pid);
+}
+
+void _enviar_ready(t_pcb *pcb){
+    pthread_mutex_lock(&cola_ready);
+        list_add(ready, pcb);
+    pthread_mutex_lock(&cola_ready);
+    sem_post(&hay_proceso_ready);
 }

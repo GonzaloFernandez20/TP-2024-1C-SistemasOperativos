@@ -9,13 +9,14 @@ int main(int argc, char *argv[]){
     //establecer_conexiones();
     //atender_entradasalida();
     iniciar_colas_planificacion();
+    iniciar_Consola();
 
 
     // -------------------------------------------------
-    // Creamos un hilo para la consola y esta va a vivir junto con el main
-    pthread_t manejo_consola;
-    pthread_create(&manejo_consola, NULL, (void *)iniciar_Consola, NULL);
-    pthread_join(manejo_consola, NULL);
+    // Creamos un hilo para el planificador de corto plazo y este va a vivir junto con el main
+    pthread_t corto_plazo;
+    pthread_create(&corto_plazo, NULL, (void *)planificador_corto_plazo, NULL);
+    pthread_join(corto_plazo, NULL);
     // -------------------------------------------------
 
     liberar_kernel();

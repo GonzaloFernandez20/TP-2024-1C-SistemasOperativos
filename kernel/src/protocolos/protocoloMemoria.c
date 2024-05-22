@@ -21,7 +21,7 @@
 	free(a_enviar);
 	eliminar_paquete(path_proceso);
 }
-*/
+
 void recibir_confirmacion(int pid){
 
     int rta_memoria = recv(fd_conexion_memoria, &rta_memoria, sizeof(int), MSG_WAITALL);
@@ -34,4 +34,4 @@ void recibir_confirmacion(int pid){
     {
         buscar_y_eliminar_pid(new, pid);
     }
-} 
+} */

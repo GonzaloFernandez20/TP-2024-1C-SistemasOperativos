@@ -5,6 +5,7 @@
 #include <planificacion/pcb.h>
 //#include <protocolos/protocoloMemoria.h>
 #include <include/estructuras.h>
+#include <protocolos/protocoloCPU.h>
 
 
 #include <commons/collections/list.h>
@@ -17,15 +18,19 @@ extern t_list *array_colas[];
 
 // ---------- DECLARACIONES DE FUNCIONES
 
+void *planificador_corto_plazo(void);
+
 void* crear_proceso(void *path_proceso_void);
 void extraer_proceso(int pid);
 
 void iniciar_colas_planificacion(void);
 void imprimir_cola(t_list *cola, void(*_mostrar_pcbs)(void*));
+t_pcb *pop_estado(t_list* lista);
+void trasladar(int pid_buscado,  t_list *cola_origen, t_list *cola_destino);
 
 int _asignar_PID(void);
 void _mostrar_pcbs(void *pcbDeLista); 
-void trasladar(int pid_buscado,  t_list *cola_origen, t_list *cola_destino);
+void _enviar_ready(t_pcb *pcb);
 
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
