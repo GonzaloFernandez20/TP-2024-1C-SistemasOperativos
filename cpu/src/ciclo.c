@@ -7,27 +7,28 @@
 
 t_dictionary* opCodes; 
 
-void init_opCodes_dictionary() {
+void init_opCode_decode() {
     opCodes = dictionary_create();
-    dictionary_put(opCodes, "SET", SET);
-    dictionary_put(opCodes, "MOV_IN", MOV_IN);
-    dictionary_put(opCodes, "MOV_OUT", MOV_OUT);
-    dictionary_put(opCodes, "SUM", SUM);
-    dictionary_put(opCodes, "SUB", SUB);
-    dictionary_put(opCodes, "JNZ", JNZ);
-    dictionary_put(opCodes, "RESIZE", RESIZE);
-    dictionary_put(opCodes, "COPY_STRING", COPY_STRING);
-    dictionary_put(opCodes, "WAIT", WAIT);
-    dictionary_put(opCodes, "SIGNAL", SIGNAL);
-    dictionary_put(opCodes, "IO_GEN_SLEEP", IO_GEN_SLEEP);
-    dictionary_put(opCodes, "IO_STDIN_READ", IO_STDIN_READ);
-    dictionary_put(opCodes, "IO_STDOUT_WRITE", IO_STDOUT_WRITE);
-    dictionary_put(opCodes, "IO_FS_CREATE", IO_FS_CREATE);
-    dictionary_put(opCodes, "IO_FS_DELETE", IO_FS_DELETE);
-    dictionary_put(opCodes, "IO_FS_TRUNCATE", IO_FS_TRUNCATE);
-    dictionary_put(opCodes, "IO_FS_WRITE", IO_FS_WRITE);
-    dictionary_put(opCodes, "IO_FS_READ", IO_FS_READ);
-    dictionary_put(opCodes, "EXIT_OS", EXIT_OS);
+    
+    dictionary_put(opCodes, "SET", (void*)SET);
+    dictionary_put(opCodes, "MOV_IN", (void*)MOV_IN);
+    dictionary_put(opCodes, "MOV_OUT", (void*)MOV_OUT);
+    dictionary_put(opCodes, "SUM", (void*)SUM);
+    dictionary_put(opCodes, "SUB", (void*)SUB);
+    dictionary_put(opCodes, "JNZ", (void*)JNZ);
+    dictionary_put(opCodes, "RESIZE", (void*)RESIZE);
+    dictionary_put(opCodes, "COPY_STRING", (void*)COPY_STRING);
+    dictionary_put(opCodes, "WAIT", (void*)WAIT);
+    dictionary_put(opCodes, "SIGNAL", (void*)SIGNAL);
+    dictionary_put(opCodes, "IO_GEN_SLEEP", (void*)IO_GEN_SLEEP);
+    dictionary_put(opCodes, "IO_STDIN_READ", (void*)IO_STDIN_READ);
+    dictionary_put(opCodes, "IO_STDOUT_WRITE", (void*)IO_STDOUT_WRITE);
+    dictionary_put(opCodes, "IO_FS_CREATE", (void*)IO_FS_CREATE);
+    dictionary_put(opCodes, "IO_FS_DELETE", (void*)IO_FS_DELETE);
+    dictionary_put(opCodes, "IO_FS_TRUNCATE", (void*)IO_FS_TRUNCATE);
+    dictionary_put(opCodes, "IO_FS_WRITE", (void*)IO_FS_WRITE);
+    dictionary_put(opCodes, "IO_FS_READ", (void*)IO_FS_READ);
+    dictionary_put(opCodes, "EXIT_OS", (void*)EXIT_OS);
 }
 
 void arranque(){
@@ -64,7 +65,7 @@ void decode() {
 void checkInterrupt() {
     // Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
     if(PID_a_interrumpir == PCB.PID) {
-        atenderInterrupcion(PID);
+        desalojarProcesoActual();
     }
     else {
         log_error(cpu_log_debug, "El proceso pedido (PID=%d) no coincide con el actual en ejecución (PID=%d), no se interrumpirá.", PID_recibido, PCB.PID);
@@ -72,11 +73,12 @@ void checkInterrupt() {
     PID_a_interrumpir = 0; // una vez checkeado, reiniciamos esta variable.
 }
 
-void atenderInterrupcion(int PID){
+void desalojarProcesoActual(int PID){
     log_info(cpu_log_debug, "Interrumpiendo proceso PID=%s en ejecución", PID_recibido);
-    exportarPCB();
-    PCB = recibirPCB();   // Actualizar PCB
-    acomodarRegistrosDeCPU(PCB.registros); 
+    
+    exportarPCB();        // Mandarle PCB a Kernel.
+    PCB = recibirPCB();   // Recibir PCB nuevo de Kernel.
+    acomodarRegistrosDeCPU(PCB.registros);  // actualizar registros de la cpu con los de la PCB.
 }
 
 /*
