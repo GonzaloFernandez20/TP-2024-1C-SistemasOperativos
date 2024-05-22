@@ -16,8 +16,10 @@
 typedef enum
 {
 	HANDSHAKE = 1,
-	MENSAJE
-
+	MENSAJE, 	// los datos recibidos con op_code MENSAJE son de tipo char*.
+	PAQUETE		// los datos recibidos con este op_code son de tipo void* (es decir, genérico), se deben extraer los distintos valores con buffer_read(t_buffer *buffer, void *read_data)
+				
+	// recibiremos texto por MENSAJE y multiples tipos de datos por PAQUETE.
 }op_code; 
 
 
@@ -69,6 +71,7 @@ void eliminar_paquete(t_paquete* paquete);
  */
 void recibir_handshake(int fd_cliente, t_log* logger);
 
+void recibir_mensaje(int socket_cliente);
 
 /**
  * @brief Recibe el código de operación desde un cliente.

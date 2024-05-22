@@ -1,6 +1,9 @@
 #ifndef CICLO_H_INCLUDED
 #define CICLO_H_INCLUDED
 
+#include <protocolos/protocoloInterrupt.h>
+#include <commons/collections/dictionary.h>
+
 typedef struct {
     uint32_t PC;    // Program Counter, indica la próxima instrucción a ejecutar
     uint8_t  AX;     // Registro Numérico de propósito general
@@ -107,6 +110,8 @@ bool hayInterrupt;                  // Flag de interrupción. CPU recibe, desde 
                                  //entonces seteamos el flag en 1. Luego de procesar la solicitud,
                                  //se debe setear nuevamente el flag en 0 (estado default).
 
+// Me traigo variable global desde protocoloInterrupt.h
+extern char* PID_a_interrumpir; 
 
 
 #endif

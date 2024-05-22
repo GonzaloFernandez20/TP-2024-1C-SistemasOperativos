@@ -17,8 +17,8 @@
 #include <utils/hilos/hilos.h>
 
 // ---------------- Definiciones de variables globales
-t_log* cpu_log;
-t_log* cpu_log_debug;
+t_log* cpu_log;         // Ojito que parece que en todo el módulo CPU no parece que se haya usado el cpu_log. 
+t_log* cpu_log_debug;   // Considerar juntar cpu_log con cpu_log_debug.
 
 char *path_config;
 t_config_cpu config_cpu;

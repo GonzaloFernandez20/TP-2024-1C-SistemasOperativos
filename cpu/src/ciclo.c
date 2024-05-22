@@ -5,8 +5,34 @@
 // y el switch del execute se asegure de que cada operacion use los argumentos correspondientes
 */
 
+t_dictionary* opCodes; 
+
+void init_opCodes_dictionary() {
+    opCodes = dictionary_create();
+    dictionary_put(opCodes, "SET", SET);
+    dictionary_put(opCodes, "MOV_IN", MOV_IN);
+    dictionary_put(opCodes, "MOV_OUT", MOV_OUT);
+    dictionary_put(opCodes, "SUM", SUM);
+    dictionary_put(opCodes, "SUB", SUB);
+    dictionary_put(opCodes, "JNZ", JNZ);
+    dictionary_put(opCodes, "RESIZE", RESIZE);
+    dictionary_put(opCodes, "COPY_STRING", COPY_STRING);
+    dictionary_put(opCodes, "WAIT", WAIT);
+    dictionary_put(opCodes, "SIGNAL", SIGNAL);
+    dictionary_put(opCodes, "IO_GEN_SLEEP", IO_GEN_SLEEP);
+    dictionary_put(opCodes, "IO_STDIN_READ", IO_STDIN_READ);
+    dictionary_put(opCodes, "IO_STDOUT_WRITE", IO_STDOUT_WRITE);
+    dictionary_put(opCodes, "IO_FS_CREATE", IO_FS_CREATE);
+    dictionary_put(opCodes, "IO_FS_DELETE", IO_FS_DELETE);
+    dictionary_put(opCodes, "IO_FS_TRUNCATE", IO_FS_TRUNCATE);
+    dictionary_put(opCodes, "IO_FS_WRITE", IO_FS_WRITE);
+    dictionary_put(opCodes, "IO_FS_READ", IO_FS_READ);
+    dictionary_put(opCodes, "EXIT_OS", EXIT_OS);
+}
 
 void arranque(){
+    init_opCodes_dictionary();
+
     PCB = recibirPCB();
     acomodarRegistrosDeCPU(PCB.registros);
     ciclo();
@@ -18,6 +44,8 @@ void ciclo() {
         execute();            // ejecuta la operación correspondiente al op_code dadp, junto a los parámetros dados por la instrucción.
         checkInterrupt();     // se fija si hay interrupciones.
     }
+    // cuando salga del loop signfica que por alguna razón cpu paró
+    dictionary_destroy(opCodes);    // liberamos memoria asignada al diccionario.
 }
 void fetch(){
     instruccion = pedirAMemoria(PCB.registros.PC + 1);
@@ -30,73 +58,24 @@ Asignamos el opCode correspondiente a la variable global "op_code".
 */
 void decode() {
     char* operacion_str = instruccion.operacion_str;
-
-    if (strcmp(operacion_str, "SET") == 0) {
-        op_code = SET;
-    } else if (strcmp(operacion_str, "MOV_IN") == 0) {
-        op_code = MOV_IN;
-    } else if (strcmp(operacion_str, "MOV_OUT") == 0) {
-        op_code = MOV_OUT;
-    } else if (strcmp(operacion_str, "SUM") == 0) {
-        op_code = SUM;
-    } else if (strcmp(operacion_str, "SUB") == 0) {
-        op_code = SUB;
-    } else if (strcmp(operacion_str, "JNZ") == 0) {
-        op_code = JNZ;
-    } else if (strcmp(operacion_str, "RESIZE") == 0) {
-        op_code = RESIZE;
-    } else if (strcmp(operacion_str, "COPY_STRING") == 0) {
-        op_code = COPY_STRING;
-    } else if (strcmp(operacion_str, "WAIT") == 0) {
-        op_code = WAIT;
-    } else if (strcmp(operacion_str, "SIGNAL") == 0) {
-        op_code = SIGNAL;
-    } else if (strcmp(operacion_str, "IO_GEN_SLEEP") == 0) {
-        op_code = IO_GEN_SLEEP;
-    } else if (strcmp(operacion_str, "IO_STDIN_READ") == 0) {
-        op_code = IO_STDIN_READ;
-    } else if (strcmp(operacion_str, "IO_STDOUT_WRITE") == 0) {
-        op_code = IO_STDOUT_WRITE;
-    } else if (strcmp(operacion_str, "IO_FS_CREATE") == 0) {
-        op_code = IO_FS_CREATE;
-    } else if (strcmp(operacion_str, "IO_FS_DELETE") == 0) {
-        op_code = IO_FS_DELETE;
-    } else if (strcmp(operacion_str, "IO_FS_TRUNCATE") == 0) {
-        op_code = IO_FS_TRUNCATE;
-    } else if (strcmp(operacion_str, "IO_FS_WRITE") == 0) {
-        op_code = IO_FS_WRITE;
-    } else if (strcmp(operacion_str, "IO_FS_READ") == 0) {
-        op_code = IO_FS_READ;
-    } else if (strcmp(operacion_str, "EXIT_OS") == 0) {
-        op_code = EXIT_OS;
-    } else {
-        // Si la cadena no coincide con ninguna operación válida
-        op_code = -1;
-    }
+    op_code = dictionary_get(opCodes, operacion_str);
 }
-
 
 void checkInterrupt() {
-    /**
-     * Verificar si el flag interrupt está en 1. 
-     * Si es así entonces atenderInterrupcion().
-     * 
-     * Si la PID del proceso en ejecución coincide con 
-     * el PID solicitado a interrumpir, entonces se realiza lo solicitado.
-     * 
-     */
-
-    if(hayInterrupcion()){
-        atenderInterrupcion();
+    // Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
+    if(PID_a_interrumpir == PCB.PID) {
+        atenderInterrupcion(PID);
     }
+    else {
+        log_error(cpu_log_debug, "El proceso pedido (PID=%d) no coincide con el actual en ejecución (PID=%d), no se interrumpirá.", PID_recibido, PCB.PID);
+    }
+    PID_a_interrumpir = 0; // una vez checkeado, reiniciamos esta variable.
 }
-void hayInterrupcion(){
-    //codear más tarde xq trabaja con la conexion interrupt
-}
-void atenderInterrupcion(void){
-    // ATENDER INTERRUPCIÓN.
+
+void atenderInterrupcion(int PID){
+    log_info(cpu_log_debug, "Interrumpiendo proceso PID=%s en ejecución", PID_recibido);
     exportarPCB();
-    PCB = recibirPCB();                     // Actualizar PCB
+    PCB = recibirPCB();   // Actualizar PCB
     acomodarRegistrosDeCPU(PCB.registros); 
 }
 

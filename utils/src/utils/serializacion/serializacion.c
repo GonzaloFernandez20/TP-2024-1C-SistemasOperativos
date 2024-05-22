@@ -73,12 +73,10 @@ void* serializar_paquete(t_paquete* paquete, int bytes){
 	 * 3) stream de buffer (los datos en sí)
 	 * 
 	*/ 
-	
 
 	return paquete_serializado;
 }
 
-void* deserializar_paquete()
 
 void eliminar_paquete(t_paquete* paquete){
 	free(paquete->buffer->stream);
@@ -114,6 +112,22 @@ void recibir_presentacion(int fd_cliente, t_log* logger){
 	free(buffer);
 }
 
+
+/*
+
+
+*/
+char* recibir_mensaje(int socket_cliente)
+{
+	int size;
+	char* buffer = recibir_buffer(&size, socket_cliente);  
+	
+	char* mensaje;
+	strcpy(mensaje, buffer); // mensaje no requiere ser liberado con free()
+	free(buffer);
+	
+	return mensaje; // devolvemos un literal string así no se necesita liberar nada afuera de esta función
+}
 
 int recibir_operacion(int fd_cliente){
 	int cod_op;
