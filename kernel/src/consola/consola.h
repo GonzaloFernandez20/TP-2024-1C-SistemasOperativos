@@ -4,13 +4,15 @@
 // ------------- LIBRERIAS INCLUIDAS
 #include <include/estructuras.h>
 #include <planificacion/planificador.h>
+#include <utils/hilos/hilos.h>
 
 #include <commons/log.h>
 #include <commons/string.h>
-#include<readline/readline.h>
+#include <readline/readline.h>
 
 #include <stdlib.h>
 #include <stdbool.h>
+#include <pthread.h>
 
 // ------------- COMANDOS DE CONSOLA
 

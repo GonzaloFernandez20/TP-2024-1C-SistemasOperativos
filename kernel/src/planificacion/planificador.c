@@ -8,40 +8,47 @@ t_list *estado_exit;
 t_list *blocked;
 
 
+pthread_mutex_t mutex_cola;
 
 // ----------- FUNCIONES PRINCIPALES
 
-void* crear_proceso(char *path_proceso){
+void* crear_proceso(void *path_proceso_void){
+    pthread_mutex_init(&mutex_cola, NULL);
+
+    //char *path_proceso = (char *)path_proceso_void;
     // LOG MINIMO: Creación de Proceso: "Se crea el proceso <PID> en NEW"
 
-    //Iniciar proceso: Se encargará de iniciar un nuevo proceso cuyas instrucciones a ejecutar se encontrarán en el archivo <path> dentro del file system de la máquina donde corra la Memoria. Este mensaje se encargará de la creación del proceso (PCB) en estado NEW.
     int pid_asignado = _asignar_PID();
     t_pcb *nuevo_pcb = crear_pcb(pid_asignado);
 
-    //Envio del path a memoria para que haga lo suyo
 
+    // ------------------ AGREGA A COLA NEW 
+    pthread_mutex_lock(&mutex_cola);
+        list_add(new, (void *)nuevo_pcb);
+    pthread_mutex_unlock(&mutex_cola);
 
-/*  pthread_mutex_lock(log);
-    log_info(kernelLogger, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
-    pthread_mutex_unlock(log); */
+    //pthread_mutex_lock(log);
+        //log_info(kernelLogger, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
+    //pthread_mutex_unlock(log);
 
-    //mutex
-    //lo agrego a la lista de procesos en NEW
-    list_add(new, (void *)nuevo_pcb);
-    //mutex
+    // ------------------ COMUNICACION CON MEMORIA
+    // chequeo_multiprogramacion();
 
+    //enviar_path(path_proceso, pid_asignado);
 
+    //recibir_confirmacion(pid_asignado);
+
+    // ------------------ AGREGA A COLA READY
+    pthread_mutex_lock(&mutex_cola);
+        trasladar(pid_asignado, new, ready);
+    pthread_mutex_unlock(&mutex_cola);
+
+    // ------------------ PROCESO CREADO CON EXITO
+    pthread_mutex_destroy(&mutex_cola);
     return NULL;
 } 
 
 void extraer_proceso(int pid){
-
-    /*
-    TIENE QUE: 
-                ENCONTRAR AL PROCESO EN LA COLA QUE ESTE
-                SACARLO DE LA COLA
-                BORRARLO DE LA MEMORIA
-    */
 
     t_list *array_colas[] = {new, ready, exec, blocked};
     
@@ -49,26 +56,10 @@ void extraer_proceso(int pid){
 
     for (int i = 0; i < cant_elementos; i++)
     {
-        if(_buscar_y_eliminar_pid(array_colas[i], pid) != (-1)){
+        if(buscar_y_eliminar_pid(array_colas[i], pid) != (-1)){
             break;
         }
     }
-}
-
-int _buscar_y_eliminar_pid(t_list *cola, int pid_buscado){
-    int size = list_size(cola);
-    int encontro = (-1);
-
-    for (int i = 0; i < size; i++) {
-        t_pcb *pcb = list_get(cola, i);
-        if (pcb->pid == pid_buscado)
-        {
-            list_remove(cola, i);
-            encontro = 1;
-            break;
-        }
-    }
-    return encontro;
 }
 
 void iniciar_colas_planificacion(void){
@@ -83,13 +74,21 @@ void iniciar_colas_planificacion(void){
 // ----------- FUNCIONES SECUNDARIAS
 
 void imprimir_cola(t_list *cola, void(*_mostrar_pcbs)(void*)) {
-    /* int size = queue_size(cola);
-
-    for (int i = 0; i < size; i++) {
-        void *pcb = list_get(cola->elements, i);
-        _mostrar_pcbs(pcb);
-    } */
     list_iterate(cola, _mostrar_pcbs);
+}
+
+void trasladar(int pid_buscado,  t_list *cola_origen, t_list *cola_destino){
+    int size_origen = list_size(cola_origen);
+
+    for (int i = 0; i < size_origen; i++) {
+        t_pcb *pcb = list_get(cola_origen, i);
+        if (pcb->pid == pid_buscado)
+        {
+            list_remove(cola_origen, i);
+            list_add(cola_destino, pcb);
+            break;
+        }
+    }
 }
 
 // ----------- FUNCIONES AUXILIARES

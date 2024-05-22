@@ -24,12 +24,14 @@ void *iniciar_Consola(){
 
         case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
             printf("Ejecutando comando: INICIAR_PROCESO\n");
-            // ? Este mensaje se encargará de la creación del proceso (PCB) en estado NEW.
 
             char * path_proceso = array_del_comando[1];
-            crear_proceso(path_proceso);
             
-            //! Kernel envía a memoria la dirección del archivo de pseudocódigo que contiene las instrucciones del proceso que se pidió crear.
+            pthread_t creacion_proceso;
+            pthread_create(&creacion_proceso, NULL, (void *)crear_proceso, (void *)path_proceso);
+            pthread_detach(creacion_proceso);
+
+            
             //log_info(kernel_log, "Solicitud aceptada, creando nuevo proceso. ");
             free(path_proceso);
             break;

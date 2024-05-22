@@ -2,10 +2,11 @@
 #define ESTRUCTURAS_H_INCLUDED
 
 // ---------- INCLUSIONES
+#include <commons/log.h>
+#include <commons/collections/list.h>
+
 #include <stdio.h>
 #include <string.h>
-#include <commons/log.h>
-
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct configuraciones_kernel
 {
@@ -25,16 +26,7 @@ typedef struct configuraciones_kernel
 } t_config_kernel;
 
 
-// ---------- ESTADOS DE UN PROCESO
 
-/* typedef enum nombre_estado
-{   
-    NEW,
-    READY,
-    EXEC,
-    EXIT,
-    BLOCKED
-}t_nombre_estado; */
 
 /* struct estado //? ESTO TODAVIA NO SE PARA QUE SIRVE
 {
@@ -63,10 +55,10 @@ extern int entrada_salida_conectada;
 
 
 // Estados
-/* extern t_estado *estadoNew;
-extern t_estado *estadoReady;
-extern t_estado *estadoExecute;
-extern t_estado *estadoBlocked; 
-extern t_estado *estadoExit; */
+extern t_list *new;
+extern t_list *ready;
+extern t_list *exec;
+extern t_list *estado_exit;
+extern t_list *blocked;
 
 #endif
