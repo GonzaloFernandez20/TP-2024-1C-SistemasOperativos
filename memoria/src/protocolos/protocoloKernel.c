@@ -2,7 +2,7 @@
 
 void *procesar_operacion_kernel(void *fd_kernel_casteado){
     
-    int fd_kernel = _deshacer_casting(fd_kernel_casteado);
+    fd_kernel = _deshacer_casting(fd_kernel_casteado);
 
     int cliente_conectado = 1;
 
@@ -11,16 +11,25 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 
 		switch (cod_op) {
 		case CREAR_PROCESO:
-			//
+            atender_solicitud((void *)crear_proceso);
 			break;
 		
+        case FINALIZAR_PROCESO:
+            atender_solicitud((void *)eliminar_proceso);
+			break;
+
 		case -1:
-			log_error(memoria_log_debugg, "KERNEL se desconecto\n");
+			pthread_mutex_lock(&mutex_log_debug);
+            log_error(memoria_log_debugg, "KERNEL se desconecto\n");
+            pthread_mutex_unlock(&mutex_log_debug);
+
             cliente_conectado = 0;
 			break;
 			
 		default:
-			log_warning(memoria_log_debugg,"Operacion desconocida de KERNEL");
+			pthread_mutex_lock(&mutex_log_debug);
+            log_warning(memoria_log_debugg,"Operacion desconocida de KERNEL\n");
+            pthread_mutex_unlock(&mutex_log_debug);
 			break;
 		}
 	}
@@ -28,29 +37,9 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 }
 
 
-/////////////// KERNEL serializacion
 
-void enviar_path_seudocodigo(char* archivo, int PID){
-    t_paquete* paquete = crear_paquete(CREAR_PROCESO);
-
-    int buffer_size = strlen(archivo) + 1 + 2*sizeof(int); 
-	crear_buffer(paquete, buffer_size);
-
-    buffer_add_int(paquete->buffer, PID );
-    buffer_add_int(paquete->buffer, strlen(archivo) + 1);
-	buffer_add_string(paquete->buffer, archivo);
-
-    enviar_paquete(paquete, fd_server_memoria);
-    log_info(kernel_log_debugg; "Solicitud de creacion de proceso enviada a memoria")
-
-	eliminar_paquete(paquete);
-}
-
-
-/////////////// MEMORIA serializacion
-
-void crear_proceso(void){
-    t_buffer *buffer = recibir_buffer(fd_cliente);
+void* crear_proceso(void){
+    t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
 
     int PID = buffer_read_int(&stream);
@@ -58,12 +47,16 @@ void crear_proceso(void){
 	char* path_archivo = malloc(length_path);
 	strcpy(path_archivo, buffer_read_string(&stream, length_path));
 
-    log_info(memoria_log_debugg, "Cargando instrucciones del proceso PID %d desde el archivo %s\n", PID, path_archivo);
+    pthread_mutex_lock(&mutex_log_debug);
+    log_info(memoria_log_debugg, "Cargando instrucciones del proceso <%d> desde el archivo %s\n", PID, path_archivo);
+    pthread_mutex_unlock(&mutex_log_debug);
+
 	eliminar_buffer(buffer);
 
 	crear_estructuras_administrativas(PID, path_archivo);
 
-	free(path);
+	free(path_archivo);
+    return NULL;
 }
 
 void crear_estructuras_administrativas(int PID, char* path_archivo){
@@ -72,5 +65,134 @@ void crear_estructuras_administrativas(int PID, char* path_archivo){
 }
 
 void cargar_instrucciones(int PID, char* path_archivo){
+    t_proceso* nuevo_proceso = malloc(sizeof(t_proceso));
+    nuevo_proceso-> PID = PID;
+
+    FILE* archivo_seudocodigo = abrir_archivo(char* archivo);
+    int seudocodigo_ok = 1;
+    int seudocodigo_error = 0;
+    
+    if (archivo_seudocodigo == NULL) {
+
+        pthread_mutex_lock(&mutex_log_debug);
+        log_error(memoria_log_debugg, "No se encontro el archivo de seudocodigo del proceso <%d>\n", PID);
+        pthread_mutex_unlock(&mutex_log_debug);
+
+        send(fd_kernel, &seudocodigo_error, sizeof(int), 0);
+    }
+    else{
+
+        int cantidad_instrucciones = contar_lineas(archivo_seudocodigo);
+        nuevo_proceso->cant_instrucciones=cantidad_instrucciones;
+        nuevo_proceso->CODE_segmento = malloc(cantidad_instrucciones * sizeof(char*));
+        leer_almacenar_instrucciones(nuevo_proceso->CODE_segmento, archivo_seudocodigo);
+
+        pthread_mutex_lock(&mutex_memoria_instrucciones);
+        list_add(memoria_de_instruccione, nuevo_proceso);
+        pthread_mutex_unlock(&mutex_memoria_instrucciones);
+
+        pthread_mutex_lock(&mutex_log_debug);
+        log_info(memoria_log_debugg,"PID: <%d> instrucciones cargadas en memoria\n", PID;);
+        pthread_mutex_unlock(&mutex_log_debug);
+
+        send(fd_kernel, &seudocodigo_ok, sizeof(int), 0);
+    }
+
+    fclose(archivo_seudocodigo);
+}
+
+FILE* abrir_archivo(char* archivo){
+    char* path = concatenar_rutas(config_memoria->PATH_INSTRUCCIONES, archivo);
+    FILE* archivo_seudocodigo = fopen(path, "r");
+    
+    free(path);
+    return archivo_seudocodigo;
     
 }
+
+char* concatenar_rutas(char* directorio, char* archivo){
+   
+    int length = strlen(directorio) + strlen(archivo) + 1; // +1 para el terminador nulo
+
+    char* path = malloc(length);
+
+    strcpy(path, directorio);
+    strcat(path, archivo);
+
+    return path;
+}
+
+int contar_lineas(FILE* archivo_seudocodigo){
+    
+    int lineas = 0;
+    int caracter;
+    int previo_caracter = 0;
+
+    while ((caracter = fgetc(archivo_seudocodigo)) != EOF) {
+        if (caracter == '\n') {lineas++;}
+        previo_caracter = caracter;
+    }
+
+    // Verificar si el archivo no termina con un salto de línea
+    if (previo_caracter != '\n' && previo_caracter != EOF) {
+        lineas++;
+    }
+
+    return lineas;
+}
+
+void leer_almacenar_instrucciones(char** CODE_segmento, FILE* seudocodigo){
+    
+    char* buffer = NULL;
+    int longitud = 0;
+    int caracteres_leidos;
+    int posicion_instruccion = 0;
+
+    while ((caracteres_leidos = getline(&buffer, &longitud, seudocodigo)) != -1) {
+        // Sacar el salto de línea al final de la cadena
+        if (buffer[leidos - 1] == '\n') { buffer[leidos - 1] = '\0'; }
+
+        // Asignar memoria para la línea y copiar el contenido
+        CODE_segmento[posicion_instruccion] = malloc((caracteres_leidos + 1) * sizeof(char));
+        strcpy(CODE_segmento[posicion_instruccion], buffer);
+        posicion_instruccion++;
+    }
+    free(buffer);
+}
+
+void* eliminar_proceso(void){
+    t_buffer *buffer = recibir_buffer(fd_kernel);
+	void* stream = buffer->stream;
+
+    int PID = buffer_read_int(&stream);
+    liberar_estructuras_asociadas(PID);
+    //marcar_libre_espacio();
+        ////marcar los frames como libres pero sin sobreescribir su contenido
+
+    pthread_mutex_lock(&mutex_log_debug);
+    log_info(memoria_log_debugg, "Liberado el espacio en memoria del proceso <%d>\n", PID);
+    pthread_mutex_unlock(&mutex_log_debug);
+
+    return NULL;
+}
+
+void liberar_estructuras_asociadas(int PID){
+    int indice_proceso = buscar_PID_memoria_instrucciones(PID);
+
+    pthread_mutex_lock(&mutex_memoria_instrucciones);
+    t_proceso* proceso_a_eliminar = list_remove(memoria_de_instruccione, indice_proceso);
+    pthread_mutex_unlock(&mutex_memoria_instrucciones);
+
+    liberar_segmento_codigo(proceso_a_eliminar);
+    free(proceso_a_eliminar);
+}
+
+void liberar_segmento_codigo(t_proceso* proceso){
+    for (int i = 0; i < proceso->cant_instrucciones i++) {
+        free(proceso->CODE_segmento[i]);
+    }
+    free(proceso->CODE_segmento);
+}
+
+
+

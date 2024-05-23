@@ -13,8 +13,10 @@
 
 void atender_cliente(int fd_servidor, void (*procesar_conexion)(void*), t_log* logger, char* modulo);
 
-void _asignar_hilo(int *fd_cliente,  void (*procesar_conexion)(void*));
+void asignar_hilo(int *fd_cliente,  void (*procesar_conexion)(void*));
 
 int _deshacer_casting(void *fd_cpu_casteado);
+
+void atender_solicitud(void (*procesar_solicitud));
 
 #endif

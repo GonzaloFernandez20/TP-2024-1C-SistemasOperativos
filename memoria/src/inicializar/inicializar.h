@@ -8,10 +8,12 @@
 
 
 
-/*Seteamos las configuraciones iniciales de logs y configs*/ 
+/*Seteamos las configuraciones iniciales de logs y configs y se incializan estructuras globales*/ 
 void init(void);
 
-void _leer_configuracion(char *path_config);
+void leer_configuracion(char *path_config);
+
+void inicializar_semaforos(void);
 
 
 #endif

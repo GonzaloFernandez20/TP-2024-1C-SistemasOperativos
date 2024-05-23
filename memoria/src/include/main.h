@@ -25,7 +25,17 @@ char *path_config;
 t_config_memoria config_memoria;
 
 int fd_server_memoria;
+int fd_kernel;
+int fd_cpu;
 
+
+t_list* memoria_de_instrucciones;
+
+//--semaforos
+
+pthread_mutex_t mutex_log_debug;
+pthread_mutex_t mutex_log;
+pthread_mutex_t mutex_memoria_instrucciones;
 
 
 
