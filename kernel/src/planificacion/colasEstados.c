@@ -96,8 +96,6 @@ t_pcb *pop_estado(t_list* lista){
     return pcb;
 }
 
-
-
 // ---------- FUNCIONES AUXILIARES
 
 void _mostrar_pcbs(void *pcbDeLista) {

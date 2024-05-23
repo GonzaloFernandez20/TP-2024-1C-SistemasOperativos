@@ -36,6 +36,33 @@ void *planificador_corto_plazo(){
     }
 }
 
+// ----------- PLANIFICADOR LARGO PLAZO
+
+/* void *planificador_largo_plazo(void){
+
+    // ------------------ COMUNICACION CON MEMORIA
+    // chequeo_multiprogramacion();
+
+    //enviar_path_seudocodigo(path_proceso, pid_asignado);
+    //int rta_memoria = recibir_confirmacion(pid_asignado);
+
+     if (rta_memoria){
+        pthread_mutex_lock(&mutex_log_debug); 
+            log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
+        pthread_mutex_lock(&mutex_log_debug); 
+        return NULL; 
+    } 
+
+    // ------------------ AGREGA A COLA READY
+
+    trasladar(pid_asignado, new, ready);
+ 
+    // ------------------ PROCESO CREADO CON EXITO
+}  */
+
+
+
+
 // ----------- FUNCIONES PRINCIPALES
 
 void* crear_proceso(void *path_proceso_void){
@@ -54,25 +81,8 @@ void* crear_proceso(void *path_proceso_void){
         log_info(kernel_log, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
     pthread_mutex_unlock(&mutex_log);
 
-    // ------------------ COMUNICACION CON MEMORIA
-    // chequeo_multiprogramacion();
-
-    //enviar_path_seudocodigo(path_proceso, pid_asignado);
-    //int rta_memoria = recibir_confirmacion(pid_asignado);
-
-    /* if (rta_memoria){
-        pthread_mutex_lock(&mutex_log_debug); 
-            log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
-        pthread_mutex_lock(&mutex_log_debug); 
-        return NULL; 
-    } */
-
-    // ------------------ AGREGA A COLA READY
-
+    //sem_post(&proceso_cargado);
     trasladar(pid_asignado, new, ready);
- 
-    // ------------------ PROCESO CREADO CON EXITO
-    
     return NULL;
 }
 

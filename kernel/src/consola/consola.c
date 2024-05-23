@@ -80,8 +80,8 @@ void *iniciar_Consola(){
             break;
         }
 
-		free(array_del_comando);
-        free(comando_ingresado);
+		free(comando_ingresado);
+        free(array_del_comando);
 	} while(1);
 }
 
