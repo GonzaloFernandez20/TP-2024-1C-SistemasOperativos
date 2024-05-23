@@ -58,38 +58,13 @@ typedef struct{
 }t_instruccion;
 
 
-//Declaraciones de todas las operaciones
-void set();
-void move_in(char* registroDatos, char* registroDireccion);
-void move_out(char* registroDireccion, char* registroDatos);
-void sum();
-void sub();
-void jnz();
-void io_gen_sleep();
-void rezize(char* tamanio);
-void copy_string(char* tamanio);
-void wait(char* recurso);
-void signal(char* recurso);
-void io_stdin_read(char* interfaz,char* registroDireccion,char* registroTamanio);
-void io_stdout_write(char* interfaz,char* registroDireccion,char* registroTamanio);
-void io_fs_create(char* interfaz, char* nombreDelArchivo);
-void io_fs_delete(char* interfaz, char* nombreDelArchivo);
-void io_fs_truncate(char* interfaz,char* nombreDelArchivo,char* registroTamanio);
-void io_fs_write(char* interfaz,char* nombreDelArchivo,char* registroDireccion,char* registroTamanio,char* registroPunteroArchivo);
-void io_fs_read();
-void exit();
-
-//Declaraciones de funciones auxiliares para hacer el decode() y execute()
-
-int tamanioDeRegistro(char* registro);
-int contiene(char *unArrayDeStrings[],int sizeOfArray,char* unElemento);
-void* direccionDelRegistro(char* registro);
+void init_opCodes_dictionary(void);
 
 //Funciones auxiliares para checkInterrupt()
-void hayInterrupcion();
-void atenderInterrupcion(void);
+void desalojarProcesoActual(void);
 void acomodarRegistrosDeCPU(struct_registros registros);
 void exportarPCB(void);
+struct_PCB recibirPCB(void);
 void acomodarRegistrosDePCB(struct_registros* registros);
 
 //Funciones del ciclo per se
@@ -98,7 +73,7 @@ void ciclo();
 void fetch();
 void decode_and_execute();
 void checkInterrupt();
-void desalojarProcesoActual(int);
+void desalojarProcesoActual();
 
 //Variables globales
 struct_PCB PCB;
@@ -107,7 +82,7 @@ t_instruccion instruccion;
 t_dictionary* opCodes;
 
 // Me traigo variable global desde protocoloInterrupt.h
-extern char* PID_a_interrumpir;     // CPU recibe, desde Kernel y 
+extern u_int32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
                                     //a través de la conexión Interrupt, PIDs que se quieran interrumpir.
                                     //Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir,
                                     //entonces seteamos el flag en 1. Luego de procesar la solicitud,

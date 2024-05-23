@@ -10,7 +10,7 @@ int main(int argc,char* argv[]) {
     gestionar_conexiones_kernel();
 
 
-    // arranque();
+    //arranque();
 
 
     
@@ -46,12 +46,3 @@ Cabe aclarar que en todos los casos el Contexto de Ejecución debe ser devuelto 
 conexión de dispatch, quedando la conexión de interrupt dedicada solamente a recibir mensajes de
 interrupción.
 */
-
-int hayInterrupcion(){
-
-}
-
-exportarPCB(){}
-
-
-recibirPCB(){}

@@ -105,6 +105,7 @@ void* direccionDelRegistro(char* registro){
     if(!strcmp(registro, "DI")) {  return ptr_a_registro = &registrosCPU.DI;}
 }
 
+
 int tamanioDeRegistro(char* registro){
     char* regs_uint8[4] = {"AX","BX","CX","DX"};
     if(contiene(regs_uint8,4,registro)){

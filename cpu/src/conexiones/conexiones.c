@@ -5,7 +5,6 @@ void iniciar_servidores(void){
     iniciar_servidor_interrupt();
 }
 
-
 /* 
 En teoría no es necesario usar strdup() dentro de estas funciones
 xq IP y PUERTO se usan nomás para pasarse como parámetros, 
@@ -41,18 +40,18 @@ void iniciar_servidor_dispatch(void){
     char* IP = config_cpu.IP_CPU;
     char* PUERTO = config_cpu.PUERTO_ESCUCHA_DISPATCH;
 
-    iniciar_servidor(IP, PUERTO, "CPU-DISPATCH");
+    _iniciar_servidor(IP, PUERTO, "CPU-DISPATCH");
 }
 
 void iniciar_servidor_interrupt(void){
-    char* IP = config_cpu.IP_CPU;
-    char* PUERTO = config_cpu.PUERTO_ESCUCHA_INTERRUPT;
+    char* IP = ;
+    char* PUERTO = ;
 
-    iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
+    _iniciar_servidor(config_cpu.IP_CPU, config_cpu.PUERTO_ESCUCHA_INTERRUPT, "CPU-INTERRUPT");
 
 }
 
-void iniciar_servidor(char* IP, char* PUERTO, char* nombre_server)  {
+void _iniciar_servidor(char* IP, char* PUERTO, char* nombre_server)  {
     fd_server = iniciar_servidor(IP , PUERTO);
 
     if(fd_server == -1){

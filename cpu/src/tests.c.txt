@@ -1,0 +1,28 @@
+
+
+void correrTests() { 
+
+    
+
+    return;
+}
+
+
+
+void assert_equals(char* nombreTest, int esperado, int actual) {
+	log_info(logger, "Corriendo test %s", nombreTest);
+	if(actual == esperado) {
+		log_info(logger, "Salio bien");
+	} else {
+		log_info(logger, "Salio mal, esperaba %d y me llego %d", esperado, actual);
+	}
+}
+
+void assert(char* nombre, bool resultado) {
+	log_info(logger, "Corriendo test %s", nombre);
+	if(resultado) {
+		log_info(logger, "Salio bien");
+	} else {
+		log_info(logger, "Salio mal");
+	}
+}

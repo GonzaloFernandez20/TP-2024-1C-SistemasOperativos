@@ -18,7 +18,7 @@ void init_opCodes_dictionary() {
     dictionary_put(opCodes, RESIZE,         (void*)resize);
     dictionary_put(opCodes, COPY_STRING,    (void*)copy_string);
     dictionary_put(opCodes, WAIT,           (void*)wait);
-    dictionary_put(opCodes, SIGNAL,         (void*)signal);
+    dictionary_put(opCodes, SIGNAL,         (void*)signal_kernel);
     dictionary_put(opCodes, IO_GEN_SLEEP,   (void*)io_gen_sleep);
     dictionary_put(opCodes, IO_STDIN_READ,  (void*)io_stdin_read);
     dictionary_put(opCodes, IO_STDOUT_WRITE,(void*)io_stdout_write);
@@ -40,8 +40,7 @@ void arranque(){
 void ciclo() {
     while(1) {
         fetch();                // busca la siguiente instrucción.
-        decode();               // interpreta la operación de la instrucción.
-        execute();              // ejecuta la operación correspondiente al op_code dadp, junto a los parámetros dados por la instrucción.
+        decode_and_execute();   // interpreta y ejecuta la operación que corresponde
         checkInterrupt();       // se fija si hay interrupciones.
     }
     // cuando salga del loop signfica que por alguna razón cpu paró
@@ -49,31 +48,46 @@ void ciclo() {
 }
 void fetch(){
     PCB.registros.PC += 1;      // buscamos la siguiente instrucción
-    instruccion = pedirAMemoria(PCB.registros.PC); 
+    // pedirAMemoria(PCB.registros.PC); 
+    
 }
 void decode_and_execute() {
-    void* funcion_operacion = dictionary_get(opCodes, instruccion.operacion_str); // obtenemos la función
+    void (*funcion_operacion)(void) = dictionary_get(opCodes, instruccion.operacion_str); // obtenemos la función
     funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el struct global instruccion.
 }
 
 void checkInterrupt() {
     // Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
     if(PID_a_interrumpir == PCB.PID) {
+        log_info(cpu_log_debug, "Interrumpiendo proceso PID=%d en ejecución", PCB.PID);
         desalojarProcesoActual();
     }
     else {
-        log_error(cpu_log_debug, "El proceso pedido (PID=%d) no coincide con el actual en ejecución (PID=%d), no se interrumpirá.", PID_recibido, PCB.PID);
+        log_error(cpu_log_debug, "El proceso pedido (PID=%d) no coincide con el actual en ejecución (PID=%d), no se interrumpirá.", PID_a_interrumpir, PCB.PID);
     }
     PID_a_interrumpir = 0; // una vez checkeado, reiniciamos esta variable.
 }
 
-void desalojarProcesoActual(int PID){
-    log_info(cpu_log_debug, "Interrumpiendo proceso PID=%s en ejecución", PID_recibido);
-    
+void desalojarProcesoActual(){
+    // Procede a realizar un cambio de contexto
     exportarPCB();        // Mandarle PCB a Kernel.
-    PCB = recibirPCB();   // Recibir PCB nuevo de Kernel.
+    PCB = recibirPCB();   // Recibir PCB de la interrupción mandada desde Kernel.
     acomodarRegistrosDeCPU(PCB.registros);  // actualizar registros de la cpu con los de la PCB.
 }
+
+
+struct_PCB recibirPCB() {
+    return PCB; // CAMBIAR DESPUÉS
+} 
+
+// Función auxiliar para fetch()
+// void pedirAMemoria(PCB.registros.PC) {
+//     return
+// }
+
+// void enviarAKernel() {
+
+// }
 
 //Funciones auxiliares para checkInterrupt()
 void acomodarRegistrosDeCPU(struct_registros registros){

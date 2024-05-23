@@ -12,7 +12,7 @@ u_int32_t PID_a_interrumpir;    // según consigna: Identificador del proceso (d
                                 // tomará el valor de 0 si Kernel no pidió interrumpir ningun proceso.
 
 // Traemos estas variables globales de ciclo.h
-extern struct_PCB PCB;
+// extern struct_PCB PCB;
 
 void *procesar_operacion_interrupt(void *fd_interrupt_casteado);
 

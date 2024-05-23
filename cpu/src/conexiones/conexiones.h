@@ -18,7 +18,7 @@ void iniciar_servidor_dispatch(void);
 
 void iniciar_servidor_interrupt(void);
 
-void iniciar_servidor(char*, char*, char*);  
+void _iniciar_servidor(char*, char*, char*);  
 
 void conectar_memoria(void);
 

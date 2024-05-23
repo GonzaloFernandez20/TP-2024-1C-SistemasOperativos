@@ -71,7 +71,7 @@ void eliminar_paquete(t_paquete* paquete);
  */
 void recibir_handshake(int fd_cliente, t_log* logger);
 
-void recibir_mensaje(int socket_cliente);
+char* recibir_mensaje(int socket_cliente);
 
 /**
  * @brief Recibe el código de operación desde un cliente.
