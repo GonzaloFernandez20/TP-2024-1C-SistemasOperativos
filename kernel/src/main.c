@@ -5,17 +5,17 @@ int main(int argc, char *argv[]){
     path_config = chequear_parametros(argc, argv);
 
     init(); 
-    iniciar_servidor_kernel();
-    establecer_conexiones();
-    atender_entradasalida();
-    liberar_kernel();
+    //iniciar_servidor_kernel();
+    //establecer_conexiones();
+    //atender_entradasalida();
     
+    
+
+    iniciar_Consola();
+
+    liberar_kernel();
     return 0;
 }
-
-
-
-
 
 /*Se libera toda la memoria asignada durante la ejecucion de kernel.*/
 void liberar_kernel(void){ 

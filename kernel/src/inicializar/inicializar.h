@@ -3,6 +3,7 @@
 
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>
+#include <planificacion/planificador.h>
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
 
 
