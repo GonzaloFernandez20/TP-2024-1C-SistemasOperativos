@@ -5,7 +5,6 @@
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
-    
     int respuesta_servidor;
 
     enviar_presentacion(modulo,fd_conexion);
@@ -20,44 +19,86 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
 
 }
 
+
+// arma el paquete (inicializa sus estructuras) con la informacion de una presentacion y lo envia
 void enviar_presentacion(char* nombre_modulo, int socket_cliente){
+	t_paquete* paquete = crear_paquete(HANDSHAKE);
+
+	int buffer_size = strlen(nombre_modulo) + 1 + sizeof(int); 
+	crear_buffer(paquete, buffer_size);
+
+
+	buffer_add_int(paquete->buffer, strlen(nombre_modulo) + 1 );
+	buffer_add_string(paquete->buffer, nombre_modulo);
+
+	enviar_paquete(paquete, socket_cliente);
+	eliminar_paquete(paquete);
+} 
+
+// crea un paqueta ya indicando su codigo de operacion
+t_paquete* crear_paquete(op_code cop){
 	t_paquete* paquete = malloc(sizeof(t_paquete));
+	paquete->codigo_operacion = cop;
+	return paquete;
+}
 
-	paquete->codigo_operacion = HANDSHAKE;
+// Crea un buffer vacío de tamaño size con el offset en 0
+void crear_buffer(t_paquete* paquete, int size){
 	paquete->buffer = malloc(sizeof(t_buffer));
-	paquete->buffer->size = strlen(nombre_modulo) + 1;
+	paquete->buffer->size = size;
+	paquete->buffer->offset = 0;
 	paquete->buffer->stream = malloc(paquete->buffer->size);
-	memcpy(paquete->buffer->stream, nombre_modulo, paquete->buffer->size);
+}
 
-	int bytes = paquete->buffer->size + 2*sizeof(int);
+void buffer_add_string(t_buffer *buffer, char *string){
+	memcpy(buffer->stream + buffer->offset, string, strlen(string)+1);
+	buffer->offset +=  strlen(string)+1;
+}
+
+void buffer_add_int(t_buffer *buffer, int dato){
+	memcpy(buffer->stream + buffer->offset, &dato, sizeof(int));
+	buffer->offset +=  sizeof(int);
+}
+
+
+// envia el paquete serializado
+void enviar_paquete(t_paquete* paquete, int socket_cliente){
+	int bytes = paquete->buffer->size + 2*sizeof(int); 
+			// paquete->buffer->size son los bytes del stream
+			// 2*sizeof(int) un int es del op_code y el otro del tamanio del buffer
 
 	void* a_enviar = serializar_paquete(paquete, bytes);
 
 	send(socket_cliente, a_enviar, bytes, 0);
 
 	free(a_enviar);
-	eliminar_paquete(paquete);
-} 
+}
+
 
 void* serializar_paquete(t_paquete* paquete, int bytes){
-	void * magic = malloc(bytes);
+	void * a_enviar = malloc(bytes);
 	int desplazamiento = 0;
 
-	memcpy(magic + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
+	memcpy(a_enviar + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
 	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, &(paquete->buffer->size), sizeof(int));
+	memcpy(a_enviar + desplazamiento, &(paquete->buffer->size), sizeof(int));
 	desplazamiento+= sizeof(int);
-	memcpy(magic + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
+	memcpy(a_enviar + desplazamiento, paquete->buffer->stream, paquete->buffer->size);
 	desplazamiento+= paquete->buffer->size;
 
-	return magic;
+	return a_enviar;
 }
 
 void eliminar_paquete(t_paquete* paquete){
-	free(paquete->buffer->stream);
-	free(paquete->buffer);
+	eliminar_buffer(paquete->buffer);
 	free(paquete);
 }
+
+void eliminar_buffer(t_buffer *buffer){
+	free(buffer->stream);
+	free(buffer);
+}
+
 
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// RECEPCION DE MENSAJES ////////////////////////////////////
@@ -92,20 +133,45 @@ int recibir_operacion(int fd_cliente){
 }
 
 void recibir_presentacion(int fd_cliente, t_log* logger){
-	int size;
-	char* buffer = recibir_buffer(&size, fd_cliente);
-	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", buffer);
-	free(buffer);
+
+	t_buffer *buffer = recibir_buffer(fd_cliente);
+	void* stream = buffer->stream;
+	
+	int length = buffer_read_int(&stream);
+	char* modulo = malloc(length);
+	strcpy(modulo, buffer_read_string(&stream, length));
+
+	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", modulo);
+	
+	free(modulo);
+	eliminar_buffer(buffer);
 }
 
-void* recibir_buffer(int* size, int socket_cliente){
-	void * buffer;
-
-	recv(socket_cliente, size, sizeof(int), MSG_WAITALL);
-	buffer = malloc(*size);
-	recv(socket_cliente, buffer, *size, MSG_WAITALL);
+t_buffer* recibir_buffer(int socket_cliente){
+	t_buffer* buffer = malloc(sizeof(t_buffer));
+	buffer->offset = 0;
+	recv(socket_cliente, &buffer->size, sizeof(int), MSG_WAITALL);
+	buffer->stream = malloc(buffer->size);
+	recv(socket_cliente, buffer->stream, buffer->size, MSG_WAITALL);
 
 	return buffer;
 }
+
+int buffer_read_int(void** stream){
+	int dato;
+	memcpy(&dato, *stream, sizeof(int));
+    *stream += sizeof(int);
+
+	return dato;
+}
+char* buffer_read_string(void** stream, int length){
+	char* string = malloc(length);
+	memcpy(string, *stream, length);
+	*stream += length;
+
+	return string;
+}
+
+
 
 

@@ -20,6 +20,13 @@ typedef struct configuraciones_memoria
     
 } t_config_memoria;
 
+//asocia PID con el archivo de seudocofigo
+typedef struct proceso_cargado
+{
+    int PID;
+    char** CODE_segmento;
+}t_proceso_cargado;
+
 
 
 // ---------- VARIABLES GLOBALES

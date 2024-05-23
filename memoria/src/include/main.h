@@ -26,11 +26,7 @@ t_config_memoria config_memoria;
 
 int fd_server_memoria;
 
-int cpu_conectada;
-int kernel_conectado;
-int IO_conectado;
 
-// ---------------- Definiciones de funciones
-void liberar_memoria(void);
+
 
 #endif
