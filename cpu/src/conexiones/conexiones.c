@@ -44,10 +44,10 @@ void iniciar_servidor_dispatch(void){
 }
 
 void iniciar_servidor_interrupt(void){
-    char* IP = ;
-    char* PUERTO = ;
+    char* IP = config_cpu.IP_CPU;
+    char* PUERTO = config_cpu.PUERTO_ESCUCHA_INTERRUPT;
 
-    _iniciar_servidor(config_cpu.IP_CPU, config_cpu.PUERTO_ESCUCHA_INTERRUPT, "CPU-INTERRUPT");
+    _iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
 
 }
 

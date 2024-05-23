@@ -49,7 +49,6 @@ void ciclo() {
 void fetch(){
     PCB.registros.PC += 1;      // buscamos la siguiente instrucción
     // pedirAMemoria(PCB.registros.PC); 
-    
 }
 void decode_and_execute() {
     void (*funcion_operacion)(void) = dictionary_get(opCodes, instruccion.operacion_str); // obtenemos la función
