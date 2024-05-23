@@ -23,7 +23,7 @@ void *planificador_corto_plazo(){
     while (1)
     {
         sem_wait(&hay_proceso_ready);
-        sem_wait(&execute_libre);
+        //sem_wait(&execute_libre);
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
        
@@ -34,7 +34,7 @@ void *planificador_corto_plazo(){
         //recibirPCB modificado y motivo de desalojo
         //asignar tarea, algo tiene que hacer ahora, capaz conviene q siga otro hilo por la suya
         
-        sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
+        //sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
     }
 }
 
@@ -145,6 +145,6 @@ void _mostrar_pcbs(void *pcbDeLista) {
 void _enviar_ready(t_pcb *pcb){
     pthread_mutex_lock(&cola_ready);
         list_add(ready, pcb);
-    pthread_mutex_lock(&cola_ready);
+    pthread_mutex_unlock(&cola_ready);
     sem_post(&hay_proceso_ready);
 }
