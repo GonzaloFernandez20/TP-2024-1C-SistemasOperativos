@@ -61,4 +61,10 @@ extern t_list *exec;
 extern t_list *estado_exit;
 extern t_list *blocked;
 
+
+extern pthread_mutex_t mutexBlocked;
+extern pthread_mutex_t mutexNew;
+extern pthread_mutex_t mutexReady;
+extern pthread_mutex_t mutexExec;
+extern pthread_mutex_t mutexExit;
 #endif
