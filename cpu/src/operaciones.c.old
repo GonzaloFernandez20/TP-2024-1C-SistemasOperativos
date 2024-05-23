@@ -1,3 +1,5 @@
+#include <include/operaciones.h>
+
 // LAS FUNCIONES OPERACIÓN
 
 void set(){//asigna al registro seleccionado el valor pasado como argumento
@@ -68,8 +70,8 @@ void jnz(){
 
     void* ptr_registroCPU;
     
-    int instruccion = atoi(numDeInstruccion);
-    if(instruccion != 0){registrosCPU.PC += *(uint32_t*)ptr_registroOrigen;}//acá no hay if para castear porque el PC es siempre de tipo uint32_t
+    int n_instruccion = atoi(numDeInstruccion);
+    if(n_instruccion != 0){registrosCPU.PC += *(uint32_t*)ptr_registroOrigen;}//acá no hay if para castear porque el PC es siempre de tipo uint32_t
     else{
         //tirar un error
         }
@@ -81,7 +83,7 @@ void io_gen_sleep(){
 
     int interfaz_para_kernel = identificarInterfaz(interfaz);
     int unidadesDeSleep = atoi(unidadesDeTrabajo);
-    enviarleAkernel(interfaz_para_kernel, unidadesDeSleep);//hablar con gonza por protocolo de comunicacion
+    // enviarleAkernel(interfaz_para_kernel, unidadesDeSleep);//hablar con gonza por protocolo de comunicacion
 }
 
 

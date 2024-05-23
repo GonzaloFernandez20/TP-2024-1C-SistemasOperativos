@@ -2,7 +2,7 @@
 #define OPERACIONES_H
 
 #include <string.h>
-#include <include/ciclo.h>
+// #include <include/ciclo.h>
 
 // Function declarations
 void set();
@@ -10,7 +10,6 @@ void sum();//Declaraciones de todas las operaciones
 void set();
 void mov_in(char* registroDatos, char* registroDireccion);
 void mov_out(char* registroDireccion, char* registroDatos);
-void sum();
 void sub();
 void jnz();
 void io_gen_sleep();
@@ -26,9 +25,7 @@ void io_fs_truncate(char* interfaz,char* nombreDelArchivo,char* registroTamanio)
 void io_fs_write(char* interfaz,char* nombreDelArchivo,char* registroDireccion,char* registroTamanio,char* registroPunteroArchivo);
 void io_fs_read();
 void exit_os();
-void sub();
-void jnz();
-void io_gen_sleep();
+
 
 void* direccionDelRegistro(char* registro);
 int tamanioDeRegistro(char* registro);

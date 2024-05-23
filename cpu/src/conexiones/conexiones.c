@@ -1,7 +1,7 @@
 #include <conexiones/conexiones.h>
 
 void iniciar_servidores(void){
-    iniciar_servidor_dispatch();
+    //iniciar_servidor_dispatch();
     iniciar_servidor_interrupt();
 }
 
@@ -52,7 +52,7 @@ void iniciar_servidor_interrupt(void){
 }
 
 void _iniciar_servidor(char* IP, char* PUERTO, char* nombre_server)  {
-    fd_server = iniciar_servidor(IP , PUERTO);
+    int fd_server = iniciar_servidor(IP , PUERTO);
 
     if(fd_server == -1){
         log_error(cpu_log_debug,"No se pudo iniciar servidor %s", nombre_server);
