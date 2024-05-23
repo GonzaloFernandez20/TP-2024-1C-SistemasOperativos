@@ -1,19 +1,10 @@
 #include <planificacion/planificador.h>
 
 int pid_nuevo_proceso = 0; 
-t_list *new;
-t_list *ready;
-t_list *exec;
-t_list *estado_exit;
-t_list *blocked;
 
-
-pthread_mutex_t mutexBlocked;
-pthread_mutex_t mutexNew;
-pthread_mutex_t mutexReady;
-pthread_mutex_t mutexExec;
-pthread_mutex_t mutexExit;
-sem_t proceso_listo;
+pthread_mutex_t mutex_log_debug;
+pthread_mutex_t mutex_log;
+sem_t execute_libre;
 // ----------- PLANIFICADOR CORTO PLAZO
 
 void *planificador_corto_plazo(){
@@ -24,19 +15,21 @@ void *planificador_corto_plazo(){
     while (1)
     {
         sem_wait(&proceso_listo);
-        //sem_wait(&execute_libre);
+        sem_wait(&execute_libre);
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
        
         pcbExecute = pop_estado(ready);
         printf("ENVIANDO PCB %d A CPU", pcbExecute->pid);
-        //log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
+        pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
+        pthread_mutex_unlock(&mutex_log_debug);
         //enviar_pcb(pcbExecute);
-
+        usleep(15000000);
         //recibirPCB modificado y motivo de desalojo
         //asignar tarea, algo tiene que hacer ahora, capaz conviene q siga otro hilo por la suya
         
-        //sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
+        sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
     }
 }
 
@@ -45,8 +38,7 @@ void *planificador_corto_plazo(){
 void* crear_proceso(void *path_proceso_void){
 
     //char *path_proceso = (char *)path_proceso_void;
-    // LOG MINIMO: Creación de Proceso: "Se crea el proceso <PID> en NEW"
-
+    
     int pid_asignado = _asignar_PID();
     t_pcb *nuevo_pcb = crear_pcb(pid_asignado);
 
@@ -56,9 +48,9 @@ void* crear_proceso(void *path_proceso_void){
         list_add(new, nuevo_pcb);
     pthread_mutex_unlock(&mutexNew);
 
-    //pthread_mutex_lock(log);
-        //log_info(kernelLogger, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
-    //pthread_mutex_unlock(log);
+    pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
+    pthread_mutex_unlock(&mutex_log);
 
     // ------------------ COMUNICACION CON MEMORIA
     // chequeo_multiprogramacion();
@@ -70,7 +62,6 @@ void* crear_proceso(void *path_proceso_void){
 
     trasladar(pid_asignado, new, ready);
  
-
     // ------------------ PROCESO CREADO CON EXITO
     
     return NULL;
@@ -94,58 +85,28 @@ void extraer_proceso(int pid){
     }
 }
 
-void iniciar_colas_planificacion(void){
-    new = list_create();
-    ready = list_create();
-    exec = list_create();
-    estado_exit = list_create();
-    blocked = list_create();
-    // list_create hace malloc, guarda con eso
 
-    
-}
 
 // ----------- FUNCIONES SECUNDARIAS
 
 
 void iniciar_planificacion(void){
-
+    pthread_mutex_lock(&mutex_log_debug);
+    log_info(kernel_log_debugg, "iniciando planificador de corto plazo");
+    pthread_mutex_unlock(&mutex_log_debug);
     // -------------------------------------------------
-    // Creamos un hilo para el planificador de corto plazo y este va a vivir junto con el main
+    // Creamos un hilo para el planificador de corto plazo y este va a mantener conexion con CPU 
     pthread_t corto_plazo;
     pthread_create(&corto_plazo, NULL, (void *)planificador_corto_plazo, NULL);
     pthread_detach(corto_plazo);
     // -------------------------------------------------
 }
 
-void imprimir_cola(t_list *cola, void(*_mostrar_pcbs)(void*)) {
-    list_iterate(cola, _mostrar_pcbs);
-}
 
-void trasladar(int pid_buscado,  t_list *cola_origen, t_list *cola_destino){
-    int size_origen = list_size(cola_origen);
-
-    for (int i = 0; i < size_origen; i++) {
-        t_pcb *pcb = list_get(cola_origen, i);
-        if (pcb->pid == pid_buscado)
-        {
-            list_remove(cola_origen, i);
-            _enviar_ready(pcb);
-            break;
-        }
-    }
-}
-
-t_pcb *pop_estado(t_list* lista){
-    t_pcb* pcb = list_get(lista, 0);
-    list_remove(lista, 0);
-    return pcb;
-}
 
 void inicializar_semaforos(void){
 
     // ------- SEMAFOROS DE LAS COLAS DE PROCESOS
-
     pthread_mutex_init(&mutexBlocked, NULL);
     pthread_mutex_init(&mutexNew, NULL);
     pthread_mutex_init(&mutexReady, NULL);
@@ -154,10 +115,12 @@ void inicializar_semaforos(void){
 
 
     // ------- SEMAFOROS DE LOGS
-
+    pthread_mutex_init(&mutex_log_debug, NULL);
+    pthread_mutex_init(&mutex_log, NULL);
 
     // ------- SEMAFOROS DEL PLANIFICADOR DE CORTO PLAZO
-    sem_init(&proceso_listo,0,0);
+    sem_init(&proceso_listo, 0, 0);
+    sem_init(&execute_libre, 0, 1);
 }
 
 // ----------- FUNCIONES AUXILIARES
@@ -166,14 +129,3 @@ int _asignar_PID(void){
     return pid_nuevo_proceso++;
 }//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
 
-void _mostrar_pcbs(void *pcbDeLista) {
-    t_pcb *pcb = (t_pcb *)pcbDeLista;
-    printf("\t\tPID: %d\n", pcb->pid);
-}
-
-void _enviar_ready(t_pcb *pcb){
-    pthread_mutex_lock(&mutexReady);
-        list_add(ready, pcb);
-    pthread_mutex_unlock(&mutexReady);
-    sem_post(&proceso_listo);
-}

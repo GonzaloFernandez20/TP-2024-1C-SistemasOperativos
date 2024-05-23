@@ -3,9 +3,12 @@
 int planificacion_pausada = false; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
 
 void *iniciar_Consola(){
-    //pthread_mutex_lock(SEMAFORO DE LOG DE CONSOLA);
-	log_info(kernel_log, "iniciando consola...");
-	//pthread_mutex_unlock(SEMAFORO DE LOG DE CONSOLA);
+    iniciar_planificacion();
+
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "iniciando consola...");
+    pthread_mutex_unlock(&mutex_log_debug);
+    
     //int planificacion_iniciada = 1; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
     char* comando_ingresado;
 

@@ -7,6 +7,8 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct configuraciones_kernel
 {
@@ -67,4 +69,10 @@ extern pthread_mutex_t mutexNew;
 extern pthread_mutex_t mutexReady;
 extern pthread_mutex_t mutexExec;
 extern pthread_mutex_t mutexExit;
+extern sem_t proceso_listo;
+extern sem_t execute_libre;
+
+extern pthread_mutex_t mutex_log_debug;
+extern pthread_mutex_t mutex_log;
+
 #endif
