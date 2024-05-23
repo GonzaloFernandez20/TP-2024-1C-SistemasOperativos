@@ -17,10 +17,13 @@ void enviar_path_seudocodigo(char* archivo, int PID){
 }
 
 
-void recibir_confirmacion(int pid){
+int recibir_confirmacion(int pid){
     int rta_memoria = recv(fd_conexion_memoria, &rta_memoria, sizeof(int), MSG_WAITALL);
-    if(rta_memoria < 0){
-        // Logeo de error: no se pudo conectar con memoria...
+    if(rta_memoria <= 0){
+        buscar_y_eliminar_pid(new->cola, pid);
+        return 0;
+    }else
+    {
+        return 1;
     }
-    if (rta_memoria == 0){ buscar_y_eliminar_pid(new, pid); }
 } 

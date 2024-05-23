@@ -27,19 +27,12 @@ typedef struct configuraciones_kernel
 
 } t_config_kernel;
 
-
-
-
-/* struct estado //? ESTO TODAVIA NO SE PARA QUE SIRVE
+typedef struct estado
 {
-    t_nombre_estado nombreEstado;
-    t_list *listaProcesos;
-    sem_t *semaforoEstado;
-    pthread_mutex_t *mutexEstado;
-};
-typedef struct estado t_estado; */
-
-//t_nombre_estado estado_de_proceso;
+    pthread_mutex_t mutex_cola;
+    t_list *cola;
+    char* nombre;
+}t_estado;
 
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
@@ -57,22 +50,22 @@ extern int entrada_salida_conectada;
 
 
 // Estados
-extern t_list *new;
-extern t_list *ready;
-extern t_list *exec;
-extern t_list *estado_exit;
-extern t_list *blocked;
+extern t_list *cola_new;
+extern t_list *cola_ready;
+extern t_list *cola_exec;
+extern t_list *cola_estado_exit;
+extern t_list *cola_blocked;
 
-
-extern pthread_mutex_t mutexBlocked;
-extern pthread_mutex_t mutexNew;
-extern pthread_mutex_t mutexReady;
-extern pthread_mutex_t mutexExec;
-extern pthread_mutex_t mutexExit;
 extern sem_t proceso_listo;
 extern sem_t execute_libre;
 
 extern pthread_mutex_t mutex_log_debug;
 extern pthread_mutex_t mutex_log;
+
+extern t_estado *new;
+extern t_estado *ready;
+extern t_estado *exec;
+extern t_estado *blocked;
+extern t_estado *estado_exit;
 
 #endif

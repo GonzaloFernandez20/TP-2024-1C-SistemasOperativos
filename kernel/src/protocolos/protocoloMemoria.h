@@ -9,7 +9,7 @@
 // ---------- DECLARACIONES DE FUNCIONES
 
 void enviar_path_seudocodigo(char* archivo, int PID);
-void recibir_confirmacion(int pid);
+int recibir_confirmacion(int pid);
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
 

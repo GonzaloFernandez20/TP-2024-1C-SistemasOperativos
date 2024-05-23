@@ -9,8 +9,7 @@ int main(int argc, char *argv[]){
     //establecer_conexiones();
     //atender_entradasalida();
     
-    iniciar_colas_planificacion();
-    inicializar_semaforos();
+    
 
     iniciar_Consola();
 

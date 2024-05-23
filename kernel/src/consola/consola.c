@@ -81,11 +81,12 @@ void *iniciar_Consola(){
         }
 
 		free(array_del_comando);
+        free(comando_ingresado);
 	} while(1);
 }
 
 
-// --------------------------------------------------------------------- FUNCIONES AUXILIARES
+// ------------------------ FUNCIONES AUXILIARES
 /**
  * @brief Esta funcion recibe un comando por teclado y lo interpreta.
  *
@@ -96,12 +97,6 @@ void *iniciar_Consola(){
  * @return Enum correspondiente a dicho comando.
  */
 t_comandos_consola _obtener_enum_comando(char *comando_ingresado){
-
-    /*     Uso esta funcion de las commons para comparar los strings
-    
-    bool string_equals_ignore_case(char *actual, char *expected) {
-	return strcasecmp(actual, expected) == 0;
-    } */
 
     if(string_equals_ignore_case(comando_ingresado, "EJECUTAR_SCRIPT"))       /* --> */   { return EJECUTAR_SCRIPT; }
     if(string_equals_ignore_case(comando_ingresado, "INICIAR_PROCESO"))       /* --> */   { return INICIAR_PROCESO; }
@@ -131,28 +126,13 @@ void _imprimir_estados_procesos(void){
     
     puts("Cola BLOCKED: ");
     imprimir_cola(blocked, _mostrar_pcbs);
+
+    puts("Cola EXIT: ");
+    imprimir_cola(estado_exit, _mostrar_pcbs);
 }
 
 
 /*
-
-JUSTIFICACION:
-    De momento el enunciado me dice:
-    
-        -Planificador de largo plazo: "Ante la solicitud de la consola de crear un nuevo proceso el Kernel deberá [...]"
-        -Lineamientos: El módulo Kernel será el encargado de iniciar los procesos del sistema, para ello contará con una *consola interactiva* la cual permitirá las siguientes operaciones [...]
-
-    Y a su vez, me base en una respuesta de un issue de Lean donde le preguntaban por la consola:
-
-        -Las interfaces de I/O no le pedirán nada al módulo Kernel (sino lo contrario), la consola interactiva del módulo Kernel simplemente debe esperar la entrada por teclado y actuar en consecuencia, de hecho, muchas pruebas tranquilamente podrian correrse sin siquiera crear una interfaz I/O.
-
-    y supuse que entonces la consola es una "funcion" del kernel, donde espera que el usuario ingrese las funciones por teclado y en base a eso chequea que instruccion se le indico y ejecuta, faltan codear dichas instrucciones, de momento creo que solo nos interesa INICIAR_PROCESO. 
-    Tambien falta crear las colas de los procesos, definir si son listas o colas es importante. Falta tambien poder agregar un pcb a un estado y poder mandarlo a cpu. 
-    Una vez finalizado eso podemos empezar a ver el tema de planificar por FIFO Y RR. 
-
-    Lo codeado esta sujeto a modificaciones que se necesiten segun el contexto, entiendo que faltan cosas relacionadas a semaforos, logs, variables, etc. De momento compila. 
-
-
 ENUNCIADO: 
 
 Funciones por consola

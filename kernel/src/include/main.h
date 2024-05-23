@@ -17,6 +17,7 @@
 #include <conexiones/conexiones.h>
 #include <protocolos/protocoloES.h>
 #include <consola/consola.h>
+#include <planificacion/colasEstados.h>
 
 // ---- EXTERNAS
 #include <utils/inicializaciones/inicializar.h>
@@ -37,4 +38,10 @@ int entrada_salida_conectada;
 // ---------------- Definiciones de funciones
 void liberar_kernel(void);
 
+
+t_estado *new;
+t_estado *ready;
+t_estado *exec;
+t_estado *blocked;
+t_estado *estado_exit;
 #endif

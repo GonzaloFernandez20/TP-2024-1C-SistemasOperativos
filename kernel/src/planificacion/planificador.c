@@ -5,6 +5,7 @@ int pid_nuevo_proceso = 0;
 pthread_mutex_t mutex_log_debug;
 pthread_mutex_t mutex_log;
 sem_t execute_libre;
+
 // ----------- PLANIFICADOR CORTO PLAZO
 
 void *planificador_corto_plazo(){
@@ -19,13 +20,15 @@ void *planificador_corto_plazo(){
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
        
-        pcbExecute = pop_estado(ready);
+        pcbExecute = pop_estado(ready->cola);
         printf("ENVIANDO PCB %d A CPU", pcbExecute->pid);
+
         pthread_mutex_lock(&mutex_log_debug);
         log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
         pthread_mutex_unlock(&mutex_log_debug);
+
         //enviar_pcb(pcbExecute);
-        usleep(15000000);
+        usleep(400000000);
         //recibirPCB modificado y motivo de desalojo
         //asignar tarea, algo tiene que hacer ahora, capaz conviene q siga otro hilo por la suya
         
@@ -42,11 +45,10 @@ void* crear_proceso(void *path_proceso_void){
     int pid_asignado = _asignar_PID();
     t_pcb *nuevo_pcb = crear_pcb(pid_asignado);
 
-
     // ------------------ AGREGA A COLA NEW 
-    pthread_mutex_lock(&mutexNew);
-        list_add(new, nuevo_pcb);
-    pthread_mutex_unlock(&mutexNew);
+    pthread_mutex_lock(&new->mutex_cola);
+        list_add(new->cola, nuevo_pcb);
+    pthread_mutex_unlock(&new->mutex_cola);
 
     pthread_mutex_lock(&mutex_log);
         log_info(kernel_log, "Se crea el proceso <%d> en NEW", nuevo_pcb->pid);
@@ -56,7 +58,14 @@ void* crear_proceso(void *path_proceso_void){
     // chequeo_multiprogramacion();
 
     //enviar_path_seudocodigo(path_proceso, pid_asignado);
-    //recibir_confirmacion(pid_asignado);
+    //int rta_memoria = recibir_confirmacion(pid_asignado);
+
+    /* if (rta_memoria){
+        pthread_mutex_lock(&mutex_log_debug); 
+            log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
+        pthread_mutex_lock(&mutex_log_debug); 
+        return NULL; 
+    } */
 
     // ------------------ AGREGA A COLA READY
 
@@ -65,12 +74,13 @@ void* crear_proceso(void *path_proceso_void){
     // ------------------ PROCESO CREADO CON EXITO
     
     return NULL;
-} 
+}
+
 
 void extraer_proceso(int pid){
 
-    t_list *array_colas[] = {new, ready, exec, blocked};
-    pthread_mutex_t array_semaforos[] = {mutexNew, mutexReady, mutexExec, mutexBlocked};
+    t_list *array_colas[] = {cola_new, cola_ready, cola_exec, cola_estado_exit};
+    pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
     
     int cant_elementos = (int)(sizeof(array_colas) / sizeof(array_colas[0]));
     int resultado;
@@ -105,14 +115,6 @@ void iniciar_planificacion(void){
 
 
 void inicializar_semaforos(void){
-
-    // ------- SEMAFOROS DE LAS COLAS DE PROCESOS
-    pthread_mutex_init(&mutexBlocked, NULL);
-    pthread_mutex_init(&mutexNew, NULL);
-    pthread_mutex_init(&mutexReady, NULL);
-    pthread_mutex_init(&mutexExec, NULL);
-    pthread_mutex_init(&mutexExit, NULL);
-
 
     // ------- SEMAFOROS DE LOGS
     pthread_mutex_init(&mutex_log_debug, NULL);
