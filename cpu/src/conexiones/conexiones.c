@@ -53,6 +53,7 @@ void conectar_memoria(void){
     else{
         log_info(cpu_log_debug, "CPU conectado a MEMORIA en %s:%s", IP, PUERTO);
         enviar_handshake(fd_conexion_memoria, "CPU", cpu_log_debug);
+        
     }
 
     free(IP);

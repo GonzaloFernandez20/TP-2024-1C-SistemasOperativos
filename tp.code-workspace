@@ -5,8 +5,12 @@
 			"*.h": "c",
 			"cstdlib": "c",
 			"cerrno": "c",
-			"functional": "c"
-			//"*.tcc": "c"
+			"functional": "c",
+			"string": "c",
+			"array": "c",
+			"string_view": "c",
+			"initializer_list": "c",
+			"utility": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},

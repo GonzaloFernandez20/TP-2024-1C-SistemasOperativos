@@ -16,7 +16,7 @@
 typedef enum
 {
 	HANDSHAKE = 1,
-	MENSAJE
+	CREAR_PROCESO
 
 }op_code; 
 
@@ -24,6 +24,7 @@ typedef enum
 typedef struct
 {
 	int size;
+	int offset;
 	void* stream;
 } t_buffer;
 
@@ -38,9 +39,21 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);
 
 void enviar_presentacion(char* nombre_modulo, int socket_cliente);
 
+t_paquete* crear_paquete(op_code cop);
+
+void crear_buffer(t_paquete* paquete, int size);
+
+void buffer_add_string(t_buffer *buffer, char *string);
+
+void buffer_add_int(t_buffer *buffer, int dato);
+
+void enviar_paquete(t_paquete* paquete, int socket_cliente);
+
 void* serializar_paquete(t_paquete* paquete, int bytes);
 
 void eliminar_paquete(t_paquete* paquete);
+
+void eliminar_buffer(t_buffer *buffer);
 
 void recibir_handshake(int fd_cliente, t_log* logger);
 
@@ -48,6 +61,11 @@ int recibir_operacion(int fd_cliente);
 
 void recibir_presentacion(int fd_cliente, t_log* logger);
 
-void* recibir_buffer(int* size, int socket_cliente);
+t_buffer* recibir_buffer(int socket_cliente);
+
+int buffer_read_int(void** stream);
+
+char* buffer_read_string(void** stream, int length);
+
 
 #endif

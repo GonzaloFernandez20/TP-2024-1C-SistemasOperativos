@@ -21,22 +21,21 @@ void gestionar_conexiones_clientes(void){
    atender_cpu();
    atender_kernel();
    atender_entradaSalida();
-
-   while(cpu_conectada || kernel_conectado || IO_conectado){
-    // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
-    // es temporal para que el hilo main no finalice el programa
-   }
 }
 
 void atender_cpu(void){
     atender_cliente(fd_server_memoria, (void *)procesar_operacion_cpu, memoria_log_debugg, "CPU");
-    cpu_conectada = 1;
 }
 void atender_kernel(void){
     atender_cliente(fd_server_memoria, (void *)procesar_operacion_kernel, memoria_log_debugg, "KERNEL");
-    kernel_conectado = 1;
 }
+
+// la conexion de E/S la atendemos con el hilo main
 void atender_entradaSalida(void){
-    atender_cliente(fd_server_memoria, (void *)procesar_operacion_entradaSalida, memoria_log_debugg, "E/S");
-    IO_conectado = 1;
+    int fd_cliente = esperar_cliente(fd_server_memoria);
+    
+    log_info(memoria_log_debugg, "Se conecto E/S");
+
+    recibir_handshake(fd_cliente, memoria_log_debugg);
+    procesar_operacion_entradaSalida(fd_cliente);
 }
