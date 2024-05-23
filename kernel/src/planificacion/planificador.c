@@ -52,7 +52,7 @@ void* crear_proceso(void *path_proceso_void){
 
     // ------------------ AGREGA A COLA NEW 
     pthread_mutex_lock(&mutex_cola);
-        list_add(new, (void *)nuevo_pcb);
+        list_add(new, nuevo_pcb);
     pthread_mutex_unlock(&mutex_cola);
 
     //pthread_mutex_lock(log);
