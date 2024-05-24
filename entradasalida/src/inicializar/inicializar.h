@@ -7,11 +7,13 @@
 #include <utils/inicializaciones/inicializar.h>
 
 
+void chequear_parametros_inicio_interfaz(int argc, char* argv[]);
 
-/*Seteamos las configuraciones iniciales de logs y configs*/ 
 void init(void);
 
-void _leer_configuracion(char *path_config);
+void leer_configuracion();
+
+void inicializar_semaforos(void);
 
 
 #endif

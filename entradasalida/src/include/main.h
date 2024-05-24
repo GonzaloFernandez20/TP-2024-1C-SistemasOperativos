@@ -12,19 +12,21 @@
 // ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
+#include <protocolos/protocoloKernel.h>
 
 
 // ---------------- Definiciones de variables globales
 t_log* IO_log;
 t_log* IO_log_debug;
 
-char *path_config;
+char* path_config;
+char* nombre_Interfaz;
 t_config_IO config_IO;
 
 int fd_conexion_memoria; 
 int fd_conexion_kernel; 
 
-// ---------------- Definiciones de funciones
-void liberar_entradaSalida(void);
+pthread_mutex_t mutex_log_debug;
+pthread_mutex_t mutex_log;
 
 #endif

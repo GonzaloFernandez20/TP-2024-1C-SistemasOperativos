@@ -14,7 +14,7 @@ t_log* iniciar_logger(char* archivo_Log, char *modulo, bool consola_activa, t_lo
 }
 
 char* chequear_parametros(int argc, char* argv[]){ 
-    if(argc < 1) {
+    if(argc < 2) {
         printf("Faltan parametros de entrada\n");
     }
     char* path_config = strdup(argv[1]); 

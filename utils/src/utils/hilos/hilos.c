@@ -13,6 +13,7 @@ void atender_cliente(int fd_servidor, void (*procesar_conexion)(void*), t_log* l
     asignar_hilo(fd_cliente, procesar_conexion);
 }
 
+
 void asignar_hilo(int *fd_cliente,  void (*procesar_conexion)(void*)){
     pthread_t thread_cliente;
 
@@ -29,8 +30,3 @@ int _deshacer_casting(void *fd_cpu_casteado){
     return dato_sin_casting; // Devuelvo valor original 
 }
 
-void atender_solicitud(void (*procesar_solicitud)){
-    pthread_t thread_solicitud;
-    pthread_create(&thread_solicitud, NULL, (void *)procesar_solicitud, NULL);
-    pthread_detach(thread_solicitud);
-}

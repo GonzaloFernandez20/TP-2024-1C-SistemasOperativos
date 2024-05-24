@@ -2,7 +2,8 @@
 
 void *procesar_conexion_es(void *fd_es_casteado){
 
-/*     int fd_es = _deshacer_casting(fd_es_casteado);
+    int fd_es = _deshacer_casting(fd_es_casteado);
+	free(fd_es_casteado);
 
     int cliente_conectado = 1;
 
@@ -17,7 +18,6 @@ void *procesar_conexion_es(void *fd_es_casteado){
 		case -1:
 			log_error(kernel_log_debugg, "ENTRADA/SALIDA se desconecto\n");
             cliente_conectado = 0;
-			entrada_salida_conectada = 0;
 			break;
 
 		default:

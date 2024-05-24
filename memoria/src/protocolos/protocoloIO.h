@@ -7,6 +7,6 @@
 #include <utils/hilos/hilos.h>
 
 
-void procesar_operacion_entradaSalida(int fd_IO);
+void* procesar_operacion_entradaSalida(void* fd_IO_casteado);
 
 #endif
