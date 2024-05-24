@@ -2,7 +2,7 @@
 #define CICLO_H_INCLUDED
 
 #include <commons/collections/dictionary.h>
-
+#include <commons/string.h>
 #include <protocolos/protocoloInterrupt.h>
 // #include <include/operaciones.h>
 
@@ -81,11 +81,11 @@ void io_fs_read();
 void exit_os();
 
 
-void* direccionDelRegistro(char* registro);
+void* direccionDelRegistro(char* nombre_registro);
 int tamanioDeRegistro(char* registro);
 int identificarInterfaz(char* interfaz);
 void enviarleAkernel(int interfaz, int unidades); // falta implementar
-
+// bool contiene(char *unArrayDeStrings[],int sizeOfArray,char* unElemento);
 
 
 void init_opCodes_dictionary(void);
@@ -109,7 +109,8 @@ void desalojarProcesoActual();
 struct_PCB PCB;
 struct_registros registrosCPU;   
 t_instruccion instruccion;
-t_dictionary* opCodes;
+t_dictionary* opCodes_diccionario;
+t_dictionary* registros_diccionario;
 
 // Me traigo variable global desde protocoloInterrupt.h
 extern u_int32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
