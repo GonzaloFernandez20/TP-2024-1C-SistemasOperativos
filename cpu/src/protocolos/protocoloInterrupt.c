@@ -36,7 +36,7 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 			 */
 		
 			PID_a_interrumpir = atoi(recibir_mensaje(fd_interrupt));
-			log_info(cpu_log_debug, "Kernel pide interrumpir proceso PID=%s", PID_recibido);
+			log_info(cpu_log_debug, "Kernel pide interrumpir proceso PID=%d", PID_a_interrumpir);
 
 			break;
 		

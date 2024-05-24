@@ -10,24 +10,24 @@ void init_opCodes_dictionary() {
     opCodes_diccionario = dictionary_create();
     
     dictionary_put(opCodes_diccionario, SET,            (void*)set);
-    dictionary_put(opCodes_diccionario, MOV_IN,         (void*)mov_in);
-    dictionary_put(opCodes_diccionario, MOV_OUT,        (void*)mov_out);
+    // dictionary_put(opCodes_diccionario, MOV_IN,         (void*)mov_in);
+    // dictionary_put(opCodes_diccionario, MOV_OUT,        (void*)mov_out);
     dictionary_put(opCodes_diccionario, SUM,            (void*)sum);
     dictionary_put(opCodes_diccionario, SUB,            (void*)sub);
     dictionary_put(opCodes_diccionario, JNZ,            (void*)jnz);
-    dictionary_put(opCodes_diccionario, RESIZE,         (void*)resize);
-    dictionary_put(opCodes_diccionario, COPY_STRING,    (void*)copy_string);
-    dictionary_put(opCodes_diccionario, WAIT,           (void*)wait);
-    dictionary_put(opCodes_diccionario, SIGNAL,         (void*)signal_kernel);
+    // dictionary_put(opCodes_diccionario, RESIZE,         (void*)resize);
+    // dictionary_put(opCodes_diccionario, COPY_STRING,    (void*)copy_string);
+    // dictionary_put(opCodes_diccionario, WAIT,           (void*)wait);
+    // dictionary_put(opCodes_diccionario, SIGNAL,         (void*)signal_kernel);
     dictionary_put(opCodes_diccionario, IO_GEN_SLEEP,   (void*)io_gen_sleep);
-    dictionary_put(opCodes_diccionario, IO_STDIN_READ,  (void*)io_stdin_read);
-    dictionary_put(opCodes_diccionario, IO_STDOUT_WRITE,(void*)io_stdout_write);
-    dictionary_put(opCodes_diccionario, IO_FS_CREATE,   (void*)io_fs_create);
-    dictionary_put(opCodes_diccionario, IO_FS_DELETE,   (void*)io_fs_delete);
-    dictionary_put(opCodes_diccionario, IO_FS_TRUNCATE, (void*)io_fs_truncate);
-    dictionary_put(opCodes_diccionario, IO_FS_WRITE,    (void*)io_fs_write);
-    dictionary_put(opCodes_diccionario, IO_FS_READ,     (void*)io_fs_read);
-    dictionary_put(opCodes_diccionario, EXIT_OS,        (void*)exit_os);
+    // dictionary_put(opCodes_diccionario, IO_STDIN_READ,  (void*)io_stdin_read);
+    // dictionary_put(opCodes_diccionario, IO_STDOUT_WRITE,(void*)io_stdout_write);
+    // dictionary_put(opCodes_diccionario, IO_FS_CREATE,   (void*)io_fs_create);
+    // dictionary_put(opCodes_diccionario, IO_FS_DELETE,   (void*)io_fs_delete);
+    // dictionary_put(opCodes_diccionario, IO_FS_TRUNCATE, (void*)io_fs_truncate);
+    // dictionary_put(opCodes_diccionario, IO_FS_WRITE,    (void*)io_fs_write);
+    // dictionary_put(opCodes_diccionario, IO_FS_READ,     (void*)io_fs_read);
+    // dictionary_put(opCodes_diccionario, EXIT_OS,        (void*)exit_os);
 }
 
 /* Cada nombre de registro tiene asociado la dirección de memoria*/

@@ -3,7 +3,7 @@
 
 // ---------- INCLUSIONES
 #include <stdio.h>
-#include <string.h>
+// #include <string.h>
 #include <commons/log.h>
 
 

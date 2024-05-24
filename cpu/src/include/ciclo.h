@@ -62,23 +62,23 @@ typedef struct{
 void set();
 void sum();//Declaraciones de todas las operaciones
 void set();
-void mov_in(char* registroDatos, char* registroDireccion);
-void mov_out(char* registroDireccion, char* registroDatos);
+// void mov_in(char* registroDatos, char* registroDireccion);
+// void mov_out(char* registroDireccion, char* registroDatos);
 void sub();
 void jnz();
 void io_gen_sleep();
-void resize(char* tamanio);
-void copy_string(char* tamanio);
-void wait(char* recurso);
-void signal_kernel(char* recurso); // signal a secas es una función de la biblioteca estándar signal.h
-void io_stdin_read(char* interfaz,char* registroDireccion,char* registroTamanio);
-void io_stdout_write(char* interfaz,char* registroDireccion,char* registroTamanio);
-void io_fs_create(char* interfaz, char* nombreDelArchivo);
-void io_fs_delete(char* interfaz, char* nombreDelArchivo);
-void io_fs_truncate(char* interfaz,char* nombreDelArchivo,char* registroTamanio);
-void io_fs_write(char* interfaz,char* nombreDelArchivo,char* registroDireccion,char* registroTamanio,char* registroPunteroArchivo);
-void io_fs_read();
-void exit_os();
+// void resize(char* tamanio);
+// void copy_string(char* tamanio);
+// void wait(char* recurso);
+// void signal_kernel(char* recurso); // signal a secas es una función de la biblioteca estándar signal.h
+// void io_stdin_read(char* interfaz,char* registroDireccion,char* registroTamanio);
+// void io_stdout_write(char* interfaz,char* registroDireccion,char* registroTamanio);
+// void io_fs_create(char* interfaz, char* nombreDelArchivo);
+// void io_fs_delete(char* interfaz, char* nombreDelArchivo);
+// void io_fs_truncate(char* interfaz,char* nombreDelArchivo,char* registroTamanio);
+// void io_fs_write(char* interfaz,char* nombreDelArchivo,char* registroDireccion,char* registroTamanio,char* registroPunteroArchivo);
+// void io_fs_read();
+// void exit_os();
 
 
 void* direccionDelRegistro(char* nombre_registro);
@@ -113,7 +113,7 @@ t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
 
 // Me traigo variable global desde protocoloInterrupt.h
-extern u_int32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
+extern uint32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
                                     //a través de la conexión Interrupt, PIDs que se quieran interrumpir.
                                     //Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir,
                                     //entonces seteamos el flag en 1. Luego de procesar la solicitud,

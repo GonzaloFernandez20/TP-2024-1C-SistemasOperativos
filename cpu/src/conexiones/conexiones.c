@@ -79,7 +79,7 @@ void conectar_memoria(void){
 }
 
 void gestionar_conexiones_kernel(void){
-    atender_dispatch();
+    // atender_dispatch();
     atender_interrupt();
 
     while(dispatch_conectado || interrupt_conectado){
@@ -88,10 +88,10 @@ void gestionar_conexiones_kernel(void){
     }
 }
 
-void atender_dispatch(void){
-    atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
-    dispatch_conectado = 1;
-}
+// void atender_dispatch(void){
+//     atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
+//     dispatch_conectado = 1;
+// }
 
 void atender_interrupt(void){
     atender_cliente(fd_interrupt_server, (void *)procesar_operacion_interrupt, cpu_log_debug,"KERNEL-INTERRUPT");
