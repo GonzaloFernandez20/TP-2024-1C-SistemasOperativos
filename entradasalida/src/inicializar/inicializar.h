@@ -2,6 +2,7 @@
 #define IO_INICIALIZAR_H_
 
 #include <commons/log.h>
+#include <commons/string.h>
 #include <commons/config.h>
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>

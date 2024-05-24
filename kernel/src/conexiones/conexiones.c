@@ -130,7 +130,7 @@ void recibir_presentacion_IO(int fd_cliente){
 	strcpy(tipo_Interfaz, buffer_read_string(&stream, length_tipo));
 
     pthread_mutex_lock(&mutex_log_debug);
-	log_info(memoria_log_debugg, "Handshake exitoso: Establecida comunicacion con %s:%s\n", nombre_Interfaz, tipo_Interfaz);
+	log_info(kernel_log_debugg, "Handshake exitoso: Establecida comunicacion con %s:%s\n", nombre_Interfaz, tipo_Interfaz);
     pthread_mutex_unlock(&mutex_log_debug);
 	
     //registrar_interfaz_conectada(nombre_Interfaz,tipo_Interfaz,fd_cliente);

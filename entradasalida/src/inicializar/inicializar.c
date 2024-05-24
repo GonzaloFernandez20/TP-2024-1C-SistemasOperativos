@@ -7,7 +7,7 @@ void chequear_parametros_inicio_interfaz(int argc, char* argv[]){
         printf("Faltan parametros de entrada\n");
     }
 	path_config = strdup(argv[1]); 
-	nombreInterfaz = strdup(argv[2]); 
+	nombre_Interfaz = strdup(argv[2]); 
 }
 
 void init(void){
