@@ -62,6 +62,11 @@ extern sem_t execute_libre;
 extern pthread_mutex_t mutex_log_debug;
 extern pthread_mutex_t mutex_log;
 
+extern sem_t proceso_listo;
+extern sem_t proceso_cargado;
+extern sem_t execute_libre;
+extern sem_t grado_multiprogramacion;
+
 extern t_estado *new;
 extern t_estado *ready;
 extern t_estado *exec;

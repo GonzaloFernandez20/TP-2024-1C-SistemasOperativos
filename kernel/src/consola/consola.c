@@ -3,10 +3,9 @@
 int planificacion_pausada = false; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
 
 void *iniciar_Consola(){
-    iniciar_planificacion();
 
     pthread_mutex_lock(&mutex_log_debug);
-        log_info(kernel_log_debugg, "iniciando consola...");
+        log_info(kernel_log_debugg, "Iniciando consola...");
     pthread_mutex_unlock(&mutex_log_debug);
     
     //int planificacion_iniciada = 1; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
@@ -26,16 +25,11 @@ void *iniciar_Consola(){
             break;
 
         case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
-            printf("Ejecutando comando: INICIAR_PROCESO\n");
 
             char * path_proceso = array_del_comando[1];
             
-            pthread_t creacion_proceso;
-            pthread_create(&creacion_proceso, NULL, (void *)crear_proceso, (void *)path_proceso);
-            pthread_detach(creacion_proceso);
+            crear_proceso(path_proceso);
 
-            
-            //log_info(kernel_log, "Solicitud aceptada, creando nuevo proceso. ");
             free(path_proceso);
             break;
 
@@ -62,7 +56,8 @@ void *iniciar_Consola(){
             if (planificacion_pausada)
             {
                 //retomar_planificacion();
-            }            break;
+            }            
+            break;
 
         case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
             printf("Ejecutando comando: MULTIPROGRAMACION\n");

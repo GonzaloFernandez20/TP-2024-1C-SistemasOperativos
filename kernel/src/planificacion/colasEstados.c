@@ -8,7 +8,6 @@ t_list *cola_exec;
 t_list *cola_estado_exit;
 t_list *cola_blocked;
 
-sem_t proceso_listo;
 
 // ---------- DEFINICIONES DE FUNCIONES
 
@@ -75,26 +74,31 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
             pthread_mutex_lock(&(destino->mutex_cola));
             list_add(cola_destino, pcb);
             pthread_mutex_unlock(&(destino->mutex_cola));
-
+            
             break;
         }
     }
     pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "PID: <%d> - Estado Anterior: <%s> - Estado Actual: <%s>", pid_buscado, origen->nombre, destino->nombre);
+        log_info(kernel_log, "PID: <%d> - Estado Anterior: < %s > - Estado Actual: < %s >", pid_buscado, origen->nombre, destino->nombre);
     pthread_mutex_unlock(&mutex_log);
 
     if (string_equals_ignore_case(destino->nombre, "READY"))
             {
-                _loggear_ingreso_ready(cola_destino);
-                sem_post(&proceso_listo);
+                _loggear_ingreso_ready();
+                //sem_post(&proceso_listo);
             }
 }
 
-t_pcb *pop_estado(t_list* lista){
-    t_pcb* pcb = list_get(lista, 0);
-    list_remove(lista, 0);
+t_pcb *pop_estado(t_estado* estado){
+    pthread_mutex_lock(&(estado->mutex_cola));
+        t_pcb* pcb = list_remove(estado->cola, 0);
+    pthread_mutex_unlock(&(estado->mutex_cola));
+
     return pcb;
 }
+
+// TODO: t_pcb *push_estado(t_estado* estado){}
+
 
 // ---------- FUNCIONES AUXILIARES
 
@@ -103,9 +107,10 @@ void _mostrar_pcbs(void *pcbDeLista) {
     printf("\t\tPID: %d\n", pcb->pid);
 }
 
-void _loggear_ingreso_ready(t_list *cola_ready){
-
-    char* lista_de_pids = string_duplicate(__armar_lista_pids(cola_ready));
+void _loggear_ingreso_ready(){
+    pthread_mutex_lock(&(ready->mutex_cola));
+    char* lista_de_pids = string_duplicate(__armar_lista_pids());
+    pthread_mutex_unlock(&(ready->mutex_cola));
 
     pthread_mutex_lock(&mutex_log);
         log_info(kernel_log, "Cola Ready: [%s]", lista_de_pids);
@@ -114,7 +119,7 @@ void _loggear_ingreso_ready(t_list *cola_ready){
     free(lista_de_pids);
 }
 
-char* __armar_lista_pids(t_list* cola_ready) {
+char* __armar_lista_pids() {
     int size = list_size(cola_ready);
     char* lista = string_duplicate(""); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
     
@@ -135,11 +140,3 @@ char* __armar_lista_pids(t_list* cola_ready) {
     }
     return lista;
 }
-
-
-/*
-void string_append(char** original, char* string_to_add) {
-	*original = realloc(*original, strlen(*original) + strlen(string_to_add) + 1);
-	strcat(*original, string_to_add);
-}
-*/

@@ -3,7 +3,7 @@
 
 // ------------- LIBRERIAS INCLUIDAS
 #include <include/estructuras.h>
-#include <planificacion/planificador.h>
+#include <planificacion/PLPyPCP.h>
 #include <utils/hilos/hilos.h>
 
 #include <commons/log.h>

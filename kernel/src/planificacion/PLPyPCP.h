@@ -21,7 +21,7 @@
 
 void *planificador_corto_plazo(void);
 
-void* crear_proceso(void *path_proceso_void);
+void crear_proceso(char *path_proceso);
 void extraer_proceso(int pid);
 
 void inicializar_semaforos(void);

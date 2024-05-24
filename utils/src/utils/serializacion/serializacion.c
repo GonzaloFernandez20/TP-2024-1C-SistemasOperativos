@@ -35,7 +35,7 @@ void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 	eliminar_paquete(paquete);
 } 
 
-// crea un paqueta ya indicando su codigo de operacion
+// crea un paquete ya indicando su codigo de operacion
 t_paquete* crear_paquete(op_code cop){
 	t_paquete* paquete = malloc(sizeof(t_paquete));
 	paquete->codigo_operacion = cop;
