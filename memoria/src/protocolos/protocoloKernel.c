@@ -11,11 +11,11 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 
 		switch (cod_op) {
 		case CREAR_PROCESO:
-            atender_solicitud((void *)crear_proceso);
+            crear_proceso();
 			break;
 		
         case FINALIZAR_PROCESO:
-            atender_solicitud((void *)eliminar_proceso);
+            eliminar_proceso();
 			break;
 
 		case -1:
@@ -38,7 +38,7 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 
 
 
-void* crear_proceso(void){
+void crear_proceso(void){
     t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
 
@@ -56,7 +56,6 @@ void* crear_proceso(void){
 	crear_estructuras_administrativas(PID, path_archivo);
 
 	free(path_archivo);
-    return NULL;
 }
 
 void crear_estructuras_administrativas(int PID, char* path_archivo){
@@ -160,7 +159,7 @@ void leer_almacenar_instrucciones(char** CODE_segmento, FILE* seudocodigo){
     free(buffer);
 }
 
-void* eliminar_proceso(void){
+void eliminar_proceso(void){
     t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
 
@@ -173,7 +172,6 @@ void* eliminar_proceso(void){
     log_info(memoria_log_debugg, "Liberado el espacio en memoria del proceso <%d>\n", PID);
     pthread_mutex_unlock(&mutex_log_debug);
 
-    return NULL;
 }
 
 void liberar_estructuras_asociadas(int PID){
