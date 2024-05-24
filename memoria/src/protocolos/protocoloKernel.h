@@ -23,7 +23,7 @@ char* concatenar_rutas(char* directorio, char* archivo);
 
 int contar_lineas(FILE* archivo_seudocodigo);
 
-void leer_almacenar_instrucciones(char** CODE_segmento, FILE* seudocodigo);
+void leer_almacenar_instrucciones(char** CODE_segmento, char* path_archivo);
 
 void eliminar_proceso(void);
 
