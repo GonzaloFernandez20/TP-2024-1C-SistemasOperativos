@@ -12,7 +12,6 @@ int buscar_PID_memoria_instrucciones(int PID_buscado){
         if (proceso-> PID == PID_buscado)
         {
             indice_proceso = i;
-            free(proceso);
             break;
         }
     }

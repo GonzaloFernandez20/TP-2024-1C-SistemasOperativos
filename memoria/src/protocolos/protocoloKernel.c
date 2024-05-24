@@ -37,7 +37,7 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
 }
 
 
-
+////////////////////////////CREAR PROCESOS///////////////////////////////////////////////////////////////////////////////
 void crear_proceso(void){
     t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
@@ -162,6 +162,7 @@ void leer_almacenar_instrucciones(char** CODE_segmento, char* path_archivo){
     fclose(archivo_seudocodigo);
 }
 
+//////////////////// ELIMINAR PROCESOS //////////////////////////////////////////////////////////
 void eliminar_proceso(void){
     t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
