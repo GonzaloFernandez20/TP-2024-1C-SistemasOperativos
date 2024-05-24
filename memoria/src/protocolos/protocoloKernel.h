@@ -11,7 +11,7 @@
 
 void *procesar_operacion_kernel(void *fd_kernel_casteado);
 
-void* crear_proceso(void);
+void crear_proceso(void);
 
 void crear_estructuras_administrativas(int PID, char* path_archivo);
 
@@ -25,7 +25,7 @@ int contar_lineas(FILE* archivo_seudocodigo);
 
 void leer_almacenar_instrucciones(char** CODE_segmento, FILE* seudocodigo);
 
-void* eliminar_proceso(void);
+void eliminar_proceso(void);
 
 void liberar_estructuras_asociadas(int PID);
 
