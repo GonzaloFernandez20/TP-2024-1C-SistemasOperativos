@@ -18,7 +18,7 @@ void iniciar_servidor_memoria(void){
 }
 
 void gestionar_conexiones_clientes(void){
-   //atender_cpu();
+   atender_cpu();
    atender_kernel();
    atender_entradaSalida();
 }

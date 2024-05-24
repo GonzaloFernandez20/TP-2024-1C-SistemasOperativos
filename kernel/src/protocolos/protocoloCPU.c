@@ -56,7 +56,7 @@ int recibir_pcb(t_pcb* pcb){
     pcb->registros_cpu.DI = buffer_read_int(&stream);
 
     pthread_mutex_lock(&mutex_log_debug);
-	log_info(logger, "CPU envio el contexto de ejecucion del proceso < %d >", pcb->pid);
+	log_info(kernel_log_debugg, "CPU envio el contexto de ejecucion del proceso < %d >", pcb->pid);
 	pthread_mutex_unlock(&mutex_log_debug);
 
 	eliminar_buffer(buffer);
