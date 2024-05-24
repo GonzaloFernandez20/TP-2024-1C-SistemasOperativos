@@ -6,6 +6,7 @@
 #include <commons/string.h>
 #include <include/estructuras.h>
 #include <planificacion/pcb.h>
+#include <consola/funcionesConsola.h>
 
 #include <pthread.h>
 #include <semaphore.h>
@@ -18,7 +19,6 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino);
 
 
 t_pcb *pop_estado(t_estado* estado);
-void _mostrar_pcbs(void *pcbDeLista); 
 void _loggear_ingreso_ready(); 
 
 char* __armar_lista_pids();

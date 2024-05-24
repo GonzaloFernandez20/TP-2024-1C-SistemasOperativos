@@ -102,10 +102,6 @@ t_pcb *pop_estado(t_estado* estado){
 
 // ---------- FUNCIONES AUXILIARES
 
-void _mostrar_pcbs(void *pcbDeLista) {
-    t_pcb *pcb = (t_pcb *)pcbDeLista;
-    printf("\t\tPID: %d\n", pcb->pid);
-}
 
 void _loggear_ingreso_ready(){
     pthread_mutex_lock(&(ready->mutex_cola));

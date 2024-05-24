@@ -108,23 +108,6 @@ char **_interpretar(char *comando){
     return string_split(comando, " ");
 }
 
-void _imprimir_estados_procesos(void){
-
-    puts("Cola NEW: ");
-    imprimir_cola(new, _mostrar_pcbs);
-
-    puts("Cola READY: ");
-    imprimir_cola(ready, _mostrar_pcbs);
-
-    puts("Cola EXECUTE: ");
-    imprimir_cola(exec, _mostrar_pcbs);
-    
-    puts("Cola BLOCKED: ");
-    imprimir_cola(blocked, _mostrar_pcbs);
-
-    puts("Cola EXIT: ");
-    imprimir_cola(estado_exit, _mostrar_pcbs);
-}
 
 
 /*

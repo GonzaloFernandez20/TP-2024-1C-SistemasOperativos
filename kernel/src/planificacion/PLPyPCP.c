@@ -67,40 +67,9 @@ void *planificador_largo_plazo(void){
 
 // ----------- FUNCIONES PRINCIPALES
 
-void crear_proceso(char *path_proceso){
-    
-    int pid_asignado = _asignar_PID();
-    t_pcb *nuevo_pcb = crear_pcb(pid_asignado, path_proceso);
 
-    // ------------------ AGREGA A COLA NEW 
-    pthread_mutex_lock(&new->mutex_cola);
-        list_add(new->cola, nuevo_pcb);
-    pthread_mutex_unlock(&new->mutex_cola);
 
-    pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "Se crea el proceso < %d > en NEW", nuevo_pcb->pid);
-    pthread_mutex_unlock(&mutex_log);
 
-    sem_post(&proceso_cargado);
-}
-
-void extraer_proceso(int pid){
-
-    t_estado *array_estados[] = {new, ready, exec, estado_exit};
-    pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
-    
-    int cant_elementos = (int)(sizeof(array_estados) / sizeof(array_estados[0]));
-    int resultado;
-
-    for (int i = 0; i < cant_elementos; i++)
-    {   
-        pthread_mutex_lock(&array_semaforos[i]);
-            resultado = buscar_y_eliminar_pid(array_estados[i], pid);
-        pthread_mutex_unlock(&array_semaforos[i]);
-        
-        if(resultado != (-1)){  break;  }
-    }
-}
 
 
 
@@ -145,7 +114,4 @@ void inicializar_semaforos(void){
 
 // ----------- FUNCIONES AUXILIARES
 
-int _asignar_PID(void){
-    return pid_nuevo_proceso++;
-}//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
 
