@@ -13,13 +13,17 @@
 
 
 // Protocolos de comunicacion
-typedef enum
+typedef enum CODIGOS_DE_OPERACION
 {
 	HANDSHAKE = 1,
-	MENSAJE, 	// los datos recibidos con op_code MENSAJE son de tipo char*.
-	PAQUETE		// los datos recibidos con este op_code son de tipo void* (es decir, genérico), se deben extraer los distintos valores con buffer_read(t_buffer *buffer, void *read_data)
-				
-	// recibiremos texto por MENSAJE y multiples tipos de datos por PAQUETE.
+	CREAR_PROCESO,
+	ELIMINAR_PROCESO,
+	OBTENER_INSTRUCCION,
+	INSTRUCCION,
+	CONTEXTO_EJECUCION,
+	MOTIVO_DESALOJO,
+	MENSAJE
+
 }op_code; 
 
 
@@ -50,9 +54,38 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);
 
 void enviar_presentacion(char* nombre_modulo, int socket_cliente);
 
+t_paquete* crear_paquete(op_code cop);
+
+void crear_buffer(t_paquete* paquete, int size);
+
+void buffer_add_string(t_buffer *buffer, char *string);
+
+void buffer_add_int(t_buffer *buffer, int dato);
+
+void enviar_paquete(t_paquete* paquete, int socket_cliente);
+
 void* serializar_paquete(t_paquete* paquete, int bytes);
 
 void eliminar_paquete(t_paquete* paquete);
+
+void eliminar_buffer(t_buffer *buffer);
+
+/**
+ * @brief Recibe y procesa un mensaje de handshake de un cliente.
+ * 
+ * Esta función recibe el mensaje de handshake del cliente identificado por el descriptor de archivo 'fd_cliente'.
+ * Basado en el mensaje recibido, envía una respuesta al cliente y procesa la presentación del cliente si el handshake es exitoso.
+ * Los resultados de la operación se registran utilizando el logger proporcionado.
+ * 
+ * @param fd_cliente El descriptor de archivo del socket del cliente.
+ * @param logger Un puntero al objeto logger utilizado para registrar mensajes.
+ * 
+ * @note La función asume que `recibir_operacion` y `recibir_presentacion` están definidas en otro lugar y se utilizan para recibir la operación y la presentación del cliente respectivamente.
+ * 
+ * @note Si el mensaje de handshake indica un éxito (valor 1), se envía una respuesta de handshake exitoso al cliente y se procesa la presentación del cliente utilizando la función `recibir_presentacion`.
+ *       Si el mensaje de handshake indica un error (valor distinto de 1), se envía una respuesta de handshake fallido al cliente y se registra un error utilizando el logger.
+ */
+void eliminar_buffer(t_buffer *buffer);
 
 /**
  * @brief Recibe y procesa un mensaje de handshake de un cliente.
@@ -89,39 +122,11 @@ int recibir_operacion(int fd_cliente);
 
 void recibir_presentacion(int fd_cliente, t_log* logger);
 
-void* recibir_buffer(int* size, int socket_cliente);
+t_buffer* recibir_buffer(int socket_cliente);
 
+int buffer_read_int(void** stream);
 
-
-// Crea un buffer vacío de tamaño size y offset 0
-t_buffer *buffer_create();
-
-// Libera la memoria asociada al buffer
-void buffer_destroy(t_buffer *buffer);
-
-// Agrega un stream al buffer en la posición actual y avanza el offset
-void buffer_add(t_buffer *buffer, void *data, uint32_t size);
-
-// Guarda size bytes del principio del buffer en la dirección data y avanza el offset
-void buffer_read(t_buffer *buffer, void *read_data);
-
-// // Agrega un uint32_t al buffer
-// void buffer_add_uint32(t_buffer *buffer, uint32_t data);
-
-// // Lee un uint32_t del buffer y avanza el offset
-// uint32_t buffer_read_uint32(t_buffer *buffer);
-
-// // Agrega un uint8_t al buffer
-// void buffer_add_uint8(t_buffer *buffer, uint8_t data);
-
-// // Lee un uint8_t del buffer y avanza el offset
-// uint8_t buffer_read_uint8(t_buffer *buffer);
-
-// // Agrega string al buffer con un uint32_t adelante indicando su longitud
-// void buffer_add_string(t_buffer *buffer, uint32_t length, char *string);
-
-// // Lee un string y su longitud del buffer y avanza el offset
-// char *buffer_read_string(t_buffer *buffer, uint32_t *length);
+char* buffer_read_string(void** stream, int length);
 
 
 #endif

@@ -3,6 +3,7 @@
 
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>
+#include <planificacion/PLPyPCP.h>
 // ---------- DEFINICIONES DE LAS ESTRUCTURAS
 
 

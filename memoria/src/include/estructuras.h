@@ -4,8 +4,13 @@
 // ---------- INCLUSIONES
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <commons/log.h>
+#include <commons/collections/list.h>
+#include <commons/collections/node.h>
+
+#include <pthread.h>
 
 
 // ---------- ESTRUCTURAS 
@@ -20,6 +25,15 @@ typedef struct configuraciones_memoria
     
 } t_config_memoria;
 
+//asocia PID con el archivo de seudocofigo
+typedef struct proceso_cargado
+{
+    int PID;
+
+    int cant_instrucciones;
+    char** CODE_segmento;
+}t_proceso;
+
 
 
 // ---------- VARIABLES GLOBALES
@@ -30,9 +44,13 @@ extern char *path_config;
 extern t_config_memoria config_memoria;
 
 extern int fd_server_memoria;
+extern int fd_kernel;
+extern int fd_cpu;
 
-extern int cpu_conectada;
-extern int kernel_conectado;
-extern int IO_conectado;
+extern t_list* memoria_de_instrucciones;
+
+extern pthread_mutex_t mutex_log_debug;
+extern pthread_mutex_t mutex_log;
+extern pthread_mutex_t mutex_memoria_instrucciones;
 
 #endif

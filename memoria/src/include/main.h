@@ -25,12 +25,18 @@ char *path_config;
 t_config_memoria config_memoria;
 
 int fd_server_memoria;
+int fd_kernel;
+int fd_cpu;
 
-int cpu_conectada;
-int kernel_conectado;
-int IO_conectado;
 
-// ---------------- Definiciones de funciones
-void liberar_memoria(void);
+t_list* memoria_de_instrucciones;
+
+//--semaforos
+
+pthread_mutex_t mutex_log_debug;
+pthread_mutex_t mutex_log;
+pthread_mutex_t mutex_memoria_instrucciones;
+
+
 
 #endif

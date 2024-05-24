@@ -6,6 +6,14 @@ int main(int argc, char* argv[]) {
 
     init();
     establecer_conexiones();
+
+    
+
+    while (1)
+    {
+        /* code */
+    }
+    
     liberar_entradaSalida();
 
     return 0;

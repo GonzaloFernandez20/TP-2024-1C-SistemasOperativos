@@ -2,10 +2,13 @@
 #define ESTRUCTURAS_H_INCLUDED
 
 // ---------- INCLUSIONES
+#include <commons/log.h>
+#include <commons/collections/list.h>
+
 #include <stdio.h>
 #include <string.h>
-#include <commons/log.h>
-
+#include <pthread.h>
+#include <semaphore.h>
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
 typedef struct configuraciones_kernel
 {
@@ -24,28 +27,12 @@ typedef struct configuraciones_kernel
 
 } t_config_kernel;
 
-
-// ---------- ESTADOS DE UN PROCESO
-
-/* typedef enum nombre_estado
-{   
-    NEW,
-    READY,
-    EXEC,
-    EXIT,
-    BLOCKED
-}t_nombre_estado; */
-
-/* struct estado //? ESTO TODAVIA NO SE PARA QUE SIRVE
+typedef struct estado
 {
-    t_nombre_estado nombreEstado;
-    t_list *listaProcesos;
-    sem_t *semaforoEstado;
-    pthread_mutex_t *mutexEstado;
-};
-typedef struct estado t_estado; */
-
-//t_nombre_estado estado_de_proceso;
+    pthread_mutex_t mutex_cola;
+    t_list *cola;
+    char* nombre;
+}t_estado;
 
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
@@ -63,10 +50,27 @@ extern int entrada_salida_conectada;
 
 
 // Estados
-/* extern t_estado *estadoNew;
-extern t_estado *estadoReady;
-extern t_estado *estadoExecute;
-extern t_estado *estadoBlocked; 
-extern t_estado *estadoExit; */
+extern t_list *cola_new;
+extern t_list *cola_ready;
+extern t_list *cola_exec;
+extern t_list *cola_estado_exit;
+extern t_list *cola_blocked;
+
+extern sem_t proceso_listo;
+extern sem_t execute_libre;
+
+extern pthread_mutex_t mutex_log_debug;
+extern pthread_mutex_t mutex_log;
+
+extern sem_t proceso_listo;
+extern sem_t proceso_cargado;
+extern sem_t execute_libre;
+extern sem_t grado_multiprogramacion;
+
+extern t_estado *new;
+extern t_estado *ready;
+extern t_estado *exec;
+extern t_estado *blocked;
+extern t_estado *estado_exit;
 
 #endif

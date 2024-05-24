@@ -3,13 +3,17 @@
 
 // ------------- LIBRERIAS INCLUIDAS
 #include <include/estructuras.h>
-#include <planificacion/planificador.h>
+#include <planificacion/PLPyPCP.h>
+#include <utils/hilos/hilos.h>
+#include <consola/funcionesConsola.h>
 
 #include <commons/log.h>
 #include <commons/string.h>
-#include<readline/readline.h>
+#include <readline/readline.h>
 
 #include <stdlib.h>
+#include <stdbool.h>
+#include <pthread.h>
 
 // ------------- COMANDOS DE CONSOLA
 
@@ -29,13 +33,15 @@ typedef enum comandos_consola{
 
 // ------------- VARIABLES
 
+extern int planificacion_pausada;
+
 
 // ------------- FUNCIONES DE CONSOLA
 
 void *iniciar_Consola(void);
 t_comandos_consola _obtener_enum_comando(char *comando_ingresado);
 char **_interpretar(char *comando);
-void _imprimir_estados_procesos(void);
+
 
 
 #endif

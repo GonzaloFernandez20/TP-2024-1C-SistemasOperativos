@@ -6,14 +6,11 @@
 			"cstdlib": "c",
 			"cerrno": "c",
 			"functional": "c",
+			"string": "c",
 			"array": "c",
 			"string_view": "c",
 			"initializer_list": "c",
-			"utility": "c",
-			"string": "c",
-			"*.tcc": "c",
-			"deque": "c",
-			"vector": "c"
+			"utility": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},

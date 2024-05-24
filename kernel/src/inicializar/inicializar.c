@@ -5,6 +5,8 @@ void init(void){
     kernel_log = iniciar_logger("kernel.log", "KERNEL", 1, LOG_LEVEL_DEBUG);
     kernel_log_debugg = iniciar_logger("kernel_debug.log", "KERNEL", 1, LOG_LEVEL_DEBUG);
     _leer_configuracion(path_config);
+    inicializar_semaforos();
+    iniciar_colas_planificacion();
 }
 
 void _leer_configuracion(char *path_config){
@@ -17,6 +19,8 @@ void _leer_configuracion(char *path_config){
     config_kernel.IP_CPU = strdup(config_get_string_value(archivo_config, "IP_CPU"));
     config_kernel.PUERTO_CPU_DISPATCH = strdup(config_get_string_value(archivo_config, "PUERTO_CPU_DISPATCH"));
     config_kernel.PUERTO_CPU_INTERRUPT = strdup(config_get_string_value(archivo_config, "PUERTO_CPU_INTERRUPT"));
+    config_kernel.GRADO_MULTIPROGRAMACION = config_get_int_value(archivo_config, "GRADO_MULTIPROGRAMACION");
+
 
     config_destroy(archivo_config);
 }
