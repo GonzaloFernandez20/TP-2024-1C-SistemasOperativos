@@ -30,8 +30,8 @@ void atender_entradasalida(){
 
 void establecer_conexiones(void){
     conectar_memoria();
-    conectar_dispatch();
-    conectar_interrupt();
+    //conectar_dispatch();
+    //conectar_interrupt();
 }
 
 void conectar_memoria(void){ 

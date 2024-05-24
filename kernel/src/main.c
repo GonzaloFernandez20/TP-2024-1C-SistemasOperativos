@@ -6,7 +6,7 @@ int main(int argc, char *argv[]){
 
     init(); 
     //iniciar_servidor_kernel();
-    //establecer_conexiones();
+    establecer_conexiones();
     //atender_entradasalida();
     iniciar_planificacion();
     iniciar_Consola();
