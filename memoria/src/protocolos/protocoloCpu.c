@@ -40,9 +40,9 @@ void devolver_instruccion(void){
 	int PC = buffer_read_int(&stream);
 
 	int indice_proceso = buscar_PID_memoria_instrucciones(PID);
-	t_proceso* proceso_ejecutando = list_get(memoria_de_instruccione; indice_proceso);
+	t_proceso* proceso_ejecutando = list_get(memoria_de_instrucciones, indice_proceso);
 
-	char* instruccion = strdup(proceso_a_eliminar->CODE_segmento[PC]);
+	char* instruccion = strdup(proceso_ejecutando->CODE_segmento[PC]);
 	
 	enviar_instruccion_serializada(instruccion);
 
@@ -61,7 +61,7 @@ void enviar_instruccion_serializada(char* instruccion){
 	buffer_add_int(paquete->buffer, strlen(instruccion) + 1 );
 	buffer_add_string(paquete->buffer, instruccion);
 
-	usleep(config_memoria->RETARDO_RESPUESTA);
+	usleep(config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cpu);
 
 	eliminar_paquete(paquete);

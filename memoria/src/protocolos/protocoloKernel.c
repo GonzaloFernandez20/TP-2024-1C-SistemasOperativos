@@ -68,7 +68,7 @@ void cargar_instrucciones(int PID, char* path_archivo){
     t_proceso* nuevo_proceso = malloc(sizeof(t_proceso));
     nuevo_proceso-> PID = PID;
 
-    FILE* archivo_seudocodigo = abrir_archivo(char* archivo);
+    FILE* archivo_seudocodigo = abrir_archivo(path_archivo);
     int seudocodigo_ok = 1;
     int seudocodigo_error = 0;
     
@@ -88,11 +88,11 @@ void cargar_instrucciones(int PID, char* path_archivo){
         leer_almacenar_instrucciones(nuevo_proceso->CODE_segmento, archivo_seudocodigo);
 
         pthread_mutex_lock(&mutex_memoria_instrucciones);
-        list_add(memoria_de_instruccione, nuevo_proceso);
+        list_add(memoria_de_instrucciones, nuevo_proceso);
         pthread_mutex_unlock(&mutex_memoria_instrucciones);
 
         pthread_mutex_lock(&mutex_log_debug);
-        log_info(memoria_log_debugg,"PID: <%d> instrucciones cargadas en memoria\n", PID;);
+        log_info(memoria_log_debugg,"PID: <%d> instrucciones cargadas en memoria\n", PID);
         pthread_mutex_unlock(&mutex_log_debug);
 
         send(fd_kernel, &seudocodigo_ok, sizeof(int), 0);
@@ -102,7 +102,7 @@ void cargar_instrucciones(int PID, char* path_archivo){
 }
 
 FILE* abrir_archivo(char* archivo){
-    char* path = concatenar_rutas(config_memoria->PATH_INSTRUCCIONES, archivo);
+    char* path = concatenar_rutas(config_memoria.PATH_INSTRUCCIONES, archivo);
     FILE* archivo_seudocodigo = fopen(path, "r");
     
     free(path);
@@ -144,13 +144,13 @@ int contar_lineas(FILE* archivo_seudocodigo){
 void leer_almacenar_instrucciones(char** CODE_segmento, FILE* seudocodigo){
     
     char* buffer = NULL;
-    int longitud = 0;
+    size_t longitud = 0;
     int caracteres_leidos;
     int posicion_instruccion = 0;
 
     while ((caracteres_leidos = getline(&buffer, &longitud, seudocodigo)) != -1) {
         // Sacar el salto de línea al final de la cadena
-        if (buffer[leidos - 1] == '\n') { buffer[leidos - 1] = '\0'; }
+        if (buffer[caracteres_leidos - 1] == '\n') { buffer[caracteres_leidos - 1] = '\0'; }
 
         // Asignar memoria para la línea y copiar el contenido
         CODE_segmento[posicion_instruccion] = malloc((caracteres_leidos + 1) * sizeof(char));
@@ -180,7 +180,7 @@ void liberar_estructuras_asociadas(int PID){
     int indice_proceso = buscar_PID_memoria_instrucciones(PID);
 
     pthread_mutex_lock(&mutex_memoria_instrucciones);
-    t_proceso* proceso_a_eliminar = list_remove(memoria_de_instruccione, indice_proceso);
+    t_proceso* proceso_a_eliminar = list_remove(memoria_de_instrucciones, indice_proceso);
     pthread_mutex_unlock(&mutex_memoria_instrucciones);
 
     liberar_segmento_codigo(proceso_a_eliminar);
@@ -188,7 +188,7 @@ void liberar_estructuras_asociadas(int PID){
 }
 
 void liberar_segmento_codigo(t_proceso* proceso){
-    for (int i = 0; i < proceso->cant_instrucciones i++) {
+    for (int i = 0; i < proceso->cant_instrucciones; i++) {
         free(proceso->CODE_segmento[i]);
     }
     free(proceso->CODE_segmento);
