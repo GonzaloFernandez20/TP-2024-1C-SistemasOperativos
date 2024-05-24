@@ -14,7 +14,7 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
             crear_proceso();
 			break;
 		
-        case FINALIZAR_PROCESO:
+        case ELIMINAR_PROCESO:
             eliminar_proceso();
 			break;
 
