@@ -11,8 +11,7 @@ int main(int argc,char* argv[]) {
 
 
     //arranque();
-
-
+    
     
     liberar_cpu();
     

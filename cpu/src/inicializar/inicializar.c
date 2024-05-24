@@ -14,7 +14,7 @@ void _leer_configuracion(char *path_config){
     config_cpu.PUERTO_MEMORIA = strdup(config_get_string_value(nuevo_config,"PUERTO_MEMORIA"));
     config_cpu.PUERTO_ESCUCHA_DISPATCH = strdup(config_get_string_value(nuevo_config,"PUERTO_ESCUCHA_DISPATCH"));
     config_cpu.PUERTO_ESCUCHA_INTERRUPT = strdup(config_get_string_value(nuevo_config,"PUERTO_ESCUCHA_INTERRUPT"));
-    config_cpu.CANTIDAD_ENTRADAS_TLB = config_get_int_value(nuevo_config,"CANTIDAD_ENTRADAS_TLB");
+    config_cpu.CANTIDAD_ENTRADAS_TLB = config_get_int_value(nuevo_config,"CANTIDAD_ENTRADAS_TLB"); // va un strdup tambien ???
     config_cpu.ALGORITMO_TLB = strdup(config_get_string_value(nuevo_config,"ALGORITMO_TLB"));
 
 	config_destroy(nuevo_config);

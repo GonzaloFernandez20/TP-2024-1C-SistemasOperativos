@@ -11,7 +11,7 @@
 // ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
-// #include <include/ciclo.h>
+#include <include/ciclo.h>
 
 // ---- EXTERNAS
 #include <utils/hilos/hilos.h>
@@ -25,7 +25,7 @@ t_config_cpu config_cpu;
 
 int fd_dispatch_server;
 int fd_interrupt_server;
-int fd_conexion_memoria; 
+int fd_conexion_memoria;
 
 int dispatch_conectado;
 int interrupt_conectado;

@@ -4,8 +4,8 @@
 #include <include/estructuras.h>
 #include <inicializar/inicializar.h> 
 #include <protocolos/protocoloInterrupt.h>
-// #include <protocolos/protocoloDispatch.h>
-// #include <protocolos/protocoloMemoria.h>
+#include <protocolos/protocoloDispatch.h>
+#include <protocolos/protocoloMemoria.h>
 
 #include <utils/hilos/hilos.h>
 #include <utils/conexiones/conexiones.h>
