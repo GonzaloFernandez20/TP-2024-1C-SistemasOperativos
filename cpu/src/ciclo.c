@@ -63,7 +63,7 @@ void ciclo() {
     // cuando salga del loop signfica que por alguna razón cpu paró
     dictionary_destroy(opCodes_diccionario);    // liberamos memoria asignada al diccionario.
     dictionary_destroy(registros_diccionario);
-    string_array_destroy(instruccion_cpu);      // liberamos esto
+    string_array_destroy(instruccion_cpu);      // liberamos este array de strings (commons/string.h)
 }
 void fetch(){
     PCB.registros.PC += 1;                                         // apuntamos a la siguiente instrucción
