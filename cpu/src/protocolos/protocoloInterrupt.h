@@ -6,11 +6,12 @@
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>
 #include <include/ciclo.h>
+#include <pthread.h>
 
 // Variables globales
 uint32_t PID_a_interrumpir;      // según consigna: Identificador del proceso (deberá ser un número entero, único en todo el sistema).
                                         // tomará el valor de 0 si Kernel no pidió interrumpir ningun proceso.
-pthread_mutex_t mutex;
+pthread_mutex_t mutexInterrupt;
 
 
 
@@ -18,6 +19,6 @@ pthread_mutex_t mutex;
 // extern struct_PCB PCB;
 
 void *procesar_operacion_interrupt(void *fd_interrupt_casteado);
-int recibir_PID();
+int recibir_PID(int fd_interrupt);
 
 #endif

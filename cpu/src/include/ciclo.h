@@ -4,7 +4,6 @@
 #include <commons/collections/dictionary.h>
 #include <commons/string.h>
 #include <protocolos/protocoloInterrupt.h>
-// #include <include/operaciones.h>
 
 
 #define SET "SET"
@@ -113,7 +112,6 @@ void fin_de_ciclo();
 //Variables globales
 struct_PCB PCB;
 struct_registros registrosCPU;   
-// t_instruccion instruccion_cpu;
 char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;

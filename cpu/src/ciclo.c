@@ -73,9 +73,11 @@ void fin_de_ciclo() {
 }
 
 void fetch(){
-    PCB.registros.PC += 1;                                         // apuntamos a la siguiente instrucción
-    solicitar_instruccion_a_memoria(PCB.registros.PC);             // se la pedimos a Memoria
-    instruccion_cpu = string_split(recibir_instruccion(), " ");    // recibimos desde Memoria la instrucción como string y dividimos las partes en un array. OJO hay que liberarla.
+    PCB.registros.PC += 1;                                   // apuntamos a la siguiente instrucción.
+    solicitar_instruccion_a_memoria(PCB.registros.PC);       // se la pedimos a Memoria.
+    char* instruccion_str = recibir_instruccion();           // recibimos un puntero.
+    instruccion_cpu = string_split(instruccion_str, " ");    // recibimos desde Memoria la instrucción como string y dividimos las partes en un array. OJO hay que liberarla.
+    free(instruccion_str);
 }
 void decode_and_execute() {
     void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion_cpu[0]); // obtenemos la función a partir del string del nombre de la instrucción
@@ -128,16 +130,13 @@ char* recibir_instruccion(void){
 
 	int length = buffer_read_int(&stream);
 
-	char *ptr_string = buffer_read_string(&stream, length); // puntero a un espacio de memoria de chars.
-    char* instruccion;                                      // para almacenar un literal string.
-    strcpy(instruccion, ptr_string);                        // copiamos el string como literal string
-    free(ptr_string);                                       // así podemos liberar el puntero retornado por el buffer_read_string().
+	char* ptr_string = buffer_read_string(&stream, length); // puntero a un espacio de memoria de chars. Hay que liberarlo.
 
-	log_info(cpu_log_debug, "Instruccion recibida: %s\n", instruccion);
+	log_info(cpu_log_debug, "Instruccion recibida: %s\n", ptr_string);
 	
 	eliminar_buffer(buffer);
 
-	return instruccion;                 // ya no va a ser necesario liberar la memoria.
+	return ptr_string;                
 }
 
 
