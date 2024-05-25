@@ -16,6 +16,19 @@ void enviar_path_seudocodigo(char* archivo, int PID){
 	eliminar_paquete(paquete);
 }
 
+void finalizar_proceso(int PID){
+    t_paquete* paquete = crear_paquete(ELIMINAR_PROCESO);
+
+    int buffer_size = sizeof(int); 
+    crear_buffer(paquete, buffer_size);
+
+
+    buffer_add_int(paquete->buffer, PID);
+
+    enviar_paquete(paquete, fd_conexion_memoria);
+    eliminar_paquete(paquete);
+}
+
 
 int recibir_confirmacion(int pid){
     int rta_memoria; 

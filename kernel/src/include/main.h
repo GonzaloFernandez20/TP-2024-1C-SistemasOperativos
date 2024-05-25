@@ -50,5 +50,5 @@ sem_t proceso_listo;
 sem_t proceso_cargado;
 sem_t grado_multiprogramacion;
 
-
+int termino_quantum;
 #endif

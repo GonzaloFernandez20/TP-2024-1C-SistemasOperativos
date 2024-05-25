@@ -8,8 +8,10 @@
 #include <protocolos/protocoloCPU.h>
 #include <planificacion/colasEstados.h>
 #include <consola/funcionesConsola.h>
+#include <utils/hilos/hilos.h>
 
 #include <commons/collections/list.h>
+#include <commons/string.h>
 
 #include <stdio.h>
 #include <pthread.h>
@@ -17,6 +19,12 @@
 #include <unistd.h>
 
 
+typedef enum algoritmo{
+    FIFO = 1,
+    RR,
+    VRR,
+    ERROR
+}t_algoritmo;
 
 // ---------- DECLARACIONES DE FUNCIONES
 
@@ -25,7 +33,9 @@ void *planificador_largo_plazo(void);
 
 void inicializar_semaforos(void);
 void iniciar_planificacion(void);
+void *iniciar_quantum(void* PID);
 
+t_algoritmo _chequear_algoritmo(void);
 
 
 

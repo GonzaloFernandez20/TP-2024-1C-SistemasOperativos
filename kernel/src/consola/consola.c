@@ -11,7 +11,7 @@ void *iniciar_Consola(){
     //int planificacion_iniciada = 1; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
     char* comando_ingresado;
 
-	do{
+	do{ 
 		comando_ingresado = readline("> ");
         char **array_del_comando = _interpretar(comando_ingresado);
 

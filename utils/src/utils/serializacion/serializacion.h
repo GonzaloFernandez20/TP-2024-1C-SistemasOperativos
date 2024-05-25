@@ -13,13 +13,15 @@
 
 
 // Protocolos de comunicacion
-typedef enum
+typedef enum CODIGOS_DE_OPERACION
 {
 	HANDSHAKE = 1,
 	CREAR_PROCESO,
 	ELIMINAR_PROCESO,
 	OBTENER_INSTRUCCION,
 	INSTRUCCION,
+	CONTEXTO_EJECUCION,
+	MOTIVO_DESALOJO,
 	MENSAJE
 
 }op_code; 

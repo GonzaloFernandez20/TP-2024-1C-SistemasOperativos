@@ -57,6 +57,7 @@ extern int fd_conexion_interrupt;
 extern t_dictionary* interfaces_conectadas;
 
 
+extern int termino_quantum;
 // Estados
 extern t_list *cola_new;
 extern t_list *cola_ready;

@@ -10,7 +10,7 @@
 
 void enviar_path_seudocodigo(char* archivo, int PID);
 int recibir_confirmacion(int pid);
-
+void finalizar_proceso(int PID);
 // ---------- DECLARACIONES DE ESTRUCTURAS
 
 typedef struct path

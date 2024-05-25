@@ -40,13 +40,13 @@ void iniciar_colas_planificacion(void){
     estado_exit = malloc(sizeof(t_estado));
     pthread_mutex_init(&(estado_exit->mutex_cola), NULL); 
     estado_exit->cola = cola_estado_exit;
-    estado_exit->nombre = string_duplicate("BLOCKED");
+    estado_exit->nombre = string_duplicate("EXIT");
 
     // Crear e inicializar la estructura t_estado para la cola blocked
     blocked = malloc(sizeof(t_estado));
     pthread_mutex_init(&(blocked->mutex_cola), NULL); 
     blocked->cola = cola_blocked;
-    blocked->nombre = string_duplicate("EXIT");
+    blocked->nombre = string_duplicate("BLOCKED");
 
 }
 
@@ -85,7 +85,7 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
     if (string_equals_ignore_case(destino->nombre, "READY"))
             {
                 _loggear_ingreso_ready();
-                //sem_post(&proceso_listo);
+                sem_post(&proceso_listo);
             }
 }
 
@@ -95,6 +95,13 @@ t_pcb *pop_estado(t_estado* estado){
     pthread_mutex_unlock(&(estado->mutex_cola));
 
     return pcb;
+}
+
+void push_estado(t_estado* estado, t_pcb* pcb){
+    pthread_mutex_lock(&(estado->mutex_cola));
+        list_add(estado->cola, pcb);
+    pthread_mutex_unlock(&(estado->mutex_cola));
+
 }
 
 // TODO: t_pcb *push_estado(t_estado* estado){}

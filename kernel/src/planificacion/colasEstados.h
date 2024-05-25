@@ -19,6 +19,7 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino);
 
 
 t_pcb *pop_estado(t_estado* estado);
+void push_estado(t_estado* estado, t_pcb* pcb);
 void _loggear_ingreso_ready(); 
 
 char* __armar_lista_pids();
