@@ -27,8 +27,10 @@
 
 t_log* kernel_log;
 t_log* kernel_log_debugg;
+
 char *path_config;
 t_config_kernel config_kernel;
+
 int fd_server_kernel;
 int fd_conexion_memoria;
 int fd_conexion_dispatch; 
@@ -39,6 +41,7 @@ t_dictionary* instrucciones_por_interfaz;
 t_dictionary* peticiones_interfaz;
 
 pthread_t manejo_quantum;
+int termino_quantum;
 
 t_estado *new;
 t_estado *ready;
@@ -48,11 +51,12 @@ t_estado *estado_exit;
 
 pthread_mutex_t mutex_log_debug;
 pthread_mutex_t mutex_log;
+pthread_mutex_t diccionario_interfaces;
+pthread_mutex_t diccionario_peticiones;
 
 sem_t execute_libre;
 sem_t proceso_listo;
 sem_t proceso_cargado;
 sem_t grado_multiprogramacion;
 
-int termino_quantum;
 #endif

@@ -22,7 +22,7 @@ void _imprimir_estados_procesos(void);
 
 int _asignar_PID(void);
 void _mostrar_pcbs(void *pcbDeLista); 
-// ---------- VARIABLES GLOBALES
+
 
 
 #endif

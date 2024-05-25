@@ -24,8 +24,6 @@ void *planificador_corto_plazo(){
                     push_estado(exec, pcb_execute);
 
                     enviar_contexto_ejecucion(pcb_execute);
-
-                    //usleep(35000000);
                     recibir_contexto_ejecucion(pcb_execute);
                 break;
             case RR:
@@ -43,7 +41,6 @@ void *planificador_corto_plazo(){
                     pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
                     pthread_detach(manejo_quantum);
 
-                    //usleep(1000*5000);
                     recibir_contexto_ejecucion(pcb_execute);
             
                 break;
@@ -66,13 +63,11 @@ void *planificador_largo_plazo(void){
     sem_wait(&proceso_cargado);
     sem_wait(&grado_multiprogramacion);
 
-    // TODO: modificar grado de multiprogramacion
-
     t_pcb* pcb_a_cargar = list_get(new->cola, 0);
 
     // ------------------ COMUNICACION CON MEMORIA
     
-    /* enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
+    enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
     int rta_memoria = recibir_confirmacion(pcb_a_cargar->pid);
 
      if (!rta_memoria){
@@ -80,14 +75,11 @@ void *planificador_largo_plazo(void){
             log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
         pthread_mutex_lock(&mutex_log_debug); 
         return NULL; 
-    }  */
+    } 
 
     // ------------------ AGREGA A COLA READY
     trasladar(pcb_a_cargar->pid, new, ready);
-    // ------------------ PROCESO CREADO CON EXITO
-    
     }
-
 } 
 
 // ----------- FUNCIONES SECUNDARIAS
@@ -119,6 +111,8 @@ void inicializar_semaforos(void){
     // ------- SEMAFOROS DE LOGS
     pthread_mutex_init(&mutex_log_debug, NULL);
     pthread_mutex_init(&mutex_log, NULL);
+    pthread_mutex_init(&diccionario_interfaces, NULL);
+    pthread_mutex_init(&diccionario_peticiones, NULL);
 
     // ------- SEMAFOROS DEL PLANIFICADOR DE CORTO PLAZO
     sem_init(&proceso_listo, 0, 0);

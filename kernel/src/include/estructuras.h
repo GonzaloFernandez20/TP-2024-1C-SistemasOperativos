@@ -71,31 +71,21 @@ extern t_dictionary* instrucciones_por_interfaz;
 extern t_dictionary* peticiones_interfaz;
 
 extern pthread_t manejo_quantum;
-
-
 extern int termino_quantum;
-// Estados
-extern t_list *cola_new;
-extern t_list *cola_ready;
-extern t_list *cola_exec;
-extern t_list *cola_estado_exit;
-extern t_list *cola_blocked;
 
-extern sem_t proceso_listo;
-extern sem_t execute_libre;
+extern t_estado *new;
+extern t_estado *ready;
+extern t_estado *exec;
+extern t_estado *estado_exit;
 
 extern pthread_mutex_t mutex_log_debug;
 extern pthread_mutex_t mutex_log;
+extern pthread_mutex_t diccionario_interfaces;
+extern pthread_mutex_t diccionario_peticiones;
 
 extern sem_t proceso_listo;
 extern sem_t proceso_cargado;
 extern sem_t execute_libre;
 extern sem_t grado_multiprogramacion;
-
-extern t_estado *new;
-extern t_estado *ready;
-extern t_estado *exec;
-extern t_estado *blocked;
-extern t_estado *estado_exit;
 
 #endif

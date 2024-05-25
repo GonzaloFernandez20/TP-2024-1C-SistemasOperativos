@@ -60,10 +60,14 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
             nueva_peticion->unidades_trabajo = unidades_trabajo;
             nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
 
-        
-            dictionary_put(peticiones_interfaz, string_itoa(pcb->pid), nueva_peticion);
+            pthread_mutex_lock(&diccionario_peticiones);
+                dictionary_put(peticiones_interfaz, string_itoa(pcb->pid), nueva_peticion);
+            pthread_mutex_unlock(&diccionario_peticiones);
 
-            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+            pthread_mutex_lock(&diccionario_interfaces);
+                t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+            pthread_mutex_unlock(&diccionario_interfaces);
+
             trasladar(pcb->pid, exec, interfaz->bloqueados);
 
             sem_post(&interfaz->hay_peticiones);
@@ -75,8 +79,9 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
 // --------------- FUNCIONES AUXILIARES
 
 int validar_peticion(char* interfaz, t_llamada_io llamada){
-
-    t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
+    pthread_mutex_lock(&diccionario_interfaces);
+        t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
+    pthread_mutex_unlock(&diccionario_interfaces);
  
     if (interfaz_solicitante == NULL){
         return 0;

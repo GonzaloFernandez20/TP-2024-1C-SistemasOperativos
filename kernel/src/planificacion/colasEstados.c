@@ -1,52 +1,31 @@
 #include <planificacion/colasEstados.h>
 
-// ---------- DEFINICIONES DE VARIABLES
-
-t_list *cola_new;
-t_list *cola_ready;
-t_list *cola_exec;
-t_list *cola_estado_exit;
-t_list *cola_blocked;
-
-
-// ---------- DEFINICIONES DE FUNCIONES
 
 void iniciar_colas_planificacion(void){
-    cola_new = list_create();
-    cola_ready = list_create();
-    cola_exec = list_create();
-    cola_estado_exit = list_create();
-    cola_blocked = list_create();
 
-    // Crear e inicializar la estructura t_estado para la cola new
+    // NEW
     new = malloc(sizeof(t_estado));
     pthread_mutex_init(&(new->mutex_cola), NULL); 
-    new->cola = cola_new;
+    new->cola = list_create();
     new->nombre = string_duplicate("NEW");
 
-    // Crear e inicializar la estructura t_estado para la cola ready
+    // READY
     ready = malloc(sizeof(t_estado));
     pthread_mutex_init(&(ready->mutex_cola), NULL); 
-    ready->cola = cola_ready;
+    ready->cola = list_create();
     ready->nombre = string_duplicate("READY");
 
-    // Crear e inicializar la estructura t_estado para la cola exec
+    // EXEC
     exec = malloc(sizeof(t_estado));
     pthread_mutex_init(&(exec->mutex_cola), NULL); 
-    exec->cola = cola_exec;
+    exec->cola = list_create();
     exec->nombre = string_duplicate("EXEC");
 
-    // Crear e inicializar la estructura t_estado para la cola estado_exit
+    // EXIT
     estado_exit = malloc(sizeof(t_estado));
     pthread_mutex_init(&(estado_exit->mutex_cola), NULL); 
-    estado_exit->cola = cola_estado_exit;
+    estado_exit->cola = list_create();
     estado_exit->nombre = string_duplicate("EXIT");
-
-    // Crear e inicializar la estructura t_estado para la cola blocked
-    blocked = malloc(sizeof(t_estado));
-    pthread_mutex_init(&(blocked->mutex_cola), NULL); 
-    blocked->cola = cola_blocked;
-    blocked->nombre = string_duplicate("BLOCKED");
 
 }
 
