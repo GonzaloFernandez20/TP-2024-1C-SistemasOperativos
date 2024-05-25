@@ -2,6 +2,13 @@
   // See https://go.microsoft.com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
   "version": "2.0.0",
+  "options": {
+    "env": {
+      "module": "${workspaceFolderBasename}",
+      "log_file": "leaks-${workspaceFolderBasename}.log"
+    },
+    "cwd": "${workspaceFolder}"
+  },
   "tasks": [
     {
       "label": "build",
@@ -11,7 +18,9 @@
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": ["$gcc"]
+      "problemMatcher": [
+        "$gcc"
+      ]
     },
     {
       "label": "clean",
@@ -20,7 +29,37 @@
       "group": {
         "kind": "none"
       },
-      "problemMatcher": []
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "valgrind-leak-check",
+      "command": "valgrind",
+      "args": [
+        "--leak-check=full",
+        "--log-file=${log_file}",
+        "./bin/${module}",
+        "./${module}.config"
+      ],
+      "type": "shell",
+      "hide": true,
+      "dependsOn": [
+        "build"
+      ]
+    },
+    {
+      "label": "leak check",
+      "command": "code",
+      "type": "shell",
+      "args": [
+        "${log_file}"
+      ],
+      "group": "test",
+      "dependsOn": [
+        "valgrind-leak-check"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ]
     }
   ]
 }
