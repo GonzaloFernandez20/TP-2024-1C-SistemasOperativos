@@ -70,12 +70,15 @@ int hayInterrupcion(){
 }
 void esperarInterrupcionInicial(){
     char* resultado;
-    printf("MANDAR UN PCB DESDE KERNEL Y DESPUES DAR ENTER ");
+    printf("MANDAR UN PCB DESDE KERNEL Y DESPUES DAR ENTER \n");
+    printf("SI NO MANDAS EL PCB HAY SEGFAULT");
+
     scanf("%s",resultado);
     printf("\n");
     desocupar_mutex(&mutex_dispatch);
     return resultado;
     //codear más tarde xq trabaja con la conexion interrupt
+    //el problema de la segfault se resuelve esperando a la primera interrupción y desbloqueando el mutes de dispatch
 }
 void atenderInterrupcion(void){
     // ATENDER INTERRUPCIÓN.

@@ -11,19 +11,21 @@
 int cliente_conectado = 1;
 int causa_de_desalojo;//interrupt() lo tiene que recibir de kernel
 
+t_pcb PCBa;
 
 
 void *procesar_operacion_dispatch(void *fd_dispatch_casteado){
-
+	inicializar_PCB();//solo pruebas
     int fd_dispatch = _deshacer_casting(fd_dispatch_casteado);//no se hace nada con esto
 //estas dos lineas solamente se ejecutan por única cuando se levanta la conexion de dispatch y sirven para establecer las condiciones iniciales del mutex
  	pthread_mutex_init(&mutex_dispatch, NULL);
- 	ocupar_mutex(&mutex_dispatch);//si no se bloquea al principio sale una segmentation fault
+ 	ocupar_mutex(&mutex_dispatch);//si no se bloquea al principio sale una segmentation fault porque recibirPCB devuelve NULL al llamar recibir_paquete_PCB
 
 //este primer ciclo se diferencia del while(cliente_conectado) en que NO SE ENVIA UN PCB porque el 
 //PCB que se recibe por primera vez no está desalojando a ningún  otro
-// 	ocupar_mutex(&mutex_dispatch);//la primer interrupcion lo va a habilitar
-	t_pcb* PCB_inicial = recibirPCB();//aca ta
+  ocupar_mutex(&mutex_dispatch);//la primer interrupcion lo va a habilitar
+//	t_pcb* PCB_inicial = recibirPCB();
+	t_pcb* PCB_inicial = &PCBa;//solo pruebas
 
 	//Cargamos el primer PCB
 	actualizarPCB(PCB_inicial);
@@ -32,7 +34,7 @@ void *procesar_operacion_dispatch(void *fd_dispatch_casteado){
 	desocupar_mutex(&mutex_ciclo);
 
 	// Liberamos memoria
-	free(PCB_inicial);
+//	free(PCB_inicial);
 
     while(cliente_conectado){
 		ocupar_mutex(&mutex_dispatch); //el signal/post de esto lo hace la rutina de atender interrupciones
@@ -65,9 +67,9 @@ t_pcb* recibirPCB(){
 		case -1: 
 			// cierra la conexión 
 			log_error(cpu_log_debug, "KERNEL-DISPATCH se desconecto");
-		          cliente_conectado = 0;
+		    cliente_conectado = 0;
 			dispatch_conectado = 0;
-			return NULL;
+			return NULL;//por ahí devolver NULL no es buena idea porque saltan seg faults
 			break;
 		default:
 			log_warning(cpu_log_debug,"Operacion desconocida de KERNEL-DISPATCH");
@@ -239,7 +241,35 @@ void recibir_buffer_PCB(int fd, t_paquete_PCB* paquete){
 //		paquete->buffer->stream = malloc(paquete->buffer->size);no hace falta el malloc porque ya de reservó el espacio fuera de la funcion???
 		recv(fd, paquete->buffer_PCB->stream, paquete->buffer_PCB->size, 0);
 }
+void inicializar_PCB(){
+	PCB.PID           = 0;
+    PCB.Quantum       = 0;
+    PCB.PC            = 0;
+    PCB.registros.AX  = 0;
+    PCB.registros.BX  = 0;
+    PCB.registros.CX  = 0;
+    PCB.registros.DX  = 0;
+    PCB.registros.EAX = 0;
+    PCB.registros.EBX = 0;
+    PCB.registros.ECX = 0;
+    PCB.registros.EDX = 0; 
+    PCB.registros.SI  = 0;
+    PCB.registros.DI  = 0;
 
+	PCBa.PID = 9999;
+    PCBa.Quantum = 99;
+    PCBa.PC = 1;
+    PCBa.registros.AX = 2;  
+    PCBa.registros.BX = 3;  
+    PCBa.registros.CX = 4;   
+    PCBa.registros.DX = 5;  
+    PCBa.registros.EAX= 6;  
+    PCBa.registros.EBX= 7;  
+    PCBa.registros.ECX= 8;  
+    PCBa.registros.EDX= 9;   
+    PCBa.registros.SI = 10; 
+    PCBa.registros.DI = 11;
+}
 
 
 
