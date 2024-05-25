@@ -49,7 +49,7 @@ void init_registros_dictionary() {
 void arranque(){
     init_opCodes_dictionary();
     init_registros_dictionary();
-    pthread_mutex_init();
+    pthread_mutex_init(&mutex, NULL);
 
     PCB = recibirPCB();
     acomodarRegistrosDeCPU(PCB.registros);
