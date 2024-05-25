@@ -32,6 +32,5 @@ char* recibir_presentacion_IO(int fd_cliente);
 
 void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, int fd);
 
-t_tipo_interfaz obtener_enum(char* tipo);
 
 #endif

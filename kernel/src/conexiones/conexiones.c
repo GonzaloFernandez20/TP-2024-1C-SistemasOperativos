@@ -160,19 +160,10 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     cola_bloqueados->nombre = strdup("BLOCKED");
 
     t_interfaz* interfaz = malloc(sizeof(t_interfaz));
-    interfaz->tipo = obtener_enum(tipo_interfaz); 
+    interfaz->tipo = strdup(tipo_interfaz);
     interfaz->fd = fd;
     interfaz->bloqueados = cola_bloqueados;
 
     dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
-}
-
-
-t_tipo_interfaz obtener_enum(char* tipo){
-    if(string_equals_ignore_case(tipo, "GENERICA")){return GENERICA;}
-    if(string_equals_ignore_case(tipo, "STDIN")){return STDIN;}
-    if(string_equals_ignore_case(tipo, "STDOUT")){return STDOUT;}
-    if(string_equals_ignore_case(tipo, "DIALFS")){return DIALFS;}
-    return ERROR;
 }
 

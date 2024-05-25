@@ -28,16 +28,6 @@ typedef struct configuraciones_kernel
 
 } t_config_kernel;
 
-
-typedef enum interfaz{
-    GENERICA,
-    STDIN,
-    STDOUT,
-    DIALFS,
-    ERROR
-
-}t_tipo_interfaz;
-
 typedef struct estado
 {
     pthread_mutex_t mutex_cola;
@@ -46,7 +36,7 @@ typedef struct estado
 }t_estado;
 typedef struct interfaz_conectada
 {
-    t_tipo_interfaz tipo;
+    char* tipo;
     int fd;
     t_estado* bloqueados;
 

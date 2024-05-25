@@ -43,6 +43,7 @@ void sacar_interfaz_de_diccionario(char* nombre_interfaz){
 	//pasa los procesos bloqueados en la cola a exit
 	list_destroy(interfaz->bloqueados->cola);
 	pthread_mutex_destroy(&interfaz->bloqueados->mutex_cola);
+	free(interfaz->tipo)
 	free(interfaz->bloqueados);
 	free(interfaz);
 }
