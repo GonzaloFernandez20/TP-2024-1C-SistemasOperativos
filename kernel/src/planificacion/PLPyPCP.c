@@ -29,9 +29,10 @@ void *planificador_corto_plazo(){
                     pthread_mutex_unlock(&mutex_log_debug);
 
                     usleep(35000000);
-                    //int op_code_desalojo = recibir_pcb(pcbExecute);
-                    trasladar(pcbExecute->pid, exec, blocked);
-                    //interpretar_desalojo(op_code_desalojo, pcbExecute);
+                    recibir_pcb(pcbExecute);
+
+                    //trasladar(pcbExecute->pid, exec, blocked);
+                    //interpretar_desalojo(op_code_desalojo, pcbExecute, arrayDeParametros);
                 break;
             case RR:
                     termino_quantum = 0;

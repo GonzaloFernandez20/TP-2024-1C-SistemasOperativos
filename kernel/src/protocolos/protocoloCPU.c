@@ -28,7 +28,7 @@ void enviar_pcb(t_pcb* pcb){
 	eliminar_paquete(paquete);
 }
 
-int recibir_pcb(t_pcb* pcb){
+void recibir_pcb(t_pcb* pcb){
 
     int opcode = recibir_operacion(fd_conexion_dispatch);
 
@@ -40,8 +40,6 @@ int recibir_pcb(t_pcb* pcb){
 	t_buffer *buffer = recibir_buffer(fd_conexion_dispatch);
 	void* stream = buffer->stream;
     
-	int op_code_motivo_desalojo = buffer_read_int(&stream);
-
 	pcb->pid = buffer_read_int(&stream);
     pcb->PC = buffer_read_int(&stream);
     pcb->registros_cpu.AX = buffer_read_int(&stream);
@@ -55,11 +53,40 @@ int recibir_pcb(t_pcb* pcb){
     pcb->registros_cpu.SI = buffer_read_int(&stream);
     pcb->registros_cpu.DI = buffer_read_int(&stream);
 
+
+    //Implementar lo anterior como una funcion aparte llamada guardar_contexto_ejecucion(pcb, stream)
+	int op_code_motivo_desalojo = buffer_read_int(&stream);
+
+    //recibo los motivos de desalojo -> switch
+    if (op_code_motivo_desalojo == LLAMADA_IO)
+    {
+        int op_code_io = buffer_read_int(&stream);
+        ejecutar_llamada_io(op_code_io, stream);
+    }
+
     pthread_mutex_lock(&mutex_log_debug);
 	log_info(kernel_log_debugg, "CPU envio el contexto de ejecucion del proceso < %d >", pcb->pid);
 	pthread_mutex_unlock(&mutex_log_debug);
 
 	eliminar_buffer(buffer);
+}
 
-    return op_code_motivo_desalojo;
+void ejecutar_llamada_io(int op_code, void* stream){
+
+    switch (op_code)
+    {
+    case IO_GEN_SLEEP: // (Interfaz, Unidades de trabajo)
+        // Esta instrucción solicita al Kernel que se envíe a una interfaz de I/O a que realice un sleep por una cantidad de unidades de trabajo.
+        int size_interfaz = buffer_read_int(&stream);
+        char* interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+        int unidades_trabajo = buffer_read_int(&stream);
+
+        //Ejecutar llamado a la IO
+
+        free(interfaz);
+        break;
+    
+    default:
+        break;
+    }
 }
