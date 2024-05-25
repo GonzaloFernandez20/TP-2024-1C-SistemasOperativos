@@ -35,6 +35,7 @@ int fd_conexion_dispatch;
 int fd_conexion_interrupt;
 
 t_dictionary* interfaces_conectadas;
+t_dictionary* instrucciones_por_interfaz;
 
 t_estado *new;
 t_estado *ready;

@@ -17,23 +17,6 @@ void iniciar_servidor_kernel(void){
     free(PUERTO);
 }
 
-void atender_entradasalida(){
-    while (1)
-    {
-        atender_cliente(fd_server_kernel, (void *)procesar_conexion_es, kernel_log_debugg, "ENTRADA/SALIDA");
-        entrada_salida_conectada = 1;
-
-        //while(entrada_salida_conectada){
-            // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
-            // es temporal para que el hilo main no finalice el programa
-        //}
-        
-    }
-    
-    
-}
-
-
 void establecer_conexiones(void){
     conectar_memoria();
     conectar_dispatch();
@@ -96,8 +79,25 @@ void conectar_interrupt(void){
 
 void atender_entradasalida(){
     interfaces_conectadas =  dictionary_create();
+    cargar_diccionario_instrucciones();
     while(1)
     atender_interfaz((void *)procesar_conexion_es);
+}
+
+void cargar_diccionario_instrucciones(void){
+     instrucciones_por_interfaz = dictionary_create();
+
+     int instrucciones_GENERICA[1] = {IO_GEN_SLEEP};
+     dictionary_put(instrucciones_por_interfaz, "GENERICA", instrucciones_GENERICA);
+
+     int instrucciones_STDIN[1] = {IO_STDIN_READ};
+     dictionary_put(instrucciones_por_interfaz, "STDIN", instrucciones_STDIN);
+
+     int instrucciones_STDOUT[1] = {IO_STDOUT_WRITE};
+     dictionary_put(instrucciones_por_interfaz, "STDOUT", instrucciones_STDOUT);
+
+     int instrucciones_DIALFS[5] = {IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ};
+     dictionary_put(instrucciones_por_interfaz, "DIALFS", instrucciones_DIALFS);
 }
 
 void atender_interfaz(void (*procesar_conexion)(void*)){

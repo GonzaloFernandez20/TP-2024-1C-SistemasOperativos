@@ -1,7 +1,7 @@
 #include <conexiones/conexiones.h>
 
 void establecer_conexiones(void){
-    if(!string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "Generica")){
+    if(!string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "GENERICA")){
         conectar_memoria();
     }
     conectar_kernel();

@@ -55,6 +55,7 @@ extern int fd_conexion_dispatch;
 extern int fd_conexion_interrupt;
 
 extern t_dictionary* interfaces_conectadas;
+extern t_dictionary* instrucciones_por_interfaz;
 
 
 extern int termino_quantum;

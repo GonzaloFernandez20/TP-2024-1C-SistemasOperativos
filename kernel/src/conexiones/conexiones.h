@@ -22,6 +22,8 @@ void conectar_interrupt(void);
 
 void atender_entradasalida(void);
 
+void cargar_diccionario_instrucciones(void);
+
 void atender_interfaz(void (*procesar_conexion)(void*));
 
 void asignar_hilo_interfaz(char *nombre_interfaz,  void (*procesar_conexion)(void*));
