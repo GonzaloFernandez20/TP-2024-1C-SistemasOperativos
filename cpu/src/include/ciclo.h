@@ -80,14 +80,15 @@ void io_gen_sleep();
 // void exit_os();
 
 
+void init_opCodes_dictionary(void);
+void init_registros_dictionary(void);
+
+
 void* direccionDelRegistro(char* nombre_registro);
 int tamanioDeRegistro(char* registro);
 int identificarInterfaz(char* interfaz);
 void enviarleAkernel(int interfaz, int unidades); // falta implementar
 // bool contiene(char *unArrayDeStrings[],int sizeOfArray,char* unElemento);
-
-
-void init_opCodes_dictionary(void);
 
 //Funciones auxiliares para checkInterrupt()
 void desalojarProcesoActual(void);
@@ -96,6 +97,10 @@ void exportarPCB(void);
 struct_PCB recibirPCB(void);
 void acomodarRegistrosDePCB(struct_registros* registros);
 
+void solicitar_instruccion_a_memoria(uint32_t PC);
+char* recibir_instruccion(void);
+
+
 //Funciones del ciclo per se
 void arranque();
 void ciclo();
@@ -103,6 +108,7 @@ void fetch();
 void decode_and_execute();
 void checkInterrupt();
 void desalojarProcesoActual();
+void fin_de_ciclo();
 
 //Variables globales
 struct_PCB PCB;
@@ -111,7 +117,7 @@ struct_registros registrosCPU;
 char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
-static pthread_mutex_t monitorLock;
+
 
 // Me traigo variable global desde protocoloInterrupt.h
 extern uint32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
@@ -119,5 +125,7 @@ extern uint32_t PID_a_interrumpir; // CPU recibe, desde Kernel y
                                     //Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir,
                                     //entonces seteamos el flag en 1. Luego de procesar la solicitud,
                                     //se debe setear nuevamente el flag en 0 (estado default).
+extern pthread_mutex_t mutexInterrupt; 
+
 
 #endif

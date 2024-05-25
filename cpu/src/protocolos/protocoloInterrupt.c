@@ -34,9 +34,10 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 			 * entonces se realiza lo solicitado. Caso contrario, lo desestima.
 			 * 
 			 */
-		
-			PID_a_interrumpir = atoi(recibir_mensaje(fd_interrupt));
+			pthread_mutex_lock(&mutexInterrupt);
 			log_info(cpu_log_debug, "Kernel pide interrumpir proceso PID=%d", PID_a_interrumpir);
+			PID_a_interrumpir = recibir_PID();
+			pthread_mutex_unlock(&mutexInterrupt);
 
 			break;
 		
@@ -52,4 +53,15 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 		}
 	}
 	return (void *)EXIT_FAILURE;
+}
+
+
+int recibir_PID() {
+	t_buffer *buffer = recibir_buffer(fd_interrupt);
+
+	int PID = buffer_read_int(&(buffer->stream));
+	
+	eliminar_buffer(buffer);
+
+	return PID;
 }

@@ -49,22 +49,29 @@ void init_registros_dictionary() {
 void arranque(){
     init_opCodes_dictionary();
     init_registros_dictionary();
+    pthread_mutex_init();
 
     PCB = recibirPCB();
     acomodarRegistrosDeCPU(PCB.registros);
     ciclo();
+
+    fin_de_ciclo();             // cuando salga del loop signfica que por alguna razón cpu paró (algun error etc)
 }
 void ciclo() {
     while(1) {
         fetch();                // busca la siguiente instrucción.
         decode_and_execute();   // interpreta y ejecuta la operación que corresponde
         checkInterrupt();       // se fija si hay interrupciones.
-    }
-    // cuando salga del loop signfica que por alguna razón cpu paró
+    }   
+}
+
+void fin_de_ciclo() {
     dictionary_destroy(opCodes_diccionario);    // liberamos memoria asignada al diccionario.
     dictionary_destroy(registros_diccionario);
     string_array_destroy(instruccion_cpu);      // liberamos este array de strings (commons/string.h)
+    pthread_mutex_destroy(&mutexInterrupt);
 }
+
 void fetch(){
     PCB.registros.PC += 1;                                         // apuntamos a la siguiente instrucción
     solicitar_instruccion_a_memoria(PCB.registros.PC);             // se la pedimos a Memoria
@@ -77,7 +84,13 @@ void decode_and_execute() {
 
 void checkInterrupt() {
     // Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir, entonces se realiza lo solicitado.
-    if(PID_a_interrumpir == PCB.PID) {
+    bool seAceptaInterrupcion;
+
+    pthread_mutex_lock(&mutexInterrupt);
+    seAceptaInterrupcion = (PID_a_interrumpir == PCB.PID);
+    pthread_mutex_unlock(&mutexInterrupt);
+    
+    if(seAceptaInterrupcion) {
         log_info(cpu_log_debug, "Interrumpiendo proceso PID=%d en ejecución", PCB.PID);
         desalojarProcesoActual();
     }
@@ -290,9 +303,9 @@ void jnz(){
 
     void* ptr_registroCPU = direccionDelRegistro(registro);
 
-    uint32_t valor_del_registro = *ptr_registroCPU;
+    uint32_t valor_del_registro = *(uint32_t*)ptr_registroCPU;
     if(valor_del_registro != 0){
-        registrosCPU.PC = instruccion_PC 
+        registrosCPU.PC = instruccion_PC; 
     }
     else{
         //tirar un error

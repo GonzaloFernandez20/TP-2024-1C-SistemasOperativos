@@ -104,7 +104,7 @@ void eliminar_buffer(t_buffer *buffer);
  */
 void recibir_handshake(int fd_cliente, t_log* logger);
 
-char* recibir_mensaje(int socket_cliente);
+// char* recibir_mensaje(int socket_cliente);
 
 /**
  * @brief Recibe el código de operación desde un cliente.
