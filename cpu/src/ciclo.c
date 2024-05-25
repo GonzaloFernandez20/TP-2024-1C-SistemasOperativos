@@ -25,7 +25,19 @@ void fetch(){}
 void decode(){}
 void execute(){}
 
-void sync_PCB_registrosCPU(){}
+void sync_PCB_registrosCPU(){
+    PCB.PC            = registrosCPU.PC;
+    PCB.registros.AX  = registrosCPU.AX;
+    PCB.registros.BX  = registrosCPU.BX;
+    PCB.registros.CX  = registrosCPU.CX;
+    PCB.registros.DX  = registrosCPU.DX;
+    PCB.registros.EAX = registrosCPU.EAX;
+    PCB.registros.EBX = registrosCPU.EBX;
+    PCB.registros.ECX = registrosCPU.ECX;
+    PCB.registros.EDX = registrosCPU.EDX; 
+    PCB.registros.SI  = registrosCPU.SI;
+    PCB.registros.DI  = registrosCPU.DI;
+}
 
 
 void desocupar_mutex(pthread_mutex_t* mutex){
