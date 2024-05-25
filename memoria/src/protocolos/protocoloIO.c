@@ -1,9 +1,12 @@
 #include <protocolos/protocoloIO.h>
 
 
-void procesar_operacion_entradaSalida(int fd_IO){
+void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
 
-    int cliente_conectado = 1;
+    fd_IO = _deshacer_casting(fd_IO_casteado);
+	free(fd_IO_casteado);
+
+	int cliente_conectado = 1;
 
     while(cliente_conectado){
         int cod_op = recibir_operacion(fd_IO);
@@ -14,15 +17,20 @@ void procesar_operacion_entradaSalida(int fd_IO){
 			break;
 		
 		case -1:
-			log_error(memoria_log_debugg, "E/S se desconecto\n");
+			pthread_mutex_lock(&mutex_log_debug);
+			log_error(memoria_log_debugg, "un modulo de E/S se desconecto\n");
+			pthread_mutex_unlock(&mutex_log_debug);
+
             cliente_conectado = 0;
 			break;
 			
 		default:
+			pthread_mutex_lock(&mutex_log_debug);
 			log_warning(memoria_log_debugg,"Operacion desconocida de E/S");
+			pthread_mutex_unlock(&mutex_log_debug);
 			break;
 		}
 	}
-	return (void)EXIT_FAILURE;
+	return (void* )EXIT_FAILURE;
 }
 

@@ -19,7 +19,6 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
 
 }
 
-
 // arma el paquete (inicializa sus estructuras) con la informacion de una presentacion y lo envia
 void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 	t_paquete* paquete = crear_paquete(HANDSHAKE);
@@ -34,7 +33,7 @@ void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 	enviar_paquete(paquete, socket_cliente);
 	eliminar_paquete(paquete);
 } 
-
+ 
 // crea un paquete ya indicando su codigo de operacion
 t_paquete* crear_paquete(op_code cop){
 	t_paquete* paquete = malloc(sizeof(t_paquete));

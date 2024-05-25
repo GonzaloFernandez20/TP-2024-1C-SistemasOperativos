@@ -18,13 +18,12 @@ void *procesar_conexion_es(void *fd_es_casteado){
 		case -1:
 			log_error(kernel_log_debugg, "ENTRADA/SALIDA se desconecto\n");
             cliente_conectado = 0;
-			entrada_salida_conectada = 0;
 			break;
 
 		default:
 			log_warning(kernel_log_debugg,"Operacion desconocida de ENTRADA/SALIDA");
 			break;
 		}
-	}
+	} 
 	return (void *)EXIT_FAILURE;
 }

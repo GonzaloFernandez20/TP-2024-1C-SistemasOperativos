@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <commons/log.h>
+#include <pthread.h>
 
 
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
@@ -28,12 +29,14 @@ typedef struct configuraciones_IO
 extern t_log* IO_log;
 extern t_log* IO_log_debug;
 
-extern char *path_config;
+extern char* path_config;
+extern char* nombre_Interfaz;
 extern t_config_IO config_IO;
 
 extern int fd_conexion_memoria; 
 extern int fd_conexion_kernel; 
 
-
+extern pthread_mutex_t mutex_log_debug;
+extern pthread_mutex_t mutex_log;
 
 #endif

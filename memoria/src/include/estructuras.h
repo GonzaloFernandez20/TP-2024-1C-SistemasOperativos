@@ -46,6 +46,7 @@ extern t_config_memoria config_memoria;
 extern int fd_server_memoria;
 extern int fd_kernel;
 extern int fd_cpu;
+extern int fd_IO;
 
 extern t_list* memoria_de_instrucciones;
 

@@ -3,6 +3,7 @@
 void *procesar_operacion_kernel(void *fd_kernel_casteado){
     
     fd_kernel = _deshacer_casting(fd_kernel_casteado);
+    free(fd_kernel_casteado);
 
     int cliente_conectado = 1;
 

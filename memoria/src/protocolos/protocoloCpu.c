@@ -3,6 +3,7 @@
 void *procesar_operacion_cpu(void *fd_cpu_casteado){
 
     fd_cpu = _deshacer_casting(fd_cpu_casteado);
+	free(fd_cpu_casteado);
 
     int cliente_conectado = 1;
 
@@ -80,5 +81,23 @@ void fetch_instruccion(int PID, int PC){
 
 	enviar_paquete(paquete, fd_conexion_memoria);
 	eliminar_paquete(paquete);
+}
+
+
+char* recibir_instruccion(void){
+	int codigo_operacion = recibir_operacion(fd_conexion_memoria);
+
+	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
+	void* stream = buffer->stream;
+	
+	int length = buffer_read_int(&stream);
+	char* instruccion = malloc(length);
+	strcpy(instruccion, buffer_read_string(&stream, length));
+
+	log_info(cpu_log_debug, "Instruccion recibida: %s\n", instruccion);
+	
+	eliminar_buffer(buffer);
+
+	return instruccion;
 }
 */

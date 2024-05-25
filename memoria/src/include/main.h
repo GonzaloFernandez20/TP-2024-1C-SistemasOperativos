@@ -27,6 +27,7 @@ t_config_memoria config_memoria;
 int fd_server_memoria;
 int fd_kernel;
 int fd_cpu;
+int fd_IO;
 
 
 t_list* memoria_de_instrucciones;

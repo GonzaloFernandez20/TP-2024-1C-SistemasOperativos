@@ -22,4 +22,10 @@ void atender_kernel(void);
 
 void atender_entradaSalida(void);
 
+void atender_interfaz(void (*procesar_conexion)(void*));
+
+void recibir_handshake_IO(int fd_cliente);
+
+void recibir_presentacion_IO(int fd_cliente);
+
 #endif
