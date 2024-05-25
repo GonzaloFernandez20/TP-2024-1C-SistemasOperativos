@@ -23,7 +23,7 @@ void conectar_memoria(void){
         
         pthread_mutex_lock(&mutex_log_debug);
         log_info(IO_log_debug, "%s:%s conectado a MEMORIA en %s:%s\n", nombre_Interfaz, config_IO.TIPO_INTERFAZ, IP, PUERTO);
-        pthread_mutex_lock(&mutex_log_debug);
+        pthread_mutex_unlock(&mutex_log_debug);
 
         enviar_handshake_IO(fd_conexion_memoria, nombre_Interfaz, config_IO.TIPO_INTERFAZ);
     }
@@ -47,7 +47,7 @@ void conectar_kernel(void){
     else{
         pthread_mutex_lock(&mutex_log_debug);
         log_info(IO_log_debug, "%s:%s conectado a KERNEL en %s:%s\n", nombre_Interfaz, config_IO.TIPO_INTERFAZ, IP, PUERTO);
-        pthread_mutex_lock(&mutex_log_debug);
+        pthread_mutex_unlock(&mutex_log_debug);
 
         enviar_handshake_IO(fd_conexion_kernel, nombre_Interfaz, config_IO.TIPO_INTERFAZ);
     }
