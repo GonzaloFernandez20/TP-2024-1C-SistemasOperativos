@@ -3,8 +3,10 @@
 void *procesar_conexion_es(void *nombre_interfaz){
 
 	char* nombre = strdup((char*)nombre_interfaz);
-	
-	t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
+
+	pthread_mutex_lock(&diccionario_interfaces);
+		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
+	pthread_mutex_unlock(&diccionario_interfaces);
 
     int cliente_conectado = 1;
 
@@ -38,7 +40,9 @@ void *procesar_conexion_es(void *nombre_interfaz){
 
 void sacar_interfaz_de_diccionario(char* nombre_interfaz){
 
-	t_interfaz* interfaz = dictionary_remove(interfaces_conectadas, nombre_interfaz);
+	pthread_mutex_lock(&diccionario_interfaces);
+		t_interfaz* interfaz = dictionary_remove(interfaces_conectadas, nombre_interfaz);
+	pthread_mutex_unlock(&diccionario_interfaces);
 
 	mandar_procesos_a_exit(interfaz->bloqueados);
 	free(interfaz->bloqueados->nombre);
@@ -88,8 +92,11 @@ void recibir_aviso(char* nombre, int fd){
 	pthread_mutex_lock(&mutex_log_debug);
 	log_info(kernel_log_debugg, "Operacion %s completada", nombre);
 	pthread_mutex_unlock(&mutex_log_debug);
-	
-	t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
+
+	pthread_mutex_lock(&diccionario_interfaces);
+		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
+	pthread_mutex_unlock(&diccionario_interfaces);
+
 	trasladar(PID, interfaz->bloqueados, ready);
 }
 

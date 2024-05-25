@@ -194,7 +194,9 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     pthread_create(&interfaz->peticiones, NULL, (void *)gestionar_peticiones, (void*)interfaz);
     pthread_detach(interfaz->peticiones);
 
-    dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
+    pthread_mutex_lock(&diccionario_interfaces);
+        dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
+    pthread_mutex_unlock(&diccionario_interfaces);
 }
 
 void* gestionar_peticiones(void* interfaz){
@@ -205,11 +207,18 @@ void* gestionar_peticiones(void* interfaz){
 
     t_pcb* pcb = list_get(interfaz_actual->bloqueados->cola, 0);
     char* PID = strdup(string_itoa(pcb->pid));
-    t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);
+
+    pthread_mutex_lock(&diccionario_peticiones);
+        t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);
+    pthread_mutex_unlock(&diccionario_peticiones);
+
     void (*funcion)(t_peticion*, int, int) = peticion->funcion;
     funcion(peticion, pcb->pid, interfaz_actual->fd);
+    
+    pthread_mutex_lock(&diccionario_peticiones);
+        peticion = dictionary_remove(peticiones_interfaz, PID);
+    pthread_mutex_unlock(&diccionario_peticiones);
 
-    peticion = dictionary_remove(peticiones_interfaz, PID);
     free(peticion);
     free(PID);
     
