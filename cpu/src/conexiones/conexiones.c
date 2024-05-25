@@ -24,17 +24,17 @@ void iniciar_servidor_dispatch(void){
     free(IP);
     free(PUERTO);
 }
-
+*/
 void iniciar_servidor_interrupt(void){
     char* IP = strdup(config_cpu.IP_CPU);
     char* PUERTO = strdup(config_cpu.PUERTO_ESCUCHA_INTERRUPT);
 
-    iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
+    _iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
 
     free(IP);
     free(PUERTO);
 }
-*/
+
 
 // void iniciar_servidor_dispatch(void){
 //     char* IP = config_cpu.IP_CPU;
@@ -43,13 +43,12 @@ void iniciar_servidor_interrupt(void){
 //     _iniciar_servidor(IP, PUERTO, "CPU-DISPATCH");
 // }
 
-void iniciar_servidor_interrupt(void){
-    char* IP = config_cpu.IP_CPU;
-    char* PUERTO = config_cpu.PUERTO_ESCUCHA_INTERRUPT;
+// void iniciar_servidor_interrupt(void){
+//     char* IP = config_cpu.IP_CPU;
+//     char* PUERTO = config_cpu.PUERTO_ESCUCHA_INTERRUPT;
 
-    _iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
-
-}
+//     _iniciar_servidor(IP, PUERTO, "CPU-INTERRUPT");
+// }
 
 void _iniciar_servidor(char* IP, char* PUERTO, char* nombre_server)  {
     int fd_server = iniciar_servidor(IP , PUERTO);

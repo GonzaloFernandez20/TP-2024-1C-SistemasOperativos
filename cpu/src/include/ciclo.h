@@ -4,6 +4,7 @@
 #include <commons/collections/dictionary.h>
 #include <commons/string.h>
 #include <protocolos/protocoloInterrupt.h>
+#include <include/estructuras.h>
 
 
 #define SET "SET"
@@ -27,34 +28,7 @@
 #define EXIT_OS "EXIT_OS"
 
 
-typedef struct {
-    uint32_t PC;    // Program Counter, indica la próxima instrucción a ejecutar
-    uint8_t  AX;     // Registro Numérico de propósito general
-    uint8_t  BX;     // idem
-    uint8_t  CX;     // idem 
-    uint8_t  DX;     // idem
-    uint32_t EAX;   // idem
-    uint32_t EBX;   // idem
-    uint32_t ECX;   // idem
-    uint32_t EDX;   // idem 
-    uint32_t SI;    // Contiene la dirección lógica de memoria de origen desde donde se va a copiar un string.
-    uint32_t DI;    // Contiene la dirección lógica de memoria de destino a donde se va a copiar un string.
-} struct_registros;
 
-typedef struct {
-    int PID;
-    int Quantum;
-    struct_registros registros; 
-} struct_PCB;
-
-typedef struct{
-    char* operacion_str;
-    char* arg1;
-    char* arg2;
-    char* arg3;
-    char* arg4;
-    char* arg5;    
-}t_instruccion;
 
 
 // Function declarations
@@ -108,22 +82,6 @@ void decode_and_execute();
 void checkInterrupt();
 void desalojarProcesoActual();
 void fin_de_ciclo();
-
-//Variables globales
-struct_PCB PCB;
-struct_registros registrosCPU;   
-char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
-t_dictionary* opCodes_diccionario;
-t_dictionary* registros_diccionario;
-
-
-// Me traigo variable global desde protocoloInterrupt.h
-extern uint32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
-                                    //a través de la conexión Interrupt, PIDs que se quieran interrumpir.
-                                    //Si la PID del proceso en ejecución coincide con el PID solicitado a interrumpir,
-                                    //entonces seteamos el flag en 1. Luego de procesar la solicitud,
-                                    //se debe setear nuevamente el flag en 0 (estado default).
-extern pthread_mutex_t mutexInterrupt; 
 
 
 #endif

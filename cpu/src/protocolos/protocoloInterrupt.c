@@ -22,6 +22,7 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
     while(cliente_conectado){
         int cod_op = recibir_operacion(fd_interrupt);
+		printf("cod_op = %d", cod_op);
 
 		switch (cod_op) {
 		case MENSAJE:

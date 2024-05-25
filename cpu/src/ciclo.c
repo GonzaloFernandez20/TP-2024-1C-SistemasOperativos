@@ -94,7 +94,7 @@ void checkInterrupt() {
     
     if(seAceptaInterrupcion) {
         log_info(cpu_log_debug, "Interrumpiendo proceso PID=%d en ejecución", PCB.PID);
-        desalojarProcesoActual();
+        desbloquearDispatch();
     }
     else {
         log_error(cpu_log_debug, "El proceso pedido (PID=%d) no coincide con el actual en ejecución (PID=%d), no se interrumpirá.", PID_a_interrumpir, PCB.PID);

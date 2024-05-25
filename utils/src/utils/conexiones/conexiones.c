@@ -99,8 +99,10 @@ Espera conexiones de clientes. El accept() es bloqueante.
 */
 int esperar_cliente(int fd_servidor)
 {
+	puts("ESPERANDO CLIENTE (conexiones.c)");
 	// Aceptamos un nuevo cliente
 	int fd_cliente = accept(fd_servidor, NULL, NULL);
+	puts("ACEPTADO CLIENTE. (conexiones.c)");
 
 	if(fd_cliente == -1){
 		fprintf(stderr, "Error al aceptar cliente: \n%s", strerror(errno));

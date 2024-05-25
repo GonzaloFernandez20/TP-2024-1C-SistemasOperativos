@@ -31,7 +31,7 @@ void liberar_cpu(void){
     free(path_config);
     log_destroy(cpu_log);
     log_destroy(cpu_log_debug);
-    liberar_conexion(fd_dispatch_server);
+    // liberar_conexion(fd_dispatch_server);
     liberar_conexion(fd_interrupt_server);
     liberar_conexion(fd_conexion_memoria);
 }
