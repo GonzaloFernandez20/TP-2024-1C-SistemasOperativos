@@ -7,4 +7,8 @@
 
 void atender_peticiones_kernel(void);
 
+void realizar_un_sleep(void);
+
+void mandar_aviso_kernel(int PID);
+
 #endif

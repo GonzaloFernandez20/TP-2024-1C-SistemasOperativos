@@ -12,8 +12,8 @@ void *procesar_conexion_es(void *nombre_interfaz){
         int cod_op = recibir_operacion(interfaz->fd);
 
 		switch (cod_op) {
-		case MENSAJE:
-			//
+		case OPERACION_COMPLETADA:
+			recibir_aviso(nombre, interfaz->fd);
 			break;
 		
 		case -1:
@@ -47,3 +47,33 @@ void sacar_interfaz_de_diccionario(char* nombre_interfaz){
 	free(interfaz->bloqueados);
 	free(interfaz);
 }
+
+void solicitar_operacion_IO_GEN_SLEEP(int PID, int fd, int parametro){
+    t_paquete* paquete = crear_paquete(IO_GEN_SLEEP);
+
+	int buffer_size = 2 * sizeof(int); 
+	crear_buffer(paquete, buffer_size);
+
+
+	buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, parametro);
+
+	enviar_paquete(paquete, fd);
+	eliminar_paquete(paquete);
+}
+
+void recibir_aviso(char* nombre, int fd){
+	t_buffer *buffer = recibir_buffer(fd);
+	void* stream = buffer->stream;
+	
+	int PID = buffer_read_int(&stream);
+	eliminar_buffer(buffer);
+
+	pthread_mutex_lock(&mutex_log_debug);
+	log_info(kernel_log_debugg, "Operacion %s completada", nombre);
+	pthread_mutex_unlock(&mutex_log_debug);
+	
+		//sabiendo el pid buscas en el dicc con la nombre y accedes a su t_estado 
+		// buscar en su cola el pid y pasarlo de blocked a ready
+}
+

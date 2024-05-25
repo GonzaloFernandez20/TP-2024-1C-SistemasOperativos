@@ -10,6 +10,9 @@ void *procesar_conexion_es(void *nombre_interfaz);
 
 void sacar_interfaz_de_diccionario(char* nombre_interfaz);
 
+void solicitar_operacion_IO_GEN_SLEEP(int PID, int fd, int parametro);
+
+void recibir_aviso(char* nombre, int fd);
 
 
 #endif
