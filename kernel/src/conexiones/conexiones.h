@@ -20,7 +20,9 @@ void conectar_dispatch(void);
 
 void conectar_interrupt(void);
 
-void atender_entradasalida(void);
+void esperar_dispositivos_IO(void);
+
+void *atender_entradasalida(void);
 
 void cargar_diccionario_instrucciones(void);
 

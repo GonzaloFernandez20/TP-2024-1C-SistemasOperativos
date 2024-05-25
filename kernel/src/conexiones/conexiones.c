@@ -77,7 +77,15 @@ void conectar_interrupt(void){
     free(PUERTO);
 }
 
-void atender_entradasalida(){
+void esperar_dispositivos_IO(){
+    // Creamos un hilo para atender conexiones de dispositivos IO's
+    pthread_t atender_IO;
+    pthread_create(&atender_IO, NULL, (void *)atender_entradasalida, NULL);
+    pthread_detach(atender_IO);
+}
+
+
+void *atender_entradasalida(){
     interfaces_conectadas =  dictionary_create();
     peticiones_interfaz = dictionary_create();
     cargar_diccionario_instrucciones();
