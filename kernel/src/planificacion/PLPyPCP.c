@@ -2,33 +2,78 @@
 
 int pid_nuevo_proceso = 0; 
 
+
 // ----------- PLANIFICADOR CORTO PLAZO
 
 void *planificador_corto_plazo(){
     //desalojadoAntes = true;
     //pcbInicial = true;
     t_pcb *pcbExecute;
+    t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
 
     while (1)
-    {
+    {   
         sem_wait(&proceso_listo);
-        sem_wait(&execute_libre);
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
-       
-        pcbExecute = pop_estado(ready);
-        printf("ENVIANDO PCB %d A CPU", pcbExecute->pid);
+       switch (algoritmo_planificacion)
+       {
+            case FIFO:
+                    pcbExecute = pop_estado(ready);
+                    push_estado(exec, pcbExecute);
 
-        pthread_mutex_lock(&mutex_log_debug);
-        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
-        pthread_mutex_unlock(&mutex_log_debug);
+                    //enviar_pcb(pcbExecute);
 
-        //enviar_pcb(pcbExecute);
-        usleep(400000000);
-        //recibirPCB modificado y motivo de desalojo
-        //asignar tarea, algo tiene que hacer ahora, capaz conviene q siga otro hilo por la suya
-        
-        sem_post(&execute_libre); //avisa q la cpu ya no esta ejecutando
+                    pthread_mutex_lock(&mutex_log_debug);
+                        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
+                    pthread_mutex_unlock(&mutex_log_debug);
+
+                    usleep(35000000);
+                    //int op_code_desalojo = recibir_pcb(pcbExecute);
+                    trasladar(pcbExecute->pid, exec, blocked);
+                    //interpretar_desalojo(op_code_desalojo, pcbExecute);
+                break;
+            case RR:
+                    termino_quantum = 0;
+                    pcbExecute = pop_estado(ready);
+                    push_estado(exec, pcbExecute);
+
+                    //enviar_pcb(pcbExecute);
+
+                    pthread_mutex_lock(&mutex_log_debug);
+                        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
+                    pthread_mutex_unlock(&mutex_log_debug);
+
+                    int *pidsito = malloc(sizeof(int));
+                        *pidsito = pcbExecute->pid;
+                    // THREAD QUE CONTROLA EL QUANTUM PARA UN PROCESO EN EJECUCION
+                    pthread_t manejo_quantum;
+                    pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
+                    pthread_detach(manejo_quantum);
+
+                    usleep(1000*5000);
+                    //int op_code_desalojo = recibir_pcb(pcbExecute);
+                    if (termino_quantum == 0){ 
+                        pthread_cancel(manejo_quantum); 
+
+                        pthread_mutex_lock(&mutex_log_debug);
+                            log_info(kernel_log_debugg, "CPU devolvio el contexto de PID: %d ", pcbExecute->pid);
+                        pthread_mutex_unlock(&mutex_log_debug);
+                    }
+
+                    
+                    //interpretar_desalojo(op_code_desalojo, pcbExecute);
+                    trasladar(pcbExecute->pid, exec, blocked);
+
+                    free(pidsito);
+                break;
+            case VRR:
+                /* code */
+                break;
+            
+            default:
+                break;
+       }
     }
 }
 
@@ -47,7 +92,7 @@ void *planificador_largo_plazo(void){
 
     // ------------------ COMUNICACION CON MEMORIA
     
-    enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
+    /* enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
     int rta_memoria = recibir_confirmacion(pcb_a_cargar->pid);
 
      if (!rta_memoria){
@@ -55,7 +100,7 @@ void *planificador_largo_plazo(void){
             log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
         pthread_mutex_lock(&mutex_log_debug); 
         return NULL; 
-    } 
+    }  */
 
     // ------------------ AGREGA A COLA READY
     trasladar(pcb_a_cargar->pid, new, ready);
@@ -64,14 +109,6 @@ void *planificador_largo_plazo(void){
     }
 
 } 
-
-// ----------- FUNCIONES PRINCIPALES
-
-
-
-
-
-
 
 // ----------- FUNCIONES SECUNDARIAS
 
@@ -97,8 +134,6 @@ void iniciar_planificacion(void){
     // -------------------------------------------------
 }
 
-
-
 void inicializar_semaforos(void){
 
     // ------- SEMAFOROS DE LOGS
@@ -112,6 +147,35 @@ void inicializar_semaforos(void){
     sem_init(&grado_multiprogramacion, 0, config_kernel.GRADO_MULTIPROGRAMACION);
 }
 
+void *iniciar_quantum(void* PID_PROCESO){
+
+    int PID = _deshacer_casting(PID_PROCESO);
+
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "Proceso < %d > comienza su Quantum", PID);
+    pthread_mutex_unlock(&mutex_log_debug);
+
+    usleep(config_kernel.QUANTUM * 2000);
+    termino_quantum = 1;
+    //enviar_interrupcion(fd_conexion_interrupt);
+
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "PID: %d Desalojado por fin de Quantum", PID);
+    pthread_mutex_unlock(&mutex_log_debug);
+
+    return NULL;
+}  
+
 // ----------- FUNCIONES AUXILIARES
 
+t_algoritmo _chequear_algoritmo(void){
+    if (string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "FIFO")) { return FIFO; }
+    if (string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR"))   { return RR; }
+    if (string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "VRR"))  { return VRR; } 
+    
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "Algoritmo de planificacion: < %s >", config_kernel.ALGORITMO_PLANIFICACION);
+    pthread_mutex_unlock(&mutex_log_debug);
 
+    return ERROR;  
+}

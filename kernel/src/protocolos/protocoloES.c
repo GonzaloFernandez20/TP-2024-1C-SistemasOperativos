@@ -3,6 +3,7 @@
 void *procesar_conexion_es(void *fd_es_casteado){
 
     int fd_es = _deshacer_casting(fd_es_casteado);
+	free(fd_es_casteado); // Hacerlo en CPU tambien
 
     int cliente_conectado = 1;
 
