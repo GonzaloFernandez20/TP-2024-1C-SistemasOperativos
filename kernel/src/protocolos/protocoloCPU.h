@@ -9,8 +9,8 @@
 
 
 // ---------- DECLARACIONES DE FUNCIONES
-void enviar_pcb(t_pcb *pcb_envio);
-void recibir_pcb(t_pcb* pcb);
+void enviar_contexto_ejecucion(t_pcb *pcb_envio);
+void recibir_contexto_ejecucion(t_pcb* pcb);
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
 

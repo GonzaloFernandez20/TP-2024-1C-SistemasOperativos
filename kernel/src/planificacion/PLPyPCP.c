@@ -8,65 +8,44 @@ int pid_nuevo_proceso = 0;
 void *planificador_corto_plazo(){
     //desalojadoAntes = true;
     //pcbInicial = true;
-    t_pcb *pcbExecute;
+    t_pcb *pcb_execute;
     t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
+    
 
     while (1)
-    {   
+    {       
         sem_wait(&proceso_listo);
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
        switch (algoritmo_planificacion)
        {
             case FIFO:
-                    pcbExecute = pop_estado(ready);
-                    push_estado(exec, pcbExecute);
+                    pcb_execute = pop_estado(ready);
+                    push_estado(exec, pcb_execute);
 
-                    //enviar_pcb(pcbExecute);
+                    enviar_contexto_ejecucion(pcb_execute);
 
-                    pthread_mutex_lock(&mutex_log_debug);
-                        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
-                    pthread_mutex_unlock(&mutex_log_debug);
-
-                    usleep(35000000);
-                    recibir_pcb(pcbExecute);
-
-                    //trasladar(pcbExecute->pid, exec, blocked);
-                    //interpretar_desalojo(op_code_desalojo, pcbExecute, arrayDeParametros);
+                    //usleep(35000000);
+                    recibir_contexto_ejecucion(pcb_execute);
                 break;
             case RR:
                     termino_quantum = 0;
-                    pcbExecute = pop_estado(ready);
-                    push_estado(exec, pcbExecute);
+                    
+                    pcb_execute = pop_estado(ready);
+                    push_estado(exec, pcb_execute);
 
-                    //enviar_pcb(pcbExecute);
-
-                    pthread_mutex_lock(&mutex_log_debug);
-                        log_info(kernel_log_debugg, "ENVIANDO PCB %d A CPU", pcbExecute->pid);
-                    pthread_mutex_unlock(&mutex_log_debug);
+                    enviar_contexto_ejecucion(pcb_execute);
 
                     int *pidsito = malloc(sizeof(int));
-                        *pidsito = pcbExecute->pid;
+                        *pidsito = pcb_execute->pid;
+
                     // THREAD QUE CONTROLA EL QUANTUM PARA UN PROCESO EN EJECUCION
-                    pthread_t manejo_quantum;
                     pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
                     pthread_detach(manejo_quantum);
 
-                    usleep(1000*5000);
-                    //int op_code_desalojo = recibir_pcb(pcbExecute);
-                    if (termino_quantum == 0){ 
-                        pthread_cancel(manejo_quantum); 
-
-                        pthread_mutex_lock(&mutex_log_debug);
-                            log_info(kernel_log_debugg, "CPU devolvio el contexto de PID: %d ", pcbExecute->pid);
-                        pthread_mutex_unlock(&mutex_log_debug);
-                    }
-
-                    
-                    //interpretar_desalojo(op_code_desalojo, pcbExecute);
-                    trasladar(pcbExecute->pid, exec, blocked);
-
-                    free(pidsito);
+                    //usleep(1000*5000);
+                    recibir_contexto_ejecucion(pcb_execute);
+            
                 break;
             case VRR:
                 /* code */
@@ -151,17 +130,18 @@ void inicializar_semaforos(void){
 void *iniciar_quantum(void* PID_PROCESO){
 
     int PID = _deshacer_casting(PID_PROCESO);
+    free(PID_PROCESO);
 
     pthread_mutex_lock(&mutex_log_debug);
         log_info(kernel_log_debugg, "Proceso < %d > comienza su Quantum", PID);
     pthread_mutex_unlock(&mutex_log_debug);
 
-    usleep(config_kernel.QUANTUM * 2000);
+    usleep(config_kernel.QUANTUM * 1000);
     termino_quantum = 1;
-    //enviar_interrupcion(fd_conexion_interrupt);
+    //enviar_interrupcion(); TODO
 
     pthread_mutex_lock(&mutex_log_debug);
-        log_info(kernel_log_debugg, "PID: %d Desalojado por fin de Quantum", PID);
+        log_info(kernel_log_debugg, "PID: %d interrumpido por fin de Quantum", PID);
     pthread_mutex_unlock(&mutex_log_debug);
 
     return NULL;

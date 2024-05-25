@@ -34,5 +34,6 @@ char* recibir_presentacion_IO(int fd_cliente);
 
 void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, int fd);
 
+void* gestionar_peticiones(void* interfaz);
 
 #endif

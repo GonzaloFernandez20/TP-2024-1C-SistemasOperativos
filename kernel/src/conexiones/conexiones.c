@@ -79,6 +79,7 @@ void conectar_interrupt(void){
 
 void atender_entradasalida(){
     interfaces_conectadas =  dictionary_create();
+    peticiones_interfaz = dictionary_create();
     cargar_diccionario_instrucciones();
     while(1)
     atender_interfaz((void *)procesar_conexion_es);
@@ -87,16 +88,16 @@ void atender_entradasalida(){
 void cargar_diccionario_instrucciones(void){
      instrucciones_por_interfaz = dictionary_create();
 
-     int instrucciones_GENERICA[1] = {IO_GEN_SLEEP};
+     int instrucciones_GENERICA[2] = {IO_GEN_SLEEP, -1};
      dictionary_put(instrucciones_por_interfaz, "GENERICA", instrucciones_GENERICA);
 
-     int instrucciones_STDIN[1] = {IO_STDIN_READ};
+     int instrucciones_STDIN[2] = {IO_STDIN_READ, -1};
      dictionary_put(instrucciones_por_interfaz, "STDIN", instrucciones_STDIN);
 
-     int instrucciones_STDOUT[1] = {IO_STDOUT_WRITE};
+     int instrucciones_STDOUT[2] = {IO_STDOUT_WRITE, -1};
      dictionary_put(instrucciones_por_interfaz, "STDOUT", instrucciones_STDOUT);
 
-     int instrucciones_DIALFS[5] = {IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ};
+     int instrucciones_DIALFS[6] = {IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ, -1};
      dictionary_put(instrucciones_por_interfaz, "DIALFS", instrucciones_DIALFS);
 }
 
@@ -180,8 +181,30 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     interfaz->tipo = strdup(tipo_interfaz);
     interfaz->fd = fd;
     interfaz->bloqueados = cola_bloqueados;
-    pthread_mutex_init(&(interfaz->interfaz_en_uso));
+    pthread_mutex_init(&(interfaz->interfaz_en_uso), NULL);
+    sem_init(&interfaz->hay_peticiones, 0,0);
+    pthread_create(&interfaz->peticiones, NULL, (void *)gestionar_peticiones, (void*)interfaz);
+    pthread_detach(interfaz->peticiones);
 
     dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
+}
+
+void* gestionar_peticiones(void* interfaz){
+    t_interfaz* interfaz_actual = (t_interfaz*)interfaz;
+
+    sem_wait(&interfaz_actual->hay_peticiones);
+    pthread_mutex_lock(&interfaz_actual->interfaz_en_uso);
+
+    t_pcb* pcb = list_get(interfaz_actual->bloqueados->cola, 0);
+    char* PID = strdup(string_itoa(pcb->pid));
+    t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);
+    void (*funcion)(t_peticion*, int, int) = peticion->funcion;
+    funcion(peticion, pcb->pid, interfaz_actual->fd);
+
+    peticion = dictionary_remove(peticiones_interfaz, PID);
+    free(peticion);
+    free(PID);
+    
+    return NULL;
 }
 

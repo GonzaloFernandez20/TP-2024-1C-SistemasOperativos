@@ -39,9 +39,20 @@ typedef struct interfaz_conectada
     char* tipo;
     int fd;
     t_estado* bloqueados;
+
+    pthread_t peticiones;
+    sem_t hay_peticiones;
     pthread_mutex_t interfaz_en_uso;
 
+
 } t_interfaz;
+
+typedef struct t_peticion
+{
+    int unidades_trabajo;
+    //agregaremos los argumentos que otras funciones necesiten
+    void (*funcion)(struct t_peticion*, int, int);
+}t_peticion;
 
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
@@ -57,6 +68,9 @@ extern int fd_conexion_interrupt;
 
 extern t_dictionary* interfaces_conectadas;
 extern t_dictionary* instrucciones_por_interfaz;
+extern t_dictionary* peticiones_interfaz;
+
+extern pthread_t manejo_quantum;
 
 
 extern int termino_quantum;

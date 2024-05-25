@@ -36,6 +36,9 @@ int fd_conexion_interrupt;
 
 t_dictionary* interfaces_conectadas;
 t_dictionary* instrucciones_por_interfaz;
+t_dictionary* peticiones_interfaz;
+
+pthread_t manejo_quantum;
 
 t_estado *new;
 t_estado *ready;
