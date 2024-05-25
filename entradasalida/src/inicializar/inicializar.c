@@ -24,7 +24,7 @@ void leer_configuracion(){
     config_IO.PUERTO_KERNEL = strdup(config_get_string_value(config, "PUERTO_KERNEL"));
     config_IO.IP_KERNEL = strdup(config_get_string_value(config, "IP_KERNEL"));
 
-    if(!string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "Generica")){
+    if(!string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "GENERICA")){
         config_IO.PUERTO_MEMORIA = strdup(config_get_string_value(config, "PUERTO_MEMORIA"));
         config_IO.IP_MEMORIA = strdup(config_get_string_value(config, "IP_MEMORIA"));
     }
@@ -33,7 +33,7 @@ void leer_configuracion(){
         config_IO.TIEMPO_UNIDAD_TRABAJO = config_get_int_value(config, "TIEMPO_UNIDAD_TRABAJO");
     } 
 
-    if(string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "DialFS")){
+    if(string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "DIALFS")){
         config_IO.PATH_BASE_DIALFS= strdup(config_get_string_value(config, "PATH_BASE_DIALFS"));
         config_IO.BLOCK_SIZE = config_get_int_value(config, "BLOCK_SIZE");
         config_IO.BLOCK_COUNT = config_get_int_value(config, "BLOCK_COUNT");

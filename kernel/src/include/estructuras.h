@@ -4,6 +4,7 @@
 // ---------- INCLUSIONES
 #include <commons/log.h>
 #include <commons/collections/list.h>
+#include <commons/collections/dictionary.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -33,6 +34,13 @@ typedef struct estado
     t_list *cola;
     char* nombre;
 }t_estado;
+typedef struct interfaz_conectada
+{
+    char* tipo;
+    int fd;
+    t_estado* bloqueados;
+
+} t_interfaz;
 
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
@@ -46,7 +54,9 @@ extern int fd_conexion_memoria;
 extern int fd_conexion_dispatch; 
 extern int fd_conexion_interrupt;
 
-extern int entrada_salida_conectada;
+extern t_dictionary* interfaces_conectadas;
+extern t_dictionary* instrucciones_por_interfaz;
+
 
 extern int termino_quantum;
 // Estados
