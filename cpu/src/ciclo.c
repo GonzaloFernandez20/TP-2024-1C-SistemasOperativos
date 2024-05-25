@@ -226,8 +226,8 @@ int tamanioDeRegistro(char* registro){
 // LAS FUNCIONES OPERACIÓN
 
 void set(){//asigna al registro seleccionado el valor pasado como argumento
-    char* registro = instruccion_cpu.arg1;
-    uint32_t valor = atoi(instruccion_cpu.arg2);  // string to int
+    char* registro = instruccion_cpu[1];
+    uint32_t valor = atoi(instruccion_cpu[2]);  // string to int
 
     void* ptr_registroCPU = direccionDelRegistro(registro);
 
@@ -242,8 +242,8 @@ void set(){//asigna al registro seleccionado el valor pasado como argumento
     // free(ptr_registroCPU);
 }
 void sum(){//Vale sumar un registro de 32bits a uno de 8bits
-    char* registroDestino = instruccion.arg1;
-    char* registroOrigen = instruccion.arg2;
+    char* registroDestino = instruccion_cpu[1];
+    char* registroOrigen = instruccion_cpu[2];
     
     void* ptr_registroDestino;
     void* ptr_registroOrigen;
@@ -265,8 +265,8 @@ void sum(){//Vale sumar un registro de 32bits a uno de 8bits
 
 }
 void sub(){
-    char* registroDestino = instruccion.arg1;
-    char* registroOrigen = instruccion.arg2;
+    char* registroDestino = instruccion_cpu[1];
+    char* registroOrigen = instruccion_cpu[2];
 
     void* ptr_registroDestino;
     void* ptr_registroOrigen;
@@ -285,22 +285,22 @@ void sub(){
     // free(ptr_registroOrigen);
 }
 void jnz(){
-    char* registro = instruccion.arg1;
-    int num_instruccion = atoi(instruccion.arg2);  // string to int
+    char* registro = instruccion_cpu[1];
+    int instruccion_PC = atoi(instruccion_cpu[2]);  // se espera un program counter
 
     void* ptr_registroCPU = direccionDelRegistro(registro);
 
-    if(num_instruccion != 0){
-        registrosCPU.PC += *(uint32_t*)ptr_registroCPU;
-    } //acá no hay if para castear porque el PC es siempre de tipo uint32_t
+    uint32_t valor_del_registro = *ptr_registroCPU;
+    if(valor_del_registro != 0){
+        registrosCPU.PC = instruccion_PC 
+    }
     else{
         //tirar un error
     }
-    free(ptr_registroCPU);
 }
 void io_gen_sleep(){
-    char* interfaz = instruccion.arg1;
-    char* unidadesDeTrabajo = instruccion.arg2;
+    char* interfaz = instruccion_cpu[1];
+    char* unidadesDeTrabajo = instruccion_cpu[2];
 
     // int interfaz_para_kernel = identificarInterfaz(interfaz);
     int unidadesDeSleep = atoi(unidadesDeTrabajo);
