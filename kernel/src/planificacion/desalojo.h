@@ -2,15 +2,11 @@
 #define DESALOJO_H_INCLUDED
 
 // ----------- LIBRERIAS 
-
+#include <utils/serializacion/serializacion.h>
+#include <include/estructuras.h>
+#include <planificacion/pcb.h>
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
-typedef enum motivo_desalojo{
-    FIN_DE_QUANTUM,
-    INTERRUPCION,
-    LLAMADA_IO,
-    EXIT
-}t_motivo_desalojo;
 
 // ---------- DECLARACIONES DE FUNCIONES
 
