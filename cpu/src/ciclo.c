@@ -63,14 +63,16 @@ void ciclo() {
     // cuando salga del loop signfica que por alguna razón cpu paró
     dictionary_destroy(opCodes_diccionario);    // liberamos memoria asignada al diccionario.
     dictionary_destroy(registros_diccionario);
+    string_array_destroy(instruccion_cpu);      // liberamos esto
 }
 void fetch(){
-    PCB.registros.PC += 1;      // buscamos la siguiente instrucción
-    // pedirAMemoria(PCB.registros.PC); 
+    PCB.registros.PC += 1;                                         // apuntamos a la siguiente instrucción
+    solicitar_instruccion_a_memoria(PCB.registros.PC);             // se la pedimos a Memoria
+    instruccion_cpu = string_split(recibir_instruccion(), " ");    // recibimos desde Memoria la instrucción como string y dividimos las partes en un array. OJO hay que liberarla.
 }
 void decode_and_execute() {
-    void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion.operacion_str); // obtenemos la función
-    funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el struct global instruccion.
+    void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion_cpu[0]); // obtenemos la función a partir del string del nombre de la instrucción
+    funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el array global instruccion_cpu.
 }
 
 void checkInterrupt() {
@@ -92,15 +94,46 @@ void desalojarProcesoActual(){
     acomodarRegistrosDeCPU(PCB.registros);  // actualizar registros de la cpu con los de la PCB.
 }
 
+void solicitar_instruccion_a_memoria(uint32_t PC){
+	t_paquete* paquete = crear_paquete(OBTENER_INSTRUCCION);
+
+	int buffer_size = 2*sizeof(int); 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PCB.PID);   // PID del proceso en ejecución
+	buffer_add_int(paquete->buffer, PC);        // PC de la instrucción que queremos del proceso
+
+	enviar_paquete(paquete, fd_conexion_memoria);
+	eliminar_paquete(paquete);
+}
+
+char* recibir_instruccion(void){
+	int codigo_operacion = recibir_operacion(fd_conexion_memoria);  // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero.
+
+	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
+	void* stream = buffer->stream;
+
+	int length = buffer_read_int(&stream);
+
+	char *ptr_string = buffer_read_string(&stream, length); // puntero a un espacio de memoria de chars.
+    char* instruccion;                                      // para almacenar un literal string.
+    strcpy(instruccion, ptr_string);                        // copiamos el string como literal string
+    free(ptr_string);                                       // así podemos liberar el puntero retornado por el buffer_read_string().
+
+	log_info(cpu_log_debug, "Instruccion recibida: %s\n", instruccion);
+	
+	eliminar_buffer(buffer);
+
+	return instruccion;                 // ya no va a ser necesario liberar la memoria.
+}
+
+
+
 
 struct_PCB recibirPCB() {
     return PCB; // CAMBIAR DESPUÉS
 } 
 
-// Función auxiliar para fetch()
-// void pedirAMemoria(PCB.registros.PC) {
-//     return
-// }
 
 // void enviarAKernel() {
 
@@ -193,8 +226,8 @@ int tamanioDeRegistro(char* registro){
 // LAS FUNCIONES OPERACIÓN
 
 void set(){//asigna al registro seleccionado el valor pasado como argumento
-    char* registro = instruccion.arg1;
-    uint32_t valor = atoi(instruccion.arg2);  // string to int
+    char* registro = instruccion_cpu.arg1;
+    uint32_t valor = atoi(instruccion_cpu.arg2);  // string to int
 
     void* ptr_registroCPU = direccionDelRegistro(registro);
 

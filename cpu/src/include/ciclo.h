@@ -108,7 +108,8 @@ void desalojarProcesoActual();
 //Variables globales
 struct_PCB PCB;
 struct_registros registrosCPU;   
-t_instruccion instruccion;
+// t_instruccion instruccion_cpu;
+char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
 

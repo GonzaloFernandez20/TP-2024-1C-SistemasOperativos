@@ -145,29 +145,18 @@ void recibir_handshake(int fd_cliente, t_log* logger){
     }
 }
 
-void recibir_presentacion(int fd_cliente, t_log* logger){
-	int size;
-	char* buffer = recibir_buffer(&size, fd_cliente);
-	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", buffer);
-	free(buffer);
-}
 
-
-/*
-
-
-*/
-char* recibir_mensaje(int socket_cliente)
-{
-	int size;
-	char* buffer = recibir_buffer(&size, socket_cliente);  
+// char* recibir_mensaje(int socket_cliente)
+// {
+// 	int size;
+// 	char* buffer = recibir_buffer(&size, socket_cliente);  
 	
-	char* mensaje;
-	strcpy(mensaje, buffer); // mensaje no requiere ser liberado con free()
-	free(buffer);
+// 	char* mensaje;
+// 	strcpy(mensaje, buffer); // mensaje no requiere ser liberado con free()
+// 	free(buffer);
 	
-	return mensaje; // devolvemos un literal string así no se necesita liberar nada afuera de esta función
-}
+// 	return mensaje; // devolvemos un literal string así no se necesita liberar nada afuera de esta función
+// }
 
 int recibir_operacion(int fd_cliente){
 	int cod_op;
