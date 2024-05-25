@@ -25,5 +25,6 @@ int recibir_motivo_de_dealojo(int socket_cliente);
 void recibir_buffer_PCB(int fd, t_paquete_PCB* paquete);
 t_paquete_PCB*  recibir_paquete_PCB(int fd);
 void inicializar_PCB();
+void enviar_PCB();
 
 #endif 

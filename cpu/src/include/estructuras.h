@@ -7,7 +7,7 @@
 #include <commons/log.h>
 #include <stdint.h>
 #include <utils/serializacion/serializacion.h>
-
+#include <commons/collections/dictionary.h>
 
 // ---------- ESTRUCTURAS 
 typedef struct configuraciones_cpu
@@ -56,14 +56,7 @@ typedef struct {
     t_registros registros; 
 } t_pcb;
 //INSTRUCCION RECIBIDA DE MEMORIA
-typedef struct{
-    char* operacion_str;
-    char* arg1;
-    char* arg2;
-    char* arg3;
-    char* arg4;
-    char* arg5;    
-}t_instruccion;
+
 //OPERACION
 typedef enum{
     SET,
@@ -103,10 +96,12 @@ typedef struct {
 
 //VARIABLES GLOBALES
 extern pthread_mutex_t mutex_dispatch;//locked al inicializarlo
-extern pthread_mutex_t mutex_ciclo;//locked al inicializarlo 
+extern pthread_mutex_t mutex_ciclo;//locked al inicializarlo
+extern pthread_mutex_t mutexInterrupt; 
 extern t_pcb PCB;
 extern t_estado_cpu registrosCPU;   
-extern t_instruccion instruccion;
+//extern uint32_t PID_a_interrumpir;
+extern bool hayInterrupcion;
 
 extern t_log* cpu_log;
 extern t_log* cpu_log_debug;
@@ -122,5 +117,10 @@ extern int dispatch_conectado;
 extern int interrupt_conectado;
 
 extern int sistema_encendido;
+   
+extern char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
+extern t_dictionary* opCodes_diccionario;
+extern t_dictionary* registros_diccionario;
+
 
 #endif

@@ -35,9 +35,16 @@ int interrupt_conectado;
 
 pthread_mutex_t mutex_dispatch;//locked al inicializarlo
 pthread_mutex_t mutex_ciclo;//locked al inicializarlo 
+pthread_mutex_t mutexInterrupt;
 t_pcb PCB;
 t_estado_cpu registrosCPU;   
-t_instruccion instruccion;
+op_code_instruccion instruccion;
+//uint32_t PID_a_interrumpir;
+bool hayInterrupcion;
+
+char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
+t_dictionary* opCodes_diccionario;
+t_dictionary* registros_diccionario;
 
 // ---------------- Definiciones de funciones
 void liberar_cpu(void);
