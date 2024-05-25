@@ -4,6 +4,7 @@
 // ---------- INCLUSIONES
 #include <commons/log.h>
 #include <commons/collections/list.h>
+#include <commons/collections/dictionary.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -27,12 +28,29 @@ typedef struct configuraciones_kernel
 
 } t_config_kernel;
 
+
+typedef enum interfaz{
+    GENERICA,
+    STDIN,
+    STDOUT,
+    DIALFS,
+    ERROR
+
+}t_tipo_interfaz;
+
 typedef struct estado
 {
     pthread_mutex_t mutex_cola;
     t_list *cola;
     char* nombre;
 }t_estado;
+typedef struct interfaz_conectada
+{
+    t_tipo_interfaz tipo;
+    int fd;
+    t_estado* bloqueados;
+
+} t_interfaz;
 
 // ---------- VARIABLES GLOBALES
 extern t_log* kernel_log;
@@ -45,6 +63,8 @@ extern int fd_server_kernel;
 extern int fd_conexion_memoria;
 extern int fd_conexion_dispatch; 
 extern int fd_conexion_interrupt;
+
+extern t_dictionary* interfaces_conectadas;
 
 
 // Estados

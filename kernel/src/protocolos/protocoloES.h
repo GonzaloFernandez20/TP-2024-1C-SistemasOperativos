@@ -6,6 +6,10 @@
 #include <utils/hilos/hilos.h>
 #include <utils/serializacion/serializacion.h>
 
-void *procesar_conexion_es(void *fd_cpu_casteado);
+void *procesar_conexion_es(void *nombre_interfaz);
+
+void sacar_interfaz_de_diccionario(char* nombre_interfaz);
+
+
 
 #endif
