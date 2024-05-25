@@ -62,7 +62,7 @@ void enviar_instruccion_serializada(char* instruccion){
 	buffer_add_int(paquete->buffer, strlen(instruccion) + 1 );
 	buffer_add_string(paquete->buffer, instruccion);
 
-	usleep(config_memoria.RETARDO_RESPUESTA);
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cpu);
 
 	eliminar_paquete(paquete);
