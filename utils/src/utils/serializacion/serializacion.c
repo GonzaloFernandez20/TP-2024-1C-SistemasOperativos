@@ -98,13 +98,12 @@ void eliminar_buffer(t_buffer *buffer){
 	free(buffer);
 }
 
-
 ///////////////////////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////// RECEPCION DE MENSAJES ////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
 void recibir_handshake(int fd_cliente, t_log* logger){
-   
+    
     int handshake_ok = 0;
     int handshake_error = -1;
     
@@ -163,6 +162,7 @@ int buffer_read_int(void** stream){
 
 	return dato;
 }
+
 char* buffer_read_string(void** stream, int length){
 	char* string = malloc(length);
 	memcpy(string, *stream, length);
@@ -170,7 +170,3 @@ char* buffer_read_string(void** stream, int length){
 
 	return string;
 }
-
-
-
-

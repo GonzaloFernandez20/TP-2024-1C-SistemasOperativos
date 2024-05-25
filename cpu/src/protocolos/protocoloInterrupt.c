@@ -11,7 +11,11 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
 		switch (cod_op) {
 		case MENSAJE:
-			//
+			int PID_a_interrumpir = recibir_PID(fd_interrupt);			
+			log_info(cpu_log_debug, "Kernel pide interrumpir proceso PID=%d", PID_a_interrumpir);
+			if(PID_a_interrumpir == PCB.PID) {
+				hayInterrupcion = 1; // debe ser variable global bool.
+			}
 			break;
 		
 		case -1:
@@ -26,4 +30,14 @@ void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
 		}
 	}
 	return (void *)EXIT_FAILURE;
+}
+
+int recibir_PID(int fd_interrupt) {
+	t_buffer *buffer = recibir_buffer(fd_interrupt);
+
+	int PID = buffer_read_int(&(buffer->stream));
+	
+	eliminar_buffer(buffer);
+
+	return PID;
 }

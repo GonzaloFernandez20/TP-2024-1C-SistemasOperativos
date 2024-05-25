@@ -54,7 +54,7 @@ typedef struct t_peticion
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;
 
-// ---------- VARIABLES GLOBALES
+//VARIABLES GLOBALES
 extern t_log* kernel_log;
 extern t_log* kernel_log_debugg;
 
