@@ -6,18 +6,22 @@
 #include <stdio.h>
 #include <string.h>
 #include <commons/config.h>
+#include <stdint.h>
+#include <pthread.h>
 
 // ---------------- Librerias Propias
 // ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
-
+#include <ciclo.h>
 // ---- EXTERNAS
 #include <utils/hilos/hilos.h>
 
 // ---------------- Definiciones de variables globales
 t_log* cpu_log;
 t_log* cpu_log_debug;
+
+int sistema_encendido = 1;
 
 char *path_config;
 t_config_cpu config_cpu;
@@ -29,7 +33,14 @@ int fd_conexion_memoria;
 int dispatch_conectado;
 int interrupt_conectado;
 
+pthread_mutex_t mutex_dispatch;//locked al inicializarlo
+pthread_mutex_t mutex_ciclo;//locked al inicializarlo 
+t_pcb PCB;
+t_estado_cpu registrosCPU;   
+t_instruccion instruccion;
+
 // ---------------- Definiciones de funciones
 void liberar_cpu(void);
+
 
 #endif

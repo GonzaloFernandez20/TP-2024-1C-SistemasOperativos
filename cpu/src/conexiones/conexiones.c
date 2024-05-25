@@ -62,12 +62,12 @@ void conectar_memoria(void){
 
 void gestionar_conexiones_kernel(void){
     atender_dispatch();
-    atender_interrupt();
+  //  atender_interrupt();
 
-    while(dispatch_conectado || interrupt_conectado){
+ //   while(dispatch_conectado || interrupt_conectado){
         // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
         // es temporal para que el hilo main no finalice el programa
-    }
+//    }
 }
 
 void atender_dispatch(void){

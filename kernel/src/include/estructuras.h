@@ -25,7 +25,7 @@ typedef struct configuraciones_kernel
 } t_config_kernel;
 
 
-// ---------- VARIABLES GLOBALES
+//VARIABLES GLOBALES
 extern t_log* kernel_log;
 extern t_log* kernel_log_debugg;
 
