@@ -1,7 +1,7 @@
 #include <conexiones/conexiones.h>
 
 void iniciar_servidores(void){
-    iniciar_servidor_dispatch();
+    // iniciar_servidor_dispatch();
     iniciar_servidor_interrupt();
 }
 
@@ -36,12 +36,12 @@ void iniciar_servidor_interrupt(void){
 }
 */
 
-void iniciar_servidor_dispatch(void){
-    char* IP = config_cpu.IP_CPU;
-    char* PUERTO = config_cpu.PUERTO_ESCUCHA_DISPATCH;
+// void iniciar_servidor_dispatch(void){
+//     char* IP = config_cpu.IP_CPU;
+//     char* PUERTO = config_cpu.PUERTO_ESCUCHA_DISPATCH;
 
-    _iniciar_servidor(IP, PUERTO, "CPU-DISPATCH");
-}
+//     _iniciar_servidor(IP, PUERTO, "CPU-DISPATCH");
+// }
 
 void iniciar_servidor_interrupt(void){
     char* IP = config_cpu.IP_CPU;
@@ -80,19 +80,19 @@ void conectar_memoria(void){
 }
 
 void gestionar_conexiones_kernel(void){
-    atender_dispatch();
+    // atender_dispatch();
     atender_interrupt();
 
-    while(dispatch_conectado || interrupt_conectado){
+    while(interrupt_conectado){
         // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
         // es temporal para que el hilo main no finalice el programa
     }
 }
 
-void atender_dispatch(void){
-    atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
-    dispatch_conectado = 1;
-}
+// void atender_dispatch(void){
+//     atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
+//     dispatch_conectado = 1;
+// }
 
 void atender_interrupt(void){
     atender_cliente(fd_interrupt_server, (void *)procesar_operacion_interrupt, cpu_log_debug,"KERNEL-INTERRUPT");
