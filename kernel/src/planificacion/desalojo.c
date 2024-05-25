@@ -78,7 +78,7 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
 
 // --------------- FUNCIONES AUXILIARES
 
-int validar_peticion(char* interfaz, t_llamada_io llamada){
+int validar_peticion(char* interfaz, op_code_instruccion llamada){
     pthread_mutex_lock(&diccionario_interfaces);
         t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
     pthread_mutex_unlock(&diccionario_interfaces);

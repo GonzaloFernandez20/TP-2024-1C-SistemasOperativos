@@ -57,28 +57,7 @@ typedef struct {
 } t_pcb;
 //INSTRUCCION RECIBIDA DE MEMORIA
 
-//OPERACION
-typedef enum{
-    SET,
-    MOV_IN,
-    MOV_OUT, 
-    SUM,
-    SUB,
-    JNZ,
-    RESIZE,
-    COPY_STRING,
-    WAIT,
-    SIGNAL,
-    IO_GEN_SLEEP,
-    IO_STDIN_READ,
-    IO_STDOUT_WRITE,
-    IO_FS_CREATE,
-    IO_FS_DELETE,
-    IO_FS_TRUNCATE, 
-    IO_FS_WRITE,
-    IO_FS_READ,
-    EXIT_OS //EXIT pelado en C es una palabra reservada
-} op_code_instruccion; //19
+//OPERACION //19
 //SERIALIZACION
 //buffer ya declarado en otro lado, pero sin el campo offset entonces no me sirve, revisar con todos dps
 typedef struct {

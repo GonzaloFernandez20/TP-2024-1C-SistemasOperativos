@@ -48,17 +48,27 @@ typedef enum motivo_desalojo{
     EXIT
 }t_motivo_desalojo;
 
-
-typedef enum llamada_io{
+typedef enum code_instruccion{
+    SET,
+    MOV_IN,
+    MOV_OUT, 
+    SUM,
+    SUB,
+    JNZ,
+    RESIZE,
+    COPY_STRING,
+    WAIT,
+    SIGNAL,
     IO_GEN_SLEEP,
     IO_STDIN_READ,
     IO_STDOUT_WRITE,
     IO_FS_CREATE,
     IO_FS_DELETE,
-    IO_FS_TRUNCATE,
+    IO_FS_TRUNCATE, 
     IO_FS_WRITE,
-    IO_FS_READ
-}t_llamada_io;
+    IO_FS_READ,
+    EXIT_OS //EXIT pelado en C es una palabra reservada
+} op_code_instruccion;
 
 void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);
 
