@@ -110,9 +110,6 @@ void push_estado(t_estado* estado, t_pcb* pcb){
 
 }
 
-// TODO: t_pcb *push_estado(t_estado* estado){}
-
-
 // ---------- FUNCIONES AUXILIARES
 
 
@@ -129,7 +126,7 @@ void _loggear_ingreso_ready(){
 }
 
 char* __armar_lista_pids() {
-    int size = list_size(cola_ready);
+    int size = list_size(ready->cola);
     char* lista = string_duplicate(""); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
     
     if (size < 1)
@@ -141,7 +138,7 @@ char* __armar_lista_pids() {
     for (int i = 0; i < size; i++) {
         char* cadena = malloc(sizeof(char) * 3); // Tamaño suficiente para un número de hasta 2 dígitos + carácter nulo
 
-        t_pcb* pcb = list_get(cola_ready, i);
+        t_pcb* pcb = list_get(ready->cola, i);
         sprintf(cadena, " %d ", pcb->pid);
         string_append(&lista, cadena);
 

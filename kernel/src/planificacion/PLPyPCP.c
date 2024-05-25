@@ -138,7 +138,7 @@ void *iniciar_quantum(void* PID_PROCESO){
 
     usleep(config_kernel.QUANTUM * 1000);
     termino_quantum = 1;
-    //enviar_interrupcion(); TODO
+    enviar_interrupcion(FIN_DE_QUANTUM);
 
     pthread_mutex_lock(&mutex_log_debug);
         log_info(kernel_log_debugg, "PID: %d interrumpido por fin de Quantum", PID);
@@ -159,4 +159,9 @@ t_algoritmo _chequear_algoritmo(void){
     pthread_mutex_unlock(&mutex_log_debug);
 
     return ERROR;  
+}
+
+void enviar_interrupcion(t_motivo_desalojo motivo){
+    int motivo_interrupcion = motivo;
+    send(fd_conexion_interrupt, &motivo_interrupcion, sizeof(int), 0);
 }
