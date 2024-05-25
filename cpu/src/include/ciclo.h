@@ -61,7 +61,6 @@ typedef struct{
 // Function declarations
 void set();
 void sum();//Declaraciones de todas las operaciones
-void set();
 // void mov_in(char* registroDatos, char* registroDireccion);
 // void mov_out(char* registroDireccion, char* registroDatos);
 void sub();
@@ -112,6 +111,7 @@ struct_registros registrosCPU;
 char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
+static pthread_mutex_t monitorLock;
 
 // Me traigo variable global desde protocoloInterrupt.h
 extern uint32_t PID_a_interrumpir; // CPU recibe, desde Kernel y 
