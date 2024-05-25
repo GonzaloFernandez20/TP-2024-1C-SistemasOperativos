@@ -6,6 +6,7 @@
 #include <include/estructuras.h>
 #include <planificacion/pcb.h>
 #include <planificacion/colasEstados.h>
+#include <protocolos/protocoloES.h>
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
 

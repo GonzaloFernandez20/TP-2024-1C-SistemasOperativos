@@ -180,6 +180,7 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     interfaz->tipo = strdup(tipo_interfaz);
     interfaz->fd = fd;
     interfaz->bloqueados = cola_bloqueados;
+    pthread_mutex_init(&(interfaz->interfaz_en_uso));
 
     dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
 }

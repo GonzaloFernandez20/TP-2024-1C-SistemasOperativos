@@ -47,15 +47,30 @@ void ejecutar_llamada_io(t_pcb* pcb, int op_code, void* stream){
 
             break;
         }
-        //Ejecutar llamado a la IO
+        // --------- EJECUTAR LLAMADO A IO
 
         t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
 
-        solicitar_operacion_IO_GEN_SLEEP(pcb->pid, interfaz->fd, unidades_trabajo);
-        
+        sem_wait(&(interfaz->interfaz_en_uso));
+
+        t_datos_operacion* datos = malloc(sizeof(t_datos_operacion));
+        datos->PID = pcb->pid;
+        datos->FD = interfaz->fd;
+        datos->unidades_trabajo = unidades_trabajo;
+        datos->interfaz = interfaz;
+
+        // -------------------------------------------------
+        // Creamos un hilo para reservar la cola durante una peticion sin afectar al PCP 
+        pthread_t manejo_peticion;
+        pthread_create(&manejo_peticion, NULL, (void *)solicitar_operacion_IO_GEN_SLEEP, (void *)datos);
+        pthread_detach(manejo_peticion);
+        // -------------------------------------------------
+
+        //solicitar_operacion_IO_GEN_SLEEP(pcb->pid, interfaz->fd, (void *)datos);
         free(nombre_interfaz);
+
         break;
     
     default:

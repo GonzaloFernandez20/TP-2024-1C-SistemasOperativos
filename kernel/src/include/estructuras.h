@@ -39,6 +39,7 @@ typedef struct interfaz_conectada
     char* tipo;
     int fd;
     t_estado* bloqueados;
+    pthread_mutex_t interfaz_en_uso;
 
 } t_interfaz;
 

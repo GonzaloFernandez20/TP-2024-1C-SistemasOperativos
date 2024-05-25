@@ -14,6 +14,7 @@ void *procesar_conexion_es(void *nombre_interfaz){
 		switch (cod_op) {
 		case OPERACION_COMPLETADA:
 			recibir_aviso(nombre, interfaz->fd);
+			sem_post(&(interfaz->interfaz_en_uso));
 			break;
 		
 		case -1:
@@ -57,18 +58,29 @@ void mandar_procesos_a_exit(t_estado* bloqueados){
 	}
 }
 
-void solicitar_operacion_IO_GEN_SLEEP(int PID, int fd, int parametro){
+void *solicitar_operacion_IO_GEN_SLEEP(void* datos_operacion){
+
+	t_datos_operacion *datos = (t_datos_operacion *)datos_operacion;
+	int PID = datos->PID;
+	int fd = datos->FD;
+	int parametro = datos->unidades_trabajo;
+	t_interfaz * interfaz = datos->interfaz;
+
+	// ------ ARMAMOS EL PAQUETE Y LO ENVIAMOS
     t_paquete* paquete = crear_paquete(IO_GEN_SLEEP);
 
 	int buffer_size = 2 * sizeof(int); 
 	crear_buffer(paquete, buffer_size);
 
-
 	buffer_add_int(paquete->buffer, PID);
 	buffer_add_int(paquete->buffer, parametro);
 
+	sem_wait(&(interfaz->interfaz_en_uso));
+
 	enviar_paquete(paquete, fd);
+
 	eliminar_paquete(paquete);
+	free(datos_operacion);
 }
 
 void recibir_aviso(char* nombre, int fd){
