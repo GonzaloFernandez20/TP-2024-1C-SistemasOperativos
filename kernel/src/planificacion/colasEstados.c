@@ -87,6 +87,12 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
                 _loggear_ingreso_ready();
                 sem_post(&proceso_listo);
             }
+
+    /* if (string_equals_ignore_case(destino->nombre, "EXIT"))
+    {
+        sem_post(&hay_proceso_exec);
+    } */  // SI LA COLA EXEC LA MANEJA UN HILO PROPIO QUE SE ENCARGA DE LIBERAR LOS RECURSOS, LE DAMOS AVISO ACA
+    
 }
 
 t_pcb *pop_estado(t_estado* estado){

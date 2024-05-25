@@ -9,10 +9,11 @@ void interpretar_motivo_desalojo(t_pcb* pcb, t_motivo_desalojo motivo, void* str
     switch (motivo)
     {
         case FIN_DE_QUANTUM:
-            /* code */
+            trasladar(pcb->pid, exec, ready);
+        
             break;
         case INTERRUPCION:
-            /* code */
+            trasladar(pcb->pid, exec, exit); // ENTIENDO QUE ES CUANDO SE INGRESA FINALIZAR_PROCESO POR CONSOLA.
             break;
         case LLAMADA_IO:
 
@@ -21,7 +22,7 @@ void interpretar_motivo_desalojo(t_pcb* pcb, t_motivo_desalojo motivo, void* str
 
             break;
         case EXIT:
-            /* code */
+            trasladar(pcb->pid, exec, exit);
             break;
 
         default:
@@ -43,13 +44,14 @@ void ejecutar_llamada_io(t_pcb* pcb, int op_code, void* stream){
         if(!validar_peticion(nombre_interfaz, IO_GEN_SLEEP)){
             trasladar(pcb->pid, exec, exit);
             free(nombre_interfaz);
-            
+
             break;
         }
-
         //Ejecutar llamado a la IO
 
         t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
 
         solicitar_operacion_IO_GEN_SLEEP(pcb->pid, interfaz->fd, unidades_trabajo);
         
