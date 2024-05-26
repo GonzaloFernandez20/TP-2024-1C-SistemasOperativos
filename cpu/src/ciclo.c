@@ -28,19 +28,6 @@ void decode_and_execute() {
     funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el array global instruccion_cpu.
 }
 
-void sync_PCB_registrosCPU(){
-    PCB.PC            = registrosCPU.PC;
-    PCB.registros.AX  = registrosCPU.AX;
-    PCB.registros.BX  = registrosCPU.BX;
-    PCB.registros.CX  = registrosCPU.CX;
-    PCB.registros.DX  = registrosCPU.DX;
-    PCB.registros.EAX = registrosCPU.EAX;
-    PCB.registros.EBX = registrosCPU.EBX;
-    PCB.registros.ECX = registrosCPU.ECX;
-    PCB.registros.EDX = registrosCPU.EDX; 
-    PCB.registros.SI  = registrosCPU.SI;
-    PCB.registros.DI  = registrosCPU.DI;
-}
 void desocupar_mutex(pthread_mutex_t* mutex){
   printf("Desocupar mutex\n");
   if (pthread_mutex_unlock(mutex) != 0) {                                          
@@ -49,7 +36,7 @@ void desocupar_mutex(pthread_mutex_t* mutex){
   } 
 }
 void ocupar_mutex(pthread_mutex_t* mutex){
-  printf("Ocupar mutex\n");
+
   if (pthread_mutex_lock(mutex) != 0) {                                          
     perror("mutex_lock");                                                     
     //loggear y devolver error                                                               

@@ -57,9 +57,6 @@ typedef struct {
 } t_pcb;
 //INSTRUCCION RECIBIDA DE MEMORIA
 
-//OPERACION //19
-//SERIALIZACION
-//buffer ya declarado en otro lado, pero sin el campo offset entonces no me sirve, revisar con todos dps
 typedef struct {
     uint32_t size; // Tamaño del payload
     uint32_t offset; // Desplazamiento dentro del payload
@@ -72,14 +69,14 @@ typedef struct {
     t_buffer_PCB* buffer_PCB;
 } t_paquete_PCB;
 
-
 //VARIABLES GLOBALES
 extern pthread_mutex_t mutex_dispatch;//locked al inicializarlo
 extern pthread_mutex_t mutex_ciclo;//locked al inicializarlo
 extern pthread_mutex_t mutexInterrupt; 
 extern t_pcb PCB;
+
 extern t_estado_cpu registrosCPU;   
-//extern uint32_t PID_a_interrumpir;
+
 extern bool hayInterrupcion;
 
 extern t_log* cpu_log;
@@ -91,6 +88,9 @@ extern t_config_cpu config_cpu;
 extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
+extern int fd_dispatch;
+extern int fd_interrupt;
+
 
 extern int dispatch_conectado;
 extern int interrupt_conectado;
@@ -101,5 +101,8 @@ extern char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 extern t_dictionary* opCodes_diccionario;
 extern t_dictionary* registros_diccionario;
 
+// SEMAFOROS
+extern pthread_mutex_t mutex_log;
+extern pthread_mutex_t mutex_log_debug;
 
 #endif

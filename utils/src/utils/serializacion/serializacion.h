@@ -82,6 +82,10 @@ void buffer_add_string(t_buffer *buffer, char *string);
 
 void buffer_add_int(t_buffer *buffer, int dato);
 
+void buffer_add_uint8(t_buffer *buffer, uint8_t dato);
+
+void buffer_add_uint32(t_buffer *buffer, uint32_t dato);
+
 void enviar_paquete(t_paquete* paquete, int socket_cliente);
 
 void* serializar_paquete(t_paquete* paquete, int bytes);
@@ -99,6 +103,10 @@ void recibir_presentacion(int fd_cliente, t_log* logger);
 t_buffer* recibir_buffer(int socket_cliente);
 
 int buffer_read_int(void** stream);
+
+uint8_t buffer_read_uint8(void** stream);
+
+uint32_t buffer_read_uint32(void** stream);
 
 char* buffer_read_string(void** stream, int length);
 

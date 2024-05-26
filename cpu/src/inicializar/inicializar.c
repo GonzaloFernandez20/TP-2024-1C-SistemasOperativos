@@ -4,6 +4,7 @@ void init(){
     cpu_log = iniciar_logger("cpu.log", "CPU", 1, LOG_LEVEL_INFO);
     cpu_log_debug = iniciar_logger("debugg.log", "CPU", 1, LOG_LEVEL_DEBUG);
     _leer_configuracion(path_config);
+    inicializar_semaforos();
 }
 
 void _leer_configuracion(char *path_config){
@@ -18,4 +19,10 @@ void _leer_configuracion(char *path_config){
     config_cpu.ALGORITMO_TLB = strdup(config_get_string_value(nuevo_config,"ALGORITMO_TLB"));
 
 	config_destroy(nuevo_config);
+}
+
+void inicializar_semaforos(void){
+    pthread_mutex_init(&mutex_log, NULL);
+    pthread_mutex_init(&mutex_log_debug, NULL);
+
 }

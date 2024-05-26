@@ -8,16 +8,16 @@ void enviar_contexto_ejecucion(t_pcb* pcb){
 
     buffer_add_int(paquete->buffer, pcb->pid );
     buffer_add_int(paquete->buffer, pcb->PC );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.AX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.BX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.CX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.DX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.EAX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.EBX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.ECX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.EDX );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.SI );
-    buffer_add_int(paquete->buffer, pcb->registros_cpu.DI );
+    buffer_add_uint8(paquete->buffer, pcb->registros_cpu.AX );
+    buffer_add_uint8(paquete->buffer, pcb->registros_cpu.BX );
+    buffer_add_uint8(paquete->buffer, pcb->registros_cpu.CX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.DX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.EAX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.EBX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.ECX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.EDX );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.SI );
+    buffer_add_uint32(paquete->buffer, pcb->registros_cpu.DI );
 
     enviar_paquete(paquete, fd_conexion_dispatch);
 
@@ -31,7 +31,6 @@ void enviar_contexto_ejecucion(t_pcb* pcb){
 void recibir_contexto_ejecucion(t_pcb* pcb){
 
     int opcode = recibir_operacion(fd_conexion_dispatch);
-
 
     int es_RR = string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR");
     if (es_RR && !termino_quantum){ 
@@ -50,16 +49,16 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     //Actualizamos el PCB guardando su contexto de ejecucion
 	pcb->pid = buffer_read_int(&stream);
     pcb->PC = buffer_read_int(&stream);
-    pcb->registros_cpu.AX = buffer_read_int(&stream);
-    pcb->registros_cpu.BX = buffer_read_int(&stream);
-    pcb->registros_cpu.CX = buffer_read_int(&stream);
-    pcb->registros_cpu.DX = buffer_read_int(&stream);
-    pcb->registros_cpu.EAX = buffer_read_int(&stream);
-    pcb->registros_cpu.EBX = buffer_read_int(&stream);
-    pcb->registros_cpu.ECX = buffer_read_int(&stream);
-    pcb->registros_cpu.ECX = buffer_read_int(&stream);
-    pcb->registros_cpu.SI = buffer_read_int(&stream);
-    pcb->registros_cpu.DI = buffer_read_int(&stream);
+    pcb->registros_cpu.AX = buffer_read_uint8(&stream);
+    pcb->registros_cpu.BX = buffer_read_uint8(&stream);
+    pcb->registros_cpu.CX = buffer_read_uint8(&stream);
+    pcb->registros_cpu.DX = buffer_read_uint8(&stream);
+    pcb->registros_cpu.EAX = buffer_read_uint32(&stream);
+    pcb->registros_cpu.EBX = buffer_read_uint32(&stream);
+    pcb->registros_cpu.ECX = buffer_read_uint32(&stream);
+    pcb->registros_cpu.EDX = buffer_read_uint32(&stream);
+    pcb->registros_cpu.SI = buffer_read_uint32(&stream);
+    pcb->registros_cpu.DI = buffer_read_uint32(&stream);
 
     interpretar_motivo_desalojo(pcb, &stream);
 

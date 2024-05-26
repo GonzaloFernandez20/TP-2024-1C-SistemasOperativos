@@ -16,7 +16,6 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
     else {
         log_error(logger, "Error handshake: no se establecio comunicacion con servidor");
     }
-
 }
 
 // arma el paquete (inicializa sus estructuras) con la informacion de una presentacion y lo envia
@@ -57,6 +56,16 @@ void buffer_add_string(t_buffer *buffer, char *string){
 void buffer_add_int(t_buffer *buffer, int dato){
 	memcpy(buffer->stream + buffer->offset, &dato, sizeof(int));
 	buffer->offset +=  sizeof(int);
+}
+
+void buffer_add_uint8(t_buffer *buffer, uint8_t dato){
+	memcpy(buffer->stream + buffer->offset, &dato, sizeof(uint8_t));
+	buffer->offset +=  sizeof(uint8_t);
+}
+
+void buffer_add_uint32(t_buffer *buffer, uint32_t dato){
+	memcpy(buffer->stream + buffer->offset, &dato, sizeof(uint32_t));
+	buffer->offset +=  sizeof(uint32_t);
 }
 
 
@@ -159,6 +168,22 @@ int buffer_read_int(void** stream){
 	int dato;
 	memcpy(&dato, *stream, sizeof(int));
     *stream += sizeof(int);
+
+	return dato;
+}
+
+uint8_t buffer_read_uint8(void** stream){
+	uint8_t dato;
+	memcpy(&dato, *stream, sizeof(uint8_t));
+    *stream += sizeof(uint8_t);
+
+	return dato;
+}
+
+uint32_t buffer_read_uint32(void** stream){
+	uint32_t dato;
+	memcpy(&dato, *stream, sizeof(uint32_t));
+    *stream += sizeof(uint32_t);
 
 	return dato;
 }

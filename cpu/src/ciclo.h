@@ -16,7 +16,7 @@
 #define COPY_STRING "COPY_STRING"
 #define WAIT "WAIT"
 #define SIGNAL "SIGNAL"
-#define IO_GEN_SLEEP "IO_GEN_SLEEP"
+//#define IO_GEN_SLEEP "IO_GEN_SLEEP"
 #define IO_STDIN_READ "IO_STDIN_READ"
 #define IO_STDOUT_WRITE "IO_STDOUT_WRITE"
 #define IO_FS_CREATE "IO_FS_CREATE"
@@ -79,3 +79,6 @@ void fin_de_ciclo();
 void dispatchAuxiliar();//desaparece despues de los tests
 int tamanioDeRegistro(char* registro);
 void* direccionDelRegistro(char* nombre_registro);
+
+
+

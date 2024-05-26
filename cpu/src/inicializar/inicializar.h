@@ -5,6 +5,8 @@
 #include <commons/config.h>
 #include <include/estructuras.h>
 #include <utils/inicializaciones/inicializar.h>
+#include <pthread.h>
+#include <semaphore.h>
 
 
 
@@ -12,6 +14,6 @@
 void init(void);
 
 void _leer_configuracion(char *path_config);
-
+void inicializar_semaforos(void);
 
 #endif
