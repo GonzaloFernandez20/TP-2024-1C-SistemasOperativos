@@ -28,13 +28,13 @@ void realizar_un_sleep(void){
 	int unidades_de_trabajo = buffer_read_int(&stream);
 	eliminar_buffer(buffer);
 
+
+    usleep(1000*unidades_de_trabajo*config_IO.TIEMPO_UNIDAD_TRABAJO);
+    mandar_aviso_kernel(PID);
+    
     pthread_mutex_lock(&mutex_log);
 	log_info(IO_log,"PID: < %d > - Operacion: IO_GEN_SLEEP", PID);
     pthread_mutex_unlock(&mutex_log);
-
-    usleep(1000*unidades_de_trabajo*config_IO.TIEMPO_UNIDAD_TRABAJO);
-    
-    mandar_aviso_kernel(PID);
 }
 
 void mandar_aviso_kernel(int PID){

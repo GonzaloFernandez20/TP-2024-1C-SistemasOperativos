@@ -50,6 +50,7 @@ void sacar_interfaz_de_diccionario(char* nombre_interfaz){
 	pthread_mutex_destroy(&interfaz->bloqueados->mutex_cola);
 
 	free(interfaz->tipo);
+	free(interfaz->nombre);
 	free(interfaz->bloqueados);
 	pthread_mutex_destroy(&interfaz->interfaz_en_uso);
 	sem_destroy(&interfaz->hay_peticiones);

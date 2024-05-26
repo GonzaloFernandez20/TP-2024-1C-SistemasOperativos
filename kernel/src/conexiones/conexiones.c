@@ -88,28 +88,10 @@ void esperar_dispositivos_IO(){
 void *atender_entradasalida(){
     interfaces_conectadas =  dictionary_create();
     peticiones_interfaz = dictionary_create();
-    cargar_diccionario_instrucciones();
     while(1)
     atender_interfaz((void *)procesar_conexion_es);
 }
 
-void cargar_diccionario_instrucciones(void){
-     instrucciones_por_interfaz = dictionary_create();
-
-     int instrucciones_GENERICA[2];
-     instrucciones_GENERICA[0] = 10;
-     instrucciones_GENERICA[1]= (-1);
-     dictionary_put(instrucciones_por_interfaz, "GENERICA", instrucciones_GENERICA);
-
-     int instrucciones_STDIN[2] = {IO_STDIN_READ, -1};
-     dictionary_put(instrucciones_por_interfaz, "STDIN", instrucciones_STDIN);
-
-     int instrucciones_STDOUT[2] = {IO_STDOUT_WRITE, -1};
-     dictionary_put(instrucciones_por_interfaz, "STDOUT", instrucciones_STDOUT);
-
-     int instrucciones_DIALFS[6] = {IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ, -1};
-     dictionary_put(instrucciones_por_interfaz, "DIALFS", instrucciones_DIALFS);
-}
 
 void atender_interfaz(void (*procesar_conexion)(void*)){
 
@@ -188,6 +170,7 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     cola_bloqueados->nombre = strdup("BLOCKED");
 
     t_interfaz* interfaz = malloc(sizeof(t_interfaz));
+    interfaz->nombre = strdup(nombre_interfaz);
     interfaz->tipo = strdup(tipo_interfaz);
     interfaz->fd = fd;
     interfaz->bloqueados = cola_bloqueados;
@@ -203,26 +186,31 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
 
 void* gestionar_peticiones(void* interfaz){
     t_interfaz* interfaz_actual = (t_interfaz*)interfaz;
+    while(1){
+        sem_wait(&interfaz_actual->hay_peticiones);
+        pthread_mutex_lock(&interfaz_actual->interfaz_en_uso);
 
-    sem_wait(&interfaz_actual->hay_peticiones);
-    pthread_mutex_lock(&interfaz_actual->interfaz_en_uso);
+        t_pcb* pcb = list_get(interfaz_actual->bloqueados->cola, 0);
+        char* PID = strdup(string_itoa(pcb->pid));
 
-    t_pcb* pcb = list_get(interfaz_actual->bloqueados->cola, 0);
-    char* PID = strdup(string_itoa(pcb->pid));
+        pthread_mutex_lock(&diccionario_peticiones);
+            t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);
+        pthread_mutex_unlock(&diccionario_peticiones);
 
-    pthread_mutex_lock(&diccionario_peticiones);
-        t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);
-    pthread_mutex_unlock(&diccionario_peticiones);
+        void (*funcion)(t_peticion*, int, int) = peticion->funcion;
+        funcion(peticion, pcb->pid, interfaz_actual->fd);
 
-    void (*funcion)(t_peticion*, int, int) = peticion->funcion;
-    funcion(peticion, pcb->pid, interfaz_actual->fd);
-    
-    pthread_mutex_lock(&diccionario_peticiones);
-        peticion = dictionary_remove(peticiones_interfaz, PID);
-    pthread_mutex_unlock(&diccionario_peticiones);
+        pthread_mutex_lock(&mutex_log_debug);
+            log_info(kernel_log_debugg, "PID < %d > peticion enviada a %s:%s\n", pcb->pid, interfaz_actual->nombre, interfaz_actual->tipo);
+        pthread_mutex_unlock(&mutex_log_debug);
 
-    free(peticion);
-    free(PID);
+        pthread_mutex_lock(&diccionario_peticiones);
+            peticion = dictionary_remove(peticiones_interfaz, PID);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        free(peticion);
+        free(PID);
+    }
     
     return NULL;
 }
