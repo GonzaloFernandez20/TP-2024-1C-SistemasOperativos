@@ -87,10 +87,10 @@ int validar_peticion(char* interfaz, op_code_instruccion llamada){
         return 0;
     } 
 
-    //int operaciones_permitidas[] = dictionary_get(instrucciones_por_interfaz, (interfaz_solicitante->tipo));
+    int* operaciones_permitidas = (int*)dictionary_get(instrucciones_por_interfaz, (interfaz_solicitante->tipo));
     //operaciones_permitidas = dictionary_get(instrucciones_por_interfaz, (interfaz_solicitante->tipo));
 
-    if (_puede_realizar_operacion(llamada, dictionary_get(instrucciones_por_interfaz, (interfaz_solicitante->tipo))))
+    if (_puede_realizar_operacion(llamada, operaciones_permitidas))
     {return 1; }
     else{return 0;}
 }

@@ -45,7 +45,7 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
 
 	eliminar_buffer(buffer);
 
-    log_info(cpu_log_debug, "Se recibio contexto de ejecucion PID: < %d > desde Kernel.\n", PID);
+    log_info(cpu_log_debug, "Se recibio contexto de ejecucion PID: < %d > desde KERNEL.\n", PID);
 
 }
 
@@ -71,7 +71,7 @@ void devolver_contexto_ejecucion(int motivo){
 
 	enviar_paquete(paquete, fd_dispatch);
 
-    log_info(cpu_log_debug, "Enviado contexto de ejecucion PID: < %d > a CPU.", PID);
+    log_info(cpu_log_debug, "Enviado contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
 	eliminar_paquete(paquete);
 }
@@ -103,7 +103,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
 
 	enviar_paquete(paquete, fd_dispatch);
 
-    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PID);
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
 	eliminar_paquete(paquete);
 }
