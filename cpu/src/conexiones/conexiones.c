@@ -62,21 +62,17 @@ void conectar_memoria(void){
 }
 
 void gestionar_conexiones_kernel(void){
+    atender_interrupt();
     atender_dispatch();
-  //  atender_interrupt();
-
- //   while(dispatch_conectado || interrupt_conectado){
-        // CONTINGENCIA: se borra en cuanto veamos señales y semaforos
-        // es temporal para que el hilo main no finalice el programa
-//    }
-}
-
-void atender_dispatch(void){
-    atender_cliente(fd_dispatch_server, (void *)procesar_operacion_dispatch, cpu_log_debug, "KERNEL-DISPATCH");
-    dispatch_conectado = 1;
 }
 
 void atender_interrupt(void){
     atender_cliente(fd_interrupt_server, (void *)procesar_operacion_interrupt, cpu_log_debug,"KERNEL-INTERRUPT");
-    interrupt_conectado = 1;
 }
+void atender_dispatch(void){
+    fd_dispatch = esperar_cliente(fd_dispatch_server);
+    log_info(cpu_log_debug, "Se conecto KERNEL-DISPATCH");
+    recibir_handshake(fd_dispatch, cpu_log_debug);
+    procesar_operacion_dispatch();
+}
+
