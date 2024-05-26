@@ -4,7 +4,7 @@
 #include <include/estructuras.h>
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>
-#include <ciclo.h>//no va con /include adelante porque están en la misma carpeta
+#include <ciclo/ciclo.h>//no va con /include adelante porque están en la misma carpeta
 
 
 void *procesar_operacion_interrupt(void *fd_interrupt_casteado);

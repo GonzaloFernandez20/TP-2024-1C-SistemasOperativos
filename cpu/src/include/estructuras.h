@@ -109,4 +109,6 @@ extern t_dictionary* registros_diccionario;
 extern pthread_mutex_t mutex_log;
 extern pthread_mutex_t mutex_log_debug;
 
+extern int salir_ciclo;
+
 #endif

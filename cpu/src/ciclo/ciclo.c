@@ -1,10 +1,12 @@
 #include <ciclo/ciclo.h>
 
 void ciclo(void){
-    while(sistema_encendido){
+    salir_ciclo = 0;
+    while(1){
         fetch();              // busca la siguiente instrucción.
         decode_and_execute(); 
         checkInterrupt();     // se fija si hay interrupciones.
+        if(salir_ciclo){break;}
     }
 }
 
@@ -30,7 +32,7 @@ void checkInterrupt(void){;
     if(interrupcion){
         devolver_contexto_ejecucion();
         interrupcion = 0;
-        break;
+        salir_ciclo = 1;
     }
 }
 

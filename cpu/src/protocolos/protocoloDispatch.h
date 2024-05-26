@@ -7,8 +7,6 @@
 #include <utils/hilos/hilos.h>
 
 void procesar_operacion_dispatch(void);
-void actualizarPCB(t_pcb* PCB_recibido);
-void actualizarRegistrosDeCPU(t_pcb* un_pcb);
 void sync_PCB_registrosCPU(void);
 
 // ------------------- 

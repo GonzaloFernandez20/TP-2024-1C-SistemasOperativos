@@ -77,7 +77,7 @@ void io_gen_sleep(void){
     char* interfaz = strdup(instruccion_cpu[1]);
     int unidades_de_trabajo = atoi(instruccion_cpu[2]);
     devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz,unidades_de_trabajo);
-    break;
+    salir_ciclo = 1;
 }
 
 //Auxiliares

@@ -1,5 +1,5 @@
 #ifndef CICLO_H_INCLUDED
-#define ESTRUCTURAS_H_INCLUDED
+#define CICLO_H_INCLUDED
 
 #include <include/estructuras.h>
 #include <pthread.h>

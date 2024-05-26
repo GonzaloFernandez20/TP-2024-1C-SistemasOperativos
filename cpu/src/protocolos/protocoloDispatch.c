@@ -1,8 +1,8 @@
 #include <protocolos/protocoloDispatch.h>
 
 void procesar_operacion_dispatch(void){
-
-    while(1){
+    int cliente_conectado = 1;
+    while(cliente_conectado){
         int cod_op = recibir_operacion(fd_dispatch);
 
 		switch (cod_op) {
@@ -30,18 +30,18 @@ void recibir_contexto_ejecucion()
 	t_buffer *buffer = recibir_buffer(fd_conexion_dispatch);
 	void* stream = buffer->stream;
 
-	PCB->PID            = buffer_read_int(&stream);
-	PCB->PC             = buffer_read_int(&stream);  
-    PCB->registros.AX   = buffer_read_uint8(&stream);   
-    PCB->registros.BX   = buffer_read_uint8(&stream);
-    PCB->registros.CX   = buffer_read_uint8(&stream);
-    PCB->registros.DX   = buffer_read_uint8(&stream);
-    PCB->registros.EAX  = buffer_read_uint32(&stream);
-    PCB->registros.EBX  = buffer_read_uint32(&stream);
-    PCB->registros.ECX  = buffer_read_uint32(&stream); 
-    PCB->registros.EDX  = buffer_read_uint32(&stream); 
-    PCB->registros.SI   = buffer_read_uint32(&stream);
-    PCB->registros.DI   = buffer_read_uint32(&stream);
+	PCB.PID            = buffer_read_int(&stream);
+	PCB.PC             = buffer_read_int(&stream);  
+    PCB.registros.AX   = buffer_read_uint8(&stream);   
+    PCB.registros.BX   = buffer_read_uint8(&stream);
+    PCB.registros.CX   = buffer_read_uint8(&stream);
+    PCB.registros.DX   = buffer_read_uint8(&stream);
+    PCB.registros.EAX  = buffer_read_uint32(&stream);
+    PCB.registros.EBX  = buffer_read_uint32(&stream);
+    PCB.registros.ECX  = buffer_read_uint32(&stream); 
+    PCB.registros.EDX  = buffer_read_uint32(&stream); 
+    PCB.registros.SI   = buffer_read_uint32(&stream);
+    PCB.registros.DI   = buffer_read_uint32(&stream);
 
 	eliminar_buffer(buffer);
 }
@@ -84,24 +84,24 @@ void devolver_contexto_ejecucion(){
     int buffer_size = 14 * sizeof(int); 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PCB->pid );
-    buffer_add_int(paquete->buffer, PCB->PC );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.AX );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.BX );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.CX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.DX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EAX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EBX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.ECX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EDX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.SI );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.DI );
+	buffer_add_int(paquete->buffer, PCB.pid );
+    buffer_add_int(paquete->buffer, PCB.PC );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.AX );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.BX );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.CX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.DX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EAX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EBX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.ECX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EDX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.SI );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.DI );
 	buffer_add_int(paquete->buffer, tipo_interrupcion);
 
 	enviar_paquete(paquete, fd_dispatch);
 
     pthread_mutex_lock(&mutex_log_debug);
-        log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PCB->pid);
+        log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PCB.pid);
     pthread_mutex_lock(&mutex_log_debug);
 
 	eliminar_paquete(paquete);
@@ -114,18 +114,18 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     int buffer_size = 17 * sizeof(int) + strlen(nombre_interfaz) + 1; // RE-VER
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PCB->pid );
-    buffer_add_int(paquete->buffer, PCB->PC );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.AX );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.BX );
-    buffer_add_uint8(paquete->buffer, PCB->registros_cpu.CX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.DX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EAX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EBX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.ECX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.EDX );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.SI );
-    buffer_add_uint32(paquete->buffer, PCB->registros_cpu.DI );
+	buffer_add_int(paquete->buffer, PCB.pid );
+    buffer_add_int(paquete->buffer, PCB.PC );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.AX );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.BX );
+    buffer_add_uint8(paquete->buffer, PCB.registros_cpu.CX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.DX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EAX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EBX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.ECX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.EDX );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.SI );
+    buffer_add_uint32(paquete->buffer, PCB.registros_cpu.DI );
 	buffer_add_int(paquete->buffer, LLAMADA_IO);
 	buffer_add_int(paquete->buffer, IO_GEN_SLEEP);
 	buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
@@ -135,7 +135,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
 	enviar_paquete(paquete, fd_dispatch);
 
     pthread_mutex_lock(&mutex_log_debug);
-        log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PCB->pid);
+        log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PCB.pid);
     pthread_mutex_lock(&mutex_log_debug);
 
 	eliminar_paquete(paquete);

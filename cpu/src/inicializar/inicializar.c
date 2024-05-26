@@ -7,6 +7,7 @@ void init(){
     inicializar_semaforos();
     init_opCodes_dictionary();
     init_registros_dictionary();
+    sistema_encendido = 1;
 }
 
 void _leer_configuracion(char *path_config){

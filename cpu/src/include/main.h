@@ -13,7 +13,7 @@
 // ---- INTERNAS
 #include <include/estructuras.h>
 #include <conexiones/conexiones.h> 
-#include <ciclo.h>
+#include <ciclo/ciclo.h>
 // ---- EXTERNAS
 #include <utils/hilos/hilos.h>
 
@@ -21,7 +21,7 @@
 t_log* cpu_log;
 t_log* cpu_log_debug;
 
-int sistema_encendido = 1;
+int sistema_encendido;
 
 char *path_config;
 t_config_cpu config_cpu;
@@ -55,7 +55,7 @@ char** instruccion_cpu; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
 
-
+int salir_ciclo;
 
 
 #endif

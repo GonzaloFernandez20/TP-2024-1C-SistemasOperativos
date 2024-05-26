@@ -4,6 +4,7 @@
 #include <commons/log.h>
 #include <commons/config.h>
 #include <include/estructuras.h>
+#include <ciclo/instrucciones.h>
 #include <utils/inicializaciones/inicializar.h>
 #include <pthread.h>
 #include <semaphore.h>
