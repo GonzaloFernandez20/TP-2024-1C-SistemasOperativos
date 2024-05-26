@@ -64,27 +64,29 @@
 				// "dependsOrder": "parallel",
 				"problemMatcher": ["$gcc"]
 			},
-			{
-				"label": "Leak-Check All",
-				"command": "echo",
-				"type": "shell",
-				"group": {
-				"kind": "none",
-				"isDefault": true
-				},
-				"dependsOrder": "sequence",
-				"dependsOn":[
-					"leak-check memoria",
-					"leak-check cpu",
-					"leak-check kernel",
-					"leak-check entradasalida"
-				]
-			}
+			// {
+			// 	"label": "Leak-Check All",
+			// 	"command": "echo",
+			// 	"type": "shell",
+			// 	"group": {
+			// 	"kind": "none",
+			// 	"isDefault": true
+			// 	},
+			// 	"dependsOrder": "sequence",
+			// 	"dependsOn":[
+			// 		"leak-check memoria",
+			// 		"leak-check cpu",
+			// 		"leak-check kernel",
+			// 		"leak-check entradasalida"
+			// 	]
+			// }
 		]
 	},
 	"launch": {
 		  "version": "0.2.0",
-		  "configurations": [],
+		  "configurations": [
+
+		  ],
 		  "compounds": [
 			  {
 				  "name": "Run All",
