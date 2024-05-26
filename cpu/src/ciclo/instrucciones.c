@@ -84,6 +84,7 @@ void io_gen_sleep(void){
 void exit_os(void){
     devolver_contexto_ejecucion(EXIT);
     se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
 }
 
 //Auxiliares

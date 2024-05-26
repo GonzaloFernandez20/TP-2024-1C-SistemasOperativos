@@ -17,11 +17,16 @@ void *planificador_corto_plazo(){
         sem_wait(&proceso_listo);
         //sem_wait(&planificacionPausada);
         //sem_post(&planificacionPausada);
+
        switch (algoritmo_planificacion)
        {
             case FIFO:
                     pcb_execute = pop_estado(ready);
                     push_estado(exec, pcb_execute);
+
+                    pthread_mutex_lock(&mutex_log);
+                        log_info(kernel_log, "PID: <%d> - Estado Anterior: < READY > - Estado Actual: < EXEC >", pcb_execute->pid);
+                    pthread_mutex_unlock(&mutex_log);
 
                     enviar_contexto_ejecucion(pcb_execute);
                     recibir_contexto_ejecucion(pcb_execute);
@@ -31,6 +36,10 @@ void *planificador_corto_plazo(){
                     
                     pcb_execute = pop_estado(ready);
                     push_estado(exec, pcb_execute);
+
+                    pthread_mutex_lock(&mutex_log);
+                        log_info(kernel_log, "PID: <%d> - Estado Anterior: < READY > - Estado Actual: < EXEC >", pcb_execute->pid);
+                    pthread_mutex_unlock(&mutex_log);
 
                     enviar_contexto_ejecucion(pcb_execute);
 

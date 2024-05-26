@@ -64,6 +64,7 @@ void enviar_instruccion_serializada(char* instruccion){
 
 	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cpu);
-
+	//free(instruccion);
+	
 	eliminar_paquete(paquete);
 }

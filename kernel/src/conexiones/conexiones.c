@@ -96,7 +96,9 @@ void *atender_entradasalida(){
 void cargar_diccionario_instrucciones(void){
      instrucciones_por_interfaz = dictionary_create();
 
-     int instrucciones_GENERICA[2] = {IO_GEN_SLEEP, -1};
+     int instrucciones_GENERICA[2];
+     instrucciones_GENERICA[0] = 10;
+     instrucciones_GENERICA[1]= (-1);
      dictionary_put(instrucciones_por_interfaz, "GENERICA", instrucciones_GENERICA);
 
      int instrucciones_STDIN[2] = {IO_STDIN_READ, -1};

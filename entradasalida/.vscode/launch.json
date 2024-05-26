@@ -10,7 +10,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["/home/utnso/tp-2024-1c-SISTEMAS-INOPERANTES/entradasalida/entradasalida.config","Interfaz2"],
+      "args": ["/home/utnso/tp-2024-1c-SISTEMAS-INOPERANTES/entradasalida/entradasalida.config","Interfaz1"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

@@ -23,7 +23,7 @@ void enviar_contexto_ejecucion(t_pcb* pcb){
 
     pthread_mutex_lock(&mutex_log_debug);
         log_info(kernel_log_debugg, "Enviando contexto de ejecucion PID: < %d > a CPU.", pcb->pid);
-    pthread_mutex_lock(&mutex_log_debug);
+    pthread_mutex_unlock(&mutex_log_debug);
 
 	eliminar_paquete(paquete);
 }
@@ -40,7 +40,7 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     if(opcode != CONTEXTO_EJECUCION){perror("Rompiste todo");}
 
     pthread_mutex_lock(&mutex_log_debug);
-	    log_info(kernel_log_debugg, "CPU devolvio el contexto de ejecucion de PID < %d >", pcb->pid);
+	    log_info(kernel_log_debugg, "CPU devolvio el contexto de ejecucion de PID < %d >\n", pcb->pid);
 	pthread_mutex_unlock(&mutex_log_debug);
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_dispatch);
@@ -60,7 +60,7 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     pcb->registros_cpu.SI = buffer_read_uint32(&stream);
     pcb->registros_cpu.DI = buffer_read_uint32(&stream);
 
-    interpretar_motivo_desalojo(pcb, &stream);
+    interpretar_motivo_desalojo(pcb, stream);
 
 	eliminar_buffer(buffer);
 }
