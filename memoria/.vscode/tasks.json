@@ -2,25 +2,64 @@
   // See https://go.microsoft.com/fwlink/?LinkId=733558
   // for the documentation about the tasks.json format
   "version": "2.0.0",
+  "options": {
+    "env": {
+      "this_module": "${workspaceFolderBasename}",
+      "log_file": "leaks-${workspaceFolderBasename}.log"
+    },
+    "cwd": "${workspaceFolder}"
+  },
   "tasks": [
     {
-      "label": "build",
+      "label": "build memoria",
       "command": "make all",
       "type": "shell",
       "group": {
         "kind": "build",
         "isDefault": true
       },
-      "problemMatcher": ["$gcc"]
+      "problemMatcher": [
+        "$gcc"
+      ]
     },
     {
-      "label": "clean",
+      "label": "clean memoria",
       "command": "make clean",
       "type": "shell",
       "group": {
         "kind": "none"
       },
-      "problemMatcher": []
+      "problemMatcher": ["$gcc"]
+    },
+    {
+      "label": "valgrind-leak-check",
+      "command": "valgrind",
+      "args": [
+        "--leak-check=full",
+        "--log-file=${log_file}",
+        "./bin/${this_module}",
+        "./${this_module}.config"
+      ],
+      "type": "shell",
+      "hide": true,
+      "dependsOn": [
+        "build memoria"
+      ]
+    },
+    {
+      "label": "leak-check memoria",
+      "command": "code",
+      "type": "shell",
+      "args": [
+        "${log_file}"
+      ],
+      "group": "test",
+      "dependsOn": [
+        "valgrind-leak-check"
+      ],
+      "problemMatcher": [
+        "$gcc"
+      ]
     }
   ]
 }

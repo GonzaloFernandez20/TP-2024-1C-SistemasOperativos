@@ -3,14 +3,13 @@
   // for the documentation about the launch.json format
   "version": "0.2.0",
   "configurations": [
-
-
+    
     {
-      "name": "run",
+      "name": "run memoria",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/memoria.config"],
+      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
@@ -23,7 +22,7 @@
           "ignoreFailures": true
         }
       ],
-      "preLaunchTask": "build"
+      "preLaunchTask": "build memoria"
     }
   ]
 }
