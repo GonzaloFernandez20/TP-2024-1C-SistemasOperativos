@@ -4,8 +4,8 @@
 //SET////////////////////////////////////////////////////////////////////////////////////
 //asigna al registro seleccionado el valor pasado como argumento
 void set(void){
-    char* registro = strdup(instruccion_cpu[1]);
-    int valor = atoi(instruccion_cpu[2]);  // string to int
+    char* registro = strdup(instruccion_ejecutando[1]);
+    int valor = atoi(instruccion_ejecutando[2]);  // string to int
 
     void* registro_CPU = direccion_del_registro(registro);
 
@@ -22,8 +22,8 @@ void set(void){
 //Suma al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
     //Vale sumar un registro de 32bits a uno de 8bits   
 void sum(void){
-    char* parametro_registro_destino = strdup(instruccion_cpu[1]);
-    char* parametro_registro_origen = strdup(instruccion_cpu[2]);
+    char* parametro_registro_destino = strdup(instruccion_ejecutando[1]);
+    char* parametro_registro_origen = strdup(instruccion_ejecutando[2]);
     
     void* registro_destino = direccion_del_registro(parametro_registro_destino);
     void* registro_origen = direccion_del_registro(parametro_registro_origen);
@@ -41,8 +41,8 @@ void sum(void){
 //SUB////////////////////////////////////////////////////////////////////////////////////
 //Resta al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
 void sub(void){
-    char* parametro_registro_destino = strdup(instruccion_cpu[1]);
-    char* parametro_registro_origen = strdup(instruccion_cpu[2]);
+    char* parametro_registro_destino = strdup(instruccion_ejecutando[1]);
+    char* parametro_registro_origen = strdup(instruccion_ejecutando[2]);
 
     void* registro_destino = direccion_del_registro(parametro_registro_destino);
     void* registro_origen = direccion_del_registro(parametro_registro_origen);
@@ -60,24 +60,30 @@ void sub(void){
 //JNZ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Si el valor del registro es distinto de cero, actualiza el program counter al número de instrucción pasada por parámetro.
 void jnz(void){
-    char* registro = strdup(instruccion_cpu[1]);
-    int instruccion_PC = atoi(instruccion_cpu[2]);  // se espera un program counter
+    char* registro = strdup(instruccion_ejecutando[1]);
+    int instruccion_PC = atoi(instruccion_ejecutando[2]);  // se espera un program counter
 
     void* registro_CPU = direccion_del_registro(registro);
     free(registro);
 
     uint32_t valor_del_registro = *(uint32_t*)registro_CPU;
     if(valor_del_registro != 0){
-        registrosCPU.PC = instruccion_PC; 
+        registros.PC = instruccion_PC; 
     }
 }
 
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
 void io_gen_sleep(void){
-    char* interfaz = strdup(instruccion_cpu[1]);
-    int unidades_de_trabajo = atoi(instruccion_cpu[2]);
+    char* interfaz = strdup(instruccion_ejecutando[1]);
+    int unidades_de_trabajo = atoi(instruccion_ejecutando[2]);
     devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz,unidades_de_trabajo);
-    salir_ciclo = 1;
+    se_devolvio_contexto = 1;
+}
+
+//EXIT////////////////////////////////////////////////////////////////////////////////////////////////
+void exit_os(void){
+    devolver_contexto_ejecucion(EXIT);
+    se_devolvio_contexto = 1;
 }
 
 //Auxiliares

@@ -7,7 +7,7 @@ int main(int argc,char* argv[]) {
 	init();
     iniciar_servidores();
     conectar_memoria();
-    gestionar_conexiones_kernel();
+    gestionar_conexiones_kernel(); 
     
 	return 0;
 }

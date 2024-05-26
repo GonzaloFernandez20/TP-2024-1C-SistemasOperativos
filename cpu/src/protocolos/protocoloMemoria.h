@@ -6,7 +6,7 @@
 #include <utils/serializacion/serializacion.h>
 
 
-void solicitar_instruccion_a_memoria(int PC);
+void solicitar_instruccion_a_memoria(void);
 
 char* recibir_instruccion(void);
 

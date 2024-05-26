@@ -19,8 +19,8 @@ void iniciar_servidor_kernel(void){
 
 void establecer_conexiones(void){
     conectar_memoria();
-    conectar_dispatch();
     conectar_interrupt();
+    conectar_dispatch();
 }
 
 void conectar_memoria(void){ 

@@ -3,11 +3,11 @@
 void enviar_contexto_ejecucion(t_pcb* pcb){
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
-    int buffer_size = 12 * sizeof(int); 
+    int buffer_size = 2*sizeof(int) + 4*sizeof(uint8_t) + 7*sizeof(uint32_t); 
 	crear_buffer(paquete, buffer_size);
 
     buffer_add_int(paquete->buffer, pcb->pid );
-    buffer_add_int(paquete->buffer, pcb->PC );
+    buffer_add_uint32(paquete->buffer, pcb->PC );
     buffer_add_uint8(paquete->buffer, pcb->registros_cpu.AX );
     buffer_add_uint8(paquete->buffer, pcb->registros_cpu.BX );
     buffer_add_uint8(paquete->buffer, pcb->registros_cpu.CX );
@@ -48,7 +48,7 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     
     //Actualizamos el PCB guardando su contexto de ejecucion
 	pcb->pid = buffer_read_int(&stream);
-    pcb->PC = buffer_read_int(&stream);
+    pcb->PC = buffer_read_uint32(&stream);
     pcb->registros_cpu.AX = buffer_read_uint8(&stream);
     pcb->registros_cpu.BX = buffer_read_uint8(&stream);
     pcb->registros_cpu.CX = buffer_read_uint8(&stream);

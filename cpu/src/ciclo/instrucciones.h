@@ -20,6 +20,8 @@ void jnz(void);
 
 void io_gen_sleep(void);
 
+void exit_os(void);
+
 void* direccion_del_registro(char* nombre_registro);
 
 int tamanio_de_registro(char* registro);

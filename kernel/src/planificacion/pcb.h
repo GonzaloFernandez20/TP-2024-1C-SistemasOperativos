@@ -26,7 +26,7 @@ typedef struct registros_cpu{
 typedef struct pcb
 {
     int pid;
-    int PC;
+    uint32_t PC;
     int quantum;
     char* path_pseudocodigo;
     t_registros_cpu registros_cpu;

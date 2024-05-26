@@ -67,37 +67,3 @@ void enviar_instruccion_serializada(char* instruccion){
 
 	eliminar_paquete(paquete);
 }
-
-/*
-void fetch_instruccion(int PID, int PC){
-	t_paquete* paquete = crear_paquete(OBTENER_INSTRUCCION);
-
-	int buffer_size = 2*sizeof(int); 
-	crear_buffer(paquete, buffer_size);
-
-
-	buffer_add_int(paquete->buffer, PID);
-	buffer_add_int(paquete->buffer, PC);
-
-	enviar_paquete(paquete, fd_conexion_memoria);
-	eliminar_paquete(paquete);
-}
-
-
-char* recibir_instruccion(void){
-	int codigo_operacion = recibir_operacion(fd_conexion_memoria);
-
-	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
-	void* stream = buffer->stream;
-	
-	int length = buffer_read_int(&stream);
-	char* instruccion = malloc(length);
-	strcpy(instruccion, buffer_read_string(&stream, length));
-
-	log_info(cpu_log_debug, "Instruccion recibida: %s\n", instruccion);
-	
-	eliminar_buffer(buffer);
-
-	return instruccion;
-}
-*/

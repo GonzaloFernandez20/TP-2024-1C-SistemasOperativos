@@ -94,7 +94,7 @@ void push_estado(t_estado* estado, t_pcb* pcb){
 
 void _loggear_ingreso_ready(){
     pthread_mutex_lock(&(ready->mutex_cola));
-    char* lista_de_pids = string_duplicate(__armar_lista_pids());
+    char* lista_de_pids = __armar_lista_pids();
     pthread_mutex_unlock(&(ready->mutex_cola));
 
     pthread_mutex_lock(&mutex_log);

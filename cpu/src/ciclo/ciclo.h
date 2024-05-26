@@ -19,4 +19,8 @@ void decode_and_execute(void);
 
 void checkInterrupt(void);
 
+char* _armado_parametros(char** instrucciones);
+
+char* _enum_interrupcion_string();
+
 #endif

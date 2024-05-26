@@ -7,7 +7,6 @@ void init(){
     inicializar_semaforos();
     init_opCodes_dictionary();
     init_registros_dictionary();
-    sistema_encendido = 1;
 }
 
 void inicializar_semaforos(void){
@@ -51,20 +50,20 @@ void init_opCodes_dictionary(void){
     // dictionary_put(opCodes_diccionario, IO_FS_TRUNCATE, (void*)io_fs_truncate);
     // dictionary_put(opCodes_diccionario, IO_FS_WRITE,    (void*)io_fs_write);
     // dictionary_put(opCodes_diccionario, IO_FS_READ,     (void*)io_fs_read);
-    // dictionary_put(opCodes_diccionario, EXIT_OS,        (void*)exit_os);
+    dictionary_put(opCodes_diccionario, "EXIT",        (void*)exit_os);
 }
 /* Cada nombre de registro tiene asociado la dirección de memoria*/
 void init_registros_dictionary(void){
     registros_diccionario = dictionary_create();
 
-    dictionary_put(registros_diccionario, "AX",  (void*)(&registrosCPU.AX));
-    dictionary_put(registros_diccionario, "BX",  (void*)(&registrosCPU.BX));
-    dictionary_put(registros_diccionario, "CX",  (void*)(&registrosCPU.CX));
-    dictionary_put(registros_diccionario, "DX",  (void*)(&registrosCPU.DX));
-    dictionary_put(registros_diccionario, "EAX", (void*)(&registrosCPU.EAX));
-    dictionary_put(registros_diccionario, "EBX", (void*)(&registrosCPU.EBX));
-    dictionary_put(registros_diccionario, "ECX", (void*)(&registrosCPU.ECX));
-    dictionary_put(registros_diccionario, "EDX", (void*)(&registrosCPU.EDX));
-    dictionary_put(registros_diccionario, "SI",  (void*)(&registrosCPU.SI));
-    dictionary_put(registros_diccionario, "DI",  (void*)(&registrosCPU.DI));
+    dictionary_put(registros_diccionario, "AX",  (void*)(&registros.AX));
+    dictionary_put(registros_diccionario, "BX",  (void*)(&registros.BX));
+    dictionary_put(registros_diccionario, "CX",  (void*)(&registros.CX));
+    dictionary_put(registros_diccionario, "DX",  (void*)(&registros.DX));
+    dictionary_put(registros_diccionario, "EAX", (void*)(&registros.EAX));
+    dictionary_put(registros_diccionario, "EBX", (void*)(&registros.EBX));
+    dictionary_put(registros_diccionario, "ECX", (void*)(&registros.ECX));
+    dictionary_put(registros_diccionario, "EDX", (void*)(&registros.EDX));
+    dictionary_put(registros_diccionario, "SI",  (void*)(&registros.SI));
+    dictionary_put(registros_diccionario, "DI",  (void*)(&registros.DI));
 }
