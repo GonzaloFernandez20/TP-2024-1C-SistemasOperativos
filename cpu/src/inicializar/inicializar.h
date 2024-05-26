@@ -16,4 +16,9 @@ void init(void);
 void _leer_configuracion(char *path_config);
 void inicializar_semaforos(void);
 
+void init_opCodes_dictionary(void);
+
+void init_registros_dictionary(void);
+
+
 #endif

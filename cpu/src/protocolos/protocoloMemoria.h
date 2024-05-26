@@ -4,7 +4,10 @@
 #include <include/estructuras.h>
 
 #include <utils/serializacion/serializacion.h>
-#include <utils/hilos/hilos.h>
 
+
+void solicitar_instruccion_a_memoria(int PC);
+
+char* recibir_instruccion(void);
 
 #endif 

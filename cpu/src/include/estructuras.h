@@ -85,6 +85,10 @@ extern t_log* cpu_log_debug;
 extern char *path_config;
 extern t_config_cpu config_cpu;
 
+extern int interrupcion;
+extern int tipo_interrupcion;
+
+
 extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
