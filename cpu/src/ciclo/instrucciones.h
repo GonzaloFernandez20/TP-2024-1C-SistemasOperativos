@@ -10,26 +10,6 @@
 #include <protocolos/protocoloDispatch.h>
 #include <utils/serializacion/serializacion.h>
 
-#define SET "SET"
-#define MOV_IN "MOV_IN"
-#define MOV_OUT "MOV_OUT"
-#define SUM "SUM"
-#define SUB "SUB"
-#define JNZ "JNZ"
-#define RESIZE "RESIZE"
-#define COPY_STRING "COPY_STRING"
-#define WAIT "WAIT"
-#define SIGNAL "SIGNAL"
-#define IO_GEN_SLEEP "IO_GEN_SLEEP"
-#define IO_STDIN_READ "IO_STDIN_READ"
-#define IO_STDOUT_WRITE "IO_STDOUT_WRITE"
-#define IO_FS_CREATE "IO_FS_CREATE"
-#define IO_FS_DELETE "IO_FS_DELETE"
-#define IO_FS_TRUNCATE "IO_FS_TRUNCATE"
-#define IO_FS_WRITE "IO_FS_WRITE"
-#define IO_FS_READ "IO_FS_READ"
-#define EXIT_OS "EXIT_OS"
-
 void set(void);
 
 void sum(void);

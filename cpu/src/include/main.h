@@ -32,7 +32,7 @@ int fd_conexion_memoria;
 int fd_dispatch;
 int fd_interrupt;
 
-int interrupcion;
+int hay_interrupcion;
 int tipo_interrupcion;
 
 

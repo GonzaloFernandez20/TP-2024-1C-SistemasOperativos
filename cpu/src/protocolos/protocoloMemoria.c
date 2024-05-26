@@ -16,7 +16,7 @@ void solicitar_instruccion_a_memoria(int PC){
 
 char* recibir_instruccion(void){
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero.
-    if(codigo_operacion!==INSTRUCCION){perror("No se recibio una instruccion");}
+    if(codigo_operacion != INSTRUCCION){perror("No se recibio una instruccion");}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
 	void* stream = buffer->stream;

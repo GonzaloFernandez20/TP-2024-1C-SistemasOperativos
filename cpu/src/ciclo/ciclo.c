@@ -29,9 +29,9 @@ void decode_and_execute(void) {
 
 
 void checkInterrupt(void){;
-    if(interrupcion){
+    if(hay_interrupcion){
         devolver_contexto_ejecucion();
-        interrupcion = 0;
+        hay_interrupcion = 0;
         salir_ciclo = 1;
     }
 }
