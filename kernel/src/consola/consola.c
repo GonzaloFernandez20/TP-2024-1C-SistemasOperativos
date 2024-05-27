@@ -19,48 +19,48 @@ void *iniciar_Consola(){
 
         switch (opCode_Comando_Ingresado)
         {
-        case EJECUTAR_SCRIPT: // EJECUTAR_SCRIPT [PATH]
-            printf("Ejecutando comando: EJECUTAR_SCRIPT\n");
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
-            break;
+            case EJECUTAR_SCRIPT: // EJECUTAR_SCRIPT [PATH]
+                printf("Ejecutando comando: EJECUTAR_SCRIPT\n");
+                    // DEBERIA LEER UN ARCHIV0 DE COMANDOS, GUARDARLAS EN UN ARRAY E IR EJECUTANDOLAS 1 A 1 
+                break;
 
-        case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
+            case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
 
-            char * path_proceso = array_del_comando[1];
-            crear_proceso(path_proceso);
-            free(path_proceso);
-            break;
+                char * path_proceso = array_del_comando[1];
+                crear_proceso(path_proceso);
+                free(path_proceso);
+                break;
 
-        case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
+            case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
 
-            int pid_proceso = atoi(array_del_comando[1]);
-            extraer_proceso(pid_proceso);
-            
-            break;
+                int pid_proceso = atoi(array_del_comando[1]);
+                extraer_proceso(pid_proceso);
+                
+                break;
 
-        case DETENER_PLANIFICACION:
-            //pausar_planificacion();
-            break;
+            case DETENER_PLANIFICACION:
+                //pausar_planificacion();
+                break;
 
-        case INICIAR_PLANIFICACION:
-            if (planificacion_pausada)
-            {
-                //retomar_planificacion();
-            }            
-            break;
+            case INICIAR_PLANIFICACION:
+                if (planificacion_pausada)
+                {
+                    //retomar_planificacion();
+                }            
+                break;
 
-        case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
-            /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
-            break;
+            case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
+                /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+                break;
 
-        case PROCESO_ESTADO:
-            _imprimir_estados_procesos();
+            case PROCESO_ESTADO:
+                _imprimir_estados_procesos();
 
-            break;
-        default:
-            printf("El comando que ingresaste no es valido\n");
-            break;
-        }
+                break;
+            default:
+                printf("El comando que ingresaste no es valido\n");
+                break;
+            }
 
 		free(comando_ingresado);
         free(array_del_comando);

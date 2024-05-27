@@ -45,6 +45,7 @@ int termino_quantum;
 
 t_estado *new;
 t_estado *ready;
+t_estado *ready_plus;
 t_estado *exec;
 t_estado *blocked;
 t_estado *estado_exit;

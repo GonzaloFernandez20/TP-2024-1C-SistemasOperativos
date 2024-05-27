@@ -27,6 +27,15 @@ void iniciar_colas_planificacion(void){
     estado_exit->cola = list_create();
     estado_exit->nombre = string_duplicate("EXIT");
 
+    if (algoritmo_es_VRR())
+    {
+        // READY +
+        ready_plus = malloc(sizeof(t_estado));
+        pthread_mutex_init(&(ready_plus->mutex_cola), NULL); 
+        ready_plus->cola = list_create();
+        ready_plus->nombre = string_duplicate("READY +");
+    }
+
 }
 
 void imprimir_cola(t_estado *estado, void(*_mostrar_pcbs)(void*)) {
@@ -87,6 +96,10 @@ void push_estado(t_estado* estado, t_pcb* pcb){
         list_add(estado->cola, pcb);
     pthread_mutex_unlock(&(estado->mutex_cola));
 
+}
+
+int algoritmo_es_VRR(){
+    return (string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "VRR")) ? 1 : 0;
 }
 
 // ---------- FUNCIONES AUXILIARES

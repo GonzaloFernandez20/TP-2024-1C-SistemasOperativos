@@ -75,6 +75,7 @@ extern int termino_quantum;
 
 extern t_estado *new;
 extern t_estado *ready;
+extern t_estado *ready_plus;
 extern t_estado *exec;
 extern t_estado *estado_exit;
 
