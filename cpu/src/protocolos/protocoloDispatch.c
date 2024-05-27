@@ -52,7 +52,7 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
 void devolver_contexto_ejecucion(int motivo){
 	t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
-    int buffer_size = 3 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)); 
+    int buffer_size = 3 * sizeof(int) + 4*sizeof(uint8_t) + 7*sizeof(uint32_t); 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID );

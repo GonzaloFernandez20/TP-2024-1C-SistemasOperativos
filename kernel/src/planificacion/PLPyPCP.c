@@ -50,7 +50,7 @@ void *planificador_corto_plazo(){
             
             default:
                 break;
-       }
+       } 
     }
 }
 
