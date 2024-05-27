@@ -167,7 +167,8 @@ void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, in
     t_estado* cola_bloqueados = malloc(sizeof(t_estado));
     cola_bloqueados->cola = list_create();
     pthread_mutex_init(&(cola_bloqueados->mutex_cola),NULL); 
-    cola_bloqueados->nombre = strdup("BLOCKED");
+    cola_bloqueados->nombre = strdup("BLOCKED: ");
+    string_append(&(cola_bloqueados->nombre), nombre_interfaz);
 
     t_interfaz* interfaz = malloc(sizeof(t_interfaz));
     interfaz->nombre = strdup(nombre_interfaz);

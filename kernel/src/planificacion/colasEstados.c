@@ -71,15 +71,16 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
     pthread_mutex_unlock(&mutex_log);
 
     if (string_equals_ignore_case(destino->nombre, "READY"))
-            {
-                _loggear_ingreso_ready();
-                sem_post(&proceso_listo);
-            }
-
-    /* if (string_equals_ignore_case(destino->nombre, "EXIT"))
     {
-        sem_post(&hay_proceso_exec);
-    } */  // SI LA COLA EXEC LA MANEJA UN HILO PROPIO QUE SE ENCARGA DE LIBERAR LOS RECURSOS, LE DAMOS AVISO ACA
+        _loggear_ingreso_ready();
+        sem_post(&proceso_listo);
+    }
+
+    if (string_equals_ignore_case(destino->nombre, "EXIT"))
+    {   
+        sem_post(&grado_multiprogramacion); // ESTO DEBERIA ESTAR LUEGO DE Q SE BORRA EL PROCESO
+        //sem_post(&hay_proceso_exit);
+    }// SI LA COLA EXEC LA MANEJA UN HILO PROPIO QUE SE ENCARGA DE LIBERAR LOS RECURSOS, LE DAMOS AVISO ACA
     
 }
 
