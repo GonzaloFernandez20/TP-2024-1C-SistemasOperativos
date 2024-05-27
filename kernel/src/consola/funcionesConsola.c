@@ -18,22 +18,30 @@ void crear_proceso(char *path_proceso){
     sem_post(&proceso_cargado);
 }
 
-
 void extraer_proceso(int pid){
 
-    t_estado *array_estados[] = {new, ready, exec, estado_exit};
-    pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
+    //t_estado *array_estados[] = {new, ready, exec, estado_exit}; -> DE EXIT NO LO PUEDO EXTRAER Y DE EJECUTANDO LO HAGO APARTE
+    //pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
+    t_estado *array_estados[] = {new, ready};
+    pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola};
     
     int cant_elementos = (int)(sizeof(array_estados) / sizeof(array_estados[0]));
     int resultado;
 
-    for (int i = 0; i < cant_elementos; i++)
-    {   
-        pthread_mutex_lock(&array_semaforos[i]);
-            resultado = buscar_y_eliminar_pid(array_estados[i], pid);
-        pthread_mutex_unlock(&array_semaforos[i]);
-        
-        if(resultado != (-1)){  break;  }
+    if ((_esta_ejecutando(pid)))
+    {
+        //puts("PROCESO EJECUTANDO");
+        enviar_interrupcion(INTERRUPCION); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
+    }else
+    {
+        for (int i = 0; i < cant_elementos; i++)
+        {   
+            pthread_mutex_lock(&array_semaforos[i]);
+                resultado = buscar_y_eliminar_pid(array_estados[i], pid);
+            pthread_mutex_unlock(&array_semaforos[i]);
+            
+            if(resultado != (-1)){  break;  }
+        }
     }
 }
 
@@ -64,4 +72,24 @@ void _imprimir_estados_procesos(void){
 void _mostrar_pcbs(void *pcbDeLista) {
     t_pcb *pcb = (t_pcb *)pcbDeLista;
     printf("\t\tPID: %d\n", pcb->pid);
+}
+
+
+int _esta_ejecutando(int pid_buscado){
+    int size = list_size(exec->cola);
+    int encontro = 0;
+
+    for (int i = 0; i < size; i++) {
+            pthread_mutex_lock(&(exec->mutex_cola));
+                t_pcb *pcb = list_get(exec->cola, i);
+            pthread_mutex_unlock(&(exec->mutex_cola));
+
+            if (pcb->pid == pid_buscado)
+            {   
+                free(pcb);
+                encontro = 1;
+                break;
+            }
+        }
+    return encontro;
 }

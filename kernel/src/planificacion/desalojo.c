@@ -7,7 +7,6 @@
 
 // --------------- PROCESAMOS EL PEDIDO DE IO POR PARTE DE CPU
 
-
 void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
     int op_code_motivo_desalojo = buffer_read_int(&stream);
     switch (op_code_motivo_desalojo)
@@ -18,6 +17,9 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
 
         case INTERRUPCION:
             trasladar(pcb->pid, exec, estado_exit); // ENTIENDO QUE ES CUANDO SE INGRESA FINALIZAR_PROCESO POR CONSOLA.
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
+            pthread_mutex_unlock(&mutex_log);
             break;
 
         case LLAMADA_IO:
@@ -26,13 +28,16 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
 
         case EXIT:
             trasladar(pcb->pid, exec, estado_exit);
+
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < SUCCESS >", pcb->pid);
+            pthread_mutex_unlock(&mutex_log);
             break;
 
         default:
             break;
     }
 }
-
 
 void ejecutar_llamada_io(t_pcb* pcb, void* stream){
     int op_code_io = buffer_read_int(&stream);
@@ -55,6 +60,9 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
         int unidades_trabajo = buffer_read_int(&stream);
 
         if(!validar_peticion(nombre_interfaz, IO_GEN_SLEEP)){
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+            pthread_mutex_unlock(&mutex_log);
             trasladar(pcb->pid, exec, estado_exit);
             free(nombre_interfaz);
         }
@@ -87,14 +95,13 @@ int validar_peticion(char* interfaz, op_code_instruccion llamada){
         t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
     pthread_mutex_unlock(&diccionario_interfaces);
  
-    if (interfaz_solicitante == NULL){
-        return 0;
-    } 
-
-    if (admite_operacion_solicitada(llamada, interfaz_solicitante->tipo))
-        return 1; 
-    else
-        return 0;
+    if (interfaz_solicitante != NULL){
+        if (admite_operacion_solicitada(llamada, interfaz_solicitante->tipo))
+        {
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo){

@@ -115,13 +115,18 @@ char* __armar_lista_pids() {
     }
 
     for (int i = 0; i < size; i++) {
-        char* cadena = malloc(sizeof(char) * 3); // Tamaño suficiente para un número de hasta 2 dígitos + carácter nulo
-
         t_pcb* pcb = list_get(ready->cola, i);
-        sprintf(cadena, " %d ", pcb->pid);
-        string_append(&lista, cadena);
+        int pid = pcb->pid;
+        
+        char* num_to_string = string_itoa(pid); // Convierte el PID a cadena
 
-        free(cadena);
+        // Agrega un espacio antes y después del número
+        string_append(&lista, " ");
+        string_append(&lista, num_to_string);
+        string_append(&lista, " ");
+
+        free(num_to_string);
     }
     return lista;
 }
+

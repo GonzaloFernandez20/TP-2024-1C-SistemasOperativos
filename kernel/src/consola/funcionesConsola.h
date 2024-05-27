@@ -7,6 +7,7 @@
 #include <protocolos/protocoloMemoria.h>
 #include <protocolos/protocoloCPU.h>
 #include <planificacion/colasEstados.h>
+#include <planificacion/PLPyPCP.h>
 
 #include <commons/collections/list.h>
 
@@ -22,6 +23,7 @@ void _imprimir_estados_procesos(void);
 
 int _asignar_PID(void);
 void _mostrar_pcbs(void *pcbDeLista); 
+int _esta_ejecutando(int pid_buscado);
 
 
 

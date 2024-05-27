@@ -32,15 +32,10 @@ void *iniciar_Consola(){
             break;
 
         case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
-            
+
             int pid_proceso = atoi(array_del_comando[1]);
-
-            //pthread_mutex_lock(SEMAFORO DE PROCESOS);
-	        //log_info(kernel_log, "Finaliza el proceso <%d> - Motivo: <INTERRUPTED_BY_USER>", pid_proceso);
-	        //pthread_mutex_unlock(SEMAFORO DE PROCESOS);
-
             extraer_proceso(pid_proceso);
-
+            
             break;
 
         case DETENER_PLANIFICACION:

@@ -30,6 +30,9 @@ int iniciar_servidor(char* IP, char* PUERTO)
         return -1;
 	}
 
+	if (setsockopt(socket_servidor, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0) 
+    perror("setsockopt(SO_REUSEADDR) failed");
+
 	// Asociamos el socket a un puerto
 	error = bind(socket_servidor, servinfo->ai_addr, servinfo->ai_addrlen);
 	// chequeo valor de retorno

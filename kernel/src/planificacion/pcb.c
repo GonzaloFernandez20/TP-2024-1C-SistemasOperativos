@@ -15,18 +15,6 @@ t_pcb *crear_pcb(int PID, char* path_pseudocodigo){
 
 void _inicializar_registros_cpu(t_registros_cpu *registro){
     memset(registro, 0, sizeof(t_registros_cpu));
-    /* En caso de que no funcione memset... 
-    registro->AX = 0;
-    registro->BX = 0;
-    registro->CX = 0;
-    registro->DX = 0;
-    registro->EAX = 0;
-    registro->EBX = 0;
-    registro->ECX = 0;
-    registro->EDX = 0;
-    registro->SI = 0;
-    registro->DI = 0;
-    */  
 }
 
 int buscar_y_eliminar_pid(t_estado *estado, int pid_buscado){
@@ -43,6 +31,7 @@ int buscar_y_eliminar_pid(t_estado *estado, int pid_buscado){
             free(pcb);
             pthread_mutex_lock(&(estado->mutex_cola));
                 list_remove(estado->cola, i);
+                // Signal a semaforo donde sea q la cola exit tome procesos y los borre de memoria
             pthread_mutex_unlock(&(estado->mutex_cola));
             encontro = 1;
             break;
