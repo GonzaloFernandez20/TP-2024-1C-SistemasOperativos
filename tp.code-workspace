@@ -35,24 +35,73 @@
 		"version": "2.0.0",
 		"tasks": [
 			{
-				"label": "build",
-				"command": "${workspaceFolder}/../buildAll.sh",
+				"label": "Build All",
+				"command": "${workspaceFolder}/../buildAll.sh", // limpia la pantalla de la terminal nomás
 				"type": "shell",
 				"group": {
 					"kind": "build",
 					"isDefault": true
 				},
+				// "dependsOn": [
+				// 	"build cpu",
+				// 	"build kernel",
+				// 	"build memoria",
+				// 	"build entradasalida"
+				// ],
+				// "dependsOrder": "parallel",
 				"problemMatcher": ["$gcc"]
 			},
 			{
-				"label": "clean",
+				"label": "Clean All",
 				"command": "${workspaceFolder}/../cleanAll.sh",
 				"type": "shell",
 				"group": {
 				"kind": "none"
 				},
-				"problemMatcher": []
-			}
+				// "dependsOn": [
+				// 	"clean cpu",
+				// 	"clean kernel",
+				// 	"clean memoria",
+				// 	"clean entradasalida",
+				// 	"clean utils"
+				// ],
+				// "dependsOrder": "parallel",
+				"problemMatcher": ["$gcc"]
+			},
+			// {
+			// 	"label": "Leak-Check All",
+			// 	"command": "echo",
+			// 	"type": "shell",
+			// 	"group": {
+			// 	"kind": "none",
+			// 	"isDefault": true
+			// 	},
+			// 	"dependsOrder": "sequence",
+			// 	"dependsOn":[
+			// 		"leak-check memoria",
+			// 		"leak-check cpu",
+			// 		"leak-check kernel",
+			// 		"leak-check entradasalida"
+			// 	]
+			// }
 		]
-	}
+	},
+	"launch": {
+		  "version": "0.2.0",
+		  "configurations": [
+
+		  ],
+		  "compounds": [
+			  {
+				  "name": "Run All",
+				  "configurations": [
+					
+					  "run memoria",
+					  "run cpu",
+					  "run kernel",
+					  "run entradasalida"
+				  ]
+			  }
+		  ]
+	  }
 }
