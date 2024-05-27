@@ -38,7 +38,6 @@ void checkInterrupt(void){
         char* interrupcion_string = _enum_interrupcion_string();
 
         log_info(cpu_log_debug, "Se detecto una interrupcion de tipo < %s >", interrupcion_string);
-        free(interrupcion_string);
 
         devolver_contexto_ejecucion(tipo_interrupcion);
 

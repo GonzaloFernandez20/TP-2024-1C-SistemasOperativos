@@ -48,7 +48,7 @@ void devolver_instruccion(void){
 	enviar_instruccion_serializada(instruccion);
 
 	pthread_mutex_lock(&mutex_log_debug);
-	log_info(memoria_log_debugg,"Enviada la instruccion solicitada PC: %d -> %s\n", PC, instruccion);
+	log_info(memoria_log_debugg,"PID < %d > enviada la instruccion solicitada PC: %d -> %s\n", PID, PC, instruccion);
 	pthread_mutex_unlock(&mutex_log_debug);
 }
 
@@ -64,6 +64,7 @@ void enviar_instruccion_serializada(char* instruccion){
 
 	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cpu);
-
+	//free(instruccion);
+	
 	eliminar_paquete(paquete);
 }

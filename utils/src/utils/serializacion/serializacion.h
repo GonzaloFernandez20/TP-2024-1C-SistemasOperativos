@@ -67,7 +67,8 @@ typedef enum code_instruccion{
     IO_FS_TRUNCATE, 
     IO_FS_WRITE,
     IO_FS_READ,
-    EXIT_OS //EXIT pelado en C es una palabra reservada
+    EXIT_OS,
+    X
 } op_code_instruccion;
 
 void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);

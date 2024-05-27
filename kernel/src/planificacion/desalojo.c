@@ -1,5 +1,9 @@
 #include <planificacion/desalojo.h>
 
+#define INSTRUCCIONES_GENERICA IO_GEN_SLEEP, X
+#define INSTRUCCIONES_STDIN IO_STDIN_READ, X
+#define INSTRUCCIONES_STDOUT IO_STDOUT_WRITE, X
+#define INSTRUCCIONES_DIALFS IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ, X
 
 // --------------- PROCESAMOS EL PEDIDO DE IO POR PARTE DE CPU
 
@@ -87,16 +91,39 @@ int validar_peticion(char* interfaz, op_code_instruccion llamada){
         return 0;
     } 
 
-    int *operaciones_permitidas;
-    operaciones_permitidas = dictionary_get(instrucciones_por_interfaz, (interfaz_solicitante->tipo));
-
-    if (_puede_realizar_operacion(llamada, operaciones_permitidas)){return 1; }
-    else{return 0;}
+    if (admite_operacion_solicitada(llamada, interfaz_solicitante->tipo))
+        return 1; 
+    else
+        return 0;
 }
 
-int _puede_realizar_operacion(int numero, int array[]) {
+int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo){
+
+    if(strcmp(tipo, "GENERICA") == 0){
+        op_code_instruccion array[] = {INSTRUCCIONES_GENERICA};
+        return _puede_realizar_operacion(instruccion, array);
+    }
+    else if(strcmp(tipo, "STDIN") == 0){
+        op_code_instruccion array[] = {INSTRUCCIONES_STDIN};
+        return _puede_realizar_operacion(instruccion, array);
+    }
+    else  if(strcmp(tipo, "STDOUT") == 0){
+        op_code_instruccion array[] = {INSTRUCCIONES_STDOUT};
+        return _puede_realizar_operacion(instruccion, array);
+    }
+    else  if(strcmp(tipo, "DIALFS") == 0){
+        op_code_instruccion array[] = {INSTRUCCIONES_DIALFS};
+        return _puede_realizar_operacion(instruccion, array);
+    }
+    else   
+        return 0;
+}
+
+
+
+int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion array[]) {
     int i = 0;
-    while (array[i] != -1) {
+    while (array[i] != X) {
         if (array[i] == numero) {
             return 1; // El elemento está presente en el array
         }

@@ -36,6 +36,7 @@ typedef struct estado
 }t_estado;
 typedef struct interfaz_conectada
 {
+    char* nombre;
     char* tipo;
     int fd;
     t_estado* bloqueados;
@@ -43,7 +44,6 @@ typedef struct interfaz_conectada
     pthread_t peticiones;
     sem_t hay_peticiones;
     pthread_mutex_t interfaz_en_uso;
-
 
 } t_interfaz;
 

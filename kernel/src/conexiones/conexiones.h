@@ -26,8 +26,6 @@ void *atender_entradasalida(void);
 
 // funciones auxiliares para atender las interfaces
 
-void cargar_diccionario_instrucciones(void);
-
 void atender_interfaz(void (*procesar_conexion)(void*));
 
 void asignar_hilo_interfaz(char *nombre_interfaz,  void (*procesar_conexion)(void*));

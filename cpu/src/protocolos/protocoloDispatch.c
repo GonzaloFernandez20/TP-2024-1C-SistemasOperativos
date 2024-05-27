@@ -45,7 +45,7 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
 
 	eliminar_buffer(buffer);
 
-    log_info(cpu_log_debug, "Se recibio contexto de ejecucion PID: < %d > desde Kernel.", PID);
+    log_info(cpu_log_debug, "Se recibio contexto de ejecucion PID: < %d > desde KERNEL.\n", PID);
 
 }
 
@@ -71,13 +71,14 @@ void devolver_contexto_ejecucion(int motivo){
 
 	enviar_paquete(paquete, fd_dispatch);
 
-    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PID);
+    log_info(cpu_log_debug, "Enviado contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
 	eliminar_paquete(paquete);
 }
 
 void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidades_trabajo){
-	t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+	int motivo = LLAMADA_IO;
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
     int buffer_size = 6 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
@@ -87,14 +88,14 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     buffer_add_uint8(paquete->buffer, registros.AX );
     buffer_add_uint8(paquete->buffer, registros.BX );
     buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint32(paquete->buffer, registros.DX );
+    buffer_add_uint8(paquete->buffer, registros.DX );
     buffer_add_uint32(paquete->buffer, registros.EAX );
     buffer_add_uint32(paquete->buffer, registros.EBX );
     buffer_add_uint32(paquete->buffer, registros.ECX );
     buffer_add_uint32(paquete->buffer, registros.EDX );
     buffer_add_uint32(paquete->buffer, registros.SI );
     buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	buffer_add_int(paquete->buffer, motivo);
 	buffer_add_int(paquete->buffer, IO_GEN_SLEEP);
 	buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
@@ -102,7 +103,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
 
 	enviar_paquete(paquete, fd_dispatch);
 
-    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a CPU.", PID);
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
 	eliminar_paquete(paquete);
 }
