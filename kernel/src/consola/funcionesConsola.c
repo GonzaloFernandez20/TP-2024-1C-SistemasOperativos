@@ -19,9 +19,13 @@ void crear_proceso(char *path_proceso){
 }
 
 void extraer_proceso(int pid){
-
+    // 1. Si el proceso esta en alguna cola de new o ready lo mando a exit instantaneamente, listo
+    // 2. si esta en exec mando una interrumpcion a cpu y cuando vuelva lo mando a exit, listo
+    // 3. si esta en la cola de bloqueados espero a que la IO me indique que termino de procesar la peticion de ese proceso para mandarlo a exit
+    
     //t_estado *array_estados[] = {new, ready, exec, estado_exit}; -> DE EXIT NO LO PUEDO EXTRAER Y DE EJECUTANDO LO HAGO APARTE
     //pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
+    
     t_estado *array_estados[] = {new, ready};
     pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola};
     
@@ -30,25 +34,25 @@ void extraer_proceso(int pid){
 
     if ((_esta_ejecutando(pid)))
     {
-        //puts("PROCESO EJECUTANDO");
         enviar_interrupcion(INTERRUPCION); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
     }else
     {
         for (int i = 0; i < cant_elementos; i++)
         {   
             pthread_mutex_lock(&array_semaforos[i]);
-                resultado = buscar_y_eliminar_pid(array_estados[i], pid);
+                resultado = buscar_y_trasladar_pid(array_estados[i], pid);
             pthread_mutex_unlock(&array_semaforos[i]);
             
             if(resultado != (-1)){  break;  }
         }
     }
+
+    // Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
 }
 
 int _asignar_PID(void){
     return pid_nuevo_proceso++;
 }//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
-
 
 void _imprimir_estados_procesos(void){
 

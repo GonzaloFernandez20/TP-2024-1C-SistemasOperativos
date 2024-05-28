@@ -16,7 +16,7 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
             break;
 
         case INTERRUPCION:
-            trasladar(pcb->pid, exec, estado_exit); // ENTIENDO QUE ES CUANDO SE INGRESA FINALIZAR_PROCESO POR CONSOLA.
+            trasladar(pcb->pid, exec, estado_exit);
             pthread_mutex_lock(&mutex_log);
                 log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
             pthread_mutex_unlock(&mutex_log);

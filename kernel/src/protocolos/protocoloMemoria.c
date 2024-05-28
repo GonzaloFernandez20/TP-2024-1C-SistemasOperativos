@@ -34,7 +34,7 @@ int recibir_confirmacion(int pid){
     int rta_memoria; 
     recv(fd_conexion_memoria, &rta_memoria, sizeof(int), MSG_WAITALL);
     if(rta_memoria == 0){
-        buscar_y_eliminar_pid(new, pid);
+        buscar_y_trasladar_pid(new, pid);
         return 0;
     }else
     {
