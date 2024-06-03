@@ -45,6 +45,7 @@ typedef enum motivo_desalojo{
     FIN_DE_QUANTUM,
     INTERRUPCION,
     LLAMADA_IO,
+    OUT_OF_MEMORY,
     EXIT
 }t_motivo_desalojo;
 
