@@ -20,7 +20,7 @@ t_log* IO_log;
 t_log* IO_log_debug;
 
 char* path_config;
-char* nombre_Interfaz;
+char* nombre_Interfaz;//no entiendo el uso
 t_config_IO config_IO;
 
 int fd_conexion_memoria; 
