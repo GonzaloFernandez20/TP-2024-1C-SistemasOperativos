@@ -24,8 +24,13 @@ typedef enum CODIGOS_DE_OPERACION
 	OPERACION_COMPLETADA,
     CAMBIO_TAMANIO,         
     ESTADO,                 // Respuesta a una solicitud. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
-	MENSAJE
-
+	MENSAJE,
+    WRITE_DIRECCION_FISICA,
+    READ_DIRECCION_FISICA,
+    SUCCESFULL_READ,
+    SUCCESFULL_WRITE,
+    FAILED_WRITE,
+    FAILED_READ
 }op_code; 
 
 
