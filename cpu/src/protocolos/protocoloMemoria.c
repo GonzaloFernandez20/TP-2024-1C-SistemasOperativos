@@ -20,7 +20,7 @@ char* _recibir_instruccion(void){
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != INSTRUCCION){ 
 		perror("No se recibio una instruccion");
-		return "NUH-UH";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
+		return "ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
@@ -43,20 +43,20 @@ bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int tamanio_nuevo) {
 	int buffer_size = 2*sizeof(int);
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID);   		// PID del proceso en ejecución
-	buffer_add_int(paquete->buffer, tamanio);    	// Tamaño nuevo al cual queremos cambiarle al proceso
+	buffer_add_int(paquete->buffer, PID);   			// PID del proceso en ejecución
+	buffer_add_int(paquete->buffer, tamanio_nuevo);    	// Tamaño nuevo al cual queremos cambiarle al proceso
 
 	enviar_paquete(paquete, fd_conexion_memoria);
 	eliminar_paquete(paquete);
-	
-	return recibir_respuesta_por_ajuste_de_tamanio(void);
+
+	return recibir_respuesta_por_ajuste_de_tamanio();
 }
 
 bool recibir_respuesta_por_ajuste_de_tamanio(void) {
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != ESTADO){ 
 		perror("No se recibio un estado");
-		return "NUH-UH";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
+		return "ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);

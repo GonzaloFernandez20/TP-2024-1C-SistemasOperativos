@@ -143,7 +143,7 @@ void resize(void) {
 void copy_string(void) {
     int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
 
-    copiar_string_desde_memoria(registros.SI, registro.DI, cantidad_de_bytes);  // FALTA IMPLEMENTAR 
+    copiar_string_desde_memoria(registros.SI, registros.DI, cantidad_de_bytes);  // FALTA IMPLEMENTAR 
 
     return;
 }
@@ -217,19 +217,11 @@ int tamanio_de_registro(char* registro){
     }
 }
 
-int solicitar_ajustar_tamanio_de_proceso_a_memoria(int nuevo_tamanio) {
+// Toma direcciones lógicas de origen y destino y la cantidad de bytes que se quieren copiar de un lado para el otro.
+void copiar_string_desde_memoria(uint32_t dl_origen, uint32_t dl_destino, uint32_t cantidad_de_bytes) {
 
-    int respuesta_de_memoria;
-
-
-    respuesta_de_memoria = 1;
-
-    return respuesta_de_memoria;
-}
-
-void copiar_string_desde_memoria(void* memptr_origen, void* memptr_destino, int cantidad_de_bytes) {
     
-    // Sea "memptr_etc" un puntero al espacio de memoria del módulo Memoria
+
     
     return;
 }

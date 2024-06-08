@@ -27,6 +27,6 @@ void* direccion_del_registro(char* nombre_registro);
 
 int tamanio_de_registro(char* registro);
 
-int solicitar_ajustar_tamanio_de_proceso_a_memoria(int);
+void copiar_string_desde_memoria(uint32_t dl_origen, uint32_t dl_destino, uint32_t cantidad_de_bytes)
 
 #endif
