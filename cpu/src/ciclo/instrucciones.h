@@ -11,19 +11,22 @@
 #include <utils/serializacion/serializacion.h>
 
 void set(void);
-
 void sum(void);
-
 void sub(void);
-
 void jnz(void);
-
+void mov_in(void);
+void mov_out(void);
+void resize(void);
+void copy_string(void);
+void io_stdin_read(void);
+void io_stdout_write(void);
 void io_gen_sleep(void);
-
 void exit_os(void);
 
 void* direccion_del_registro(char* nombre_registro);
 
 int tamanio_de_registro(char* registro);
+
+int solicitar_ajustar_tamanio_de_proceso_a_memoria(int);
 
 #endif

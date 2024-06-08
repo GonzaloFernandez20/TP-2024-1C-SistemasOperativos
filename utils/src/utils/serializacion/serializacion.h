@@ -19,9 +19,11 @@ typedef enum CODIGOS_DE_OPERACION
 	CREAR_PROCESO,
 	ELIMINAR_PROCESO,
 	OBTENER_INSTRUCCION,
-	INSTRUCCION,
+	INSTRUCCION,            
 	CONTEXTO_EJECUCION,
 	OPERACION_COMPLETADA,
+    CAMBIO_TAMANIO,         
+    ESTADO,                 // Respuesta a una solicitud. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
 	MENSAJE
 
 }op_code; 

@@ -121,7 +121,7 @@ void mov_out(void) {
 void resize(void) {
     int tamanio = atoi(instruccion_ejecutando[1]);
 
-    int ok = solicitar_ajustar_tamanioDeProceso_a_memoria(tamanio); // FALTA IMPLEMENTAR
+    int ok = solicitar_ajustar_tamanio_de_proceso_a_memoria(tamanio); // FALTA IMPLEMENTAR
     
     if(!ok) { // El error Out of Memory será representada con un 0. Si not ok entonces devolvemos contexto de ejecución con el motivo 
         int motivo = OUT_OF_MEMORY;
@@ -143,20 +143,20 @@ void resize(void) {
 void copy_string(void) {
     int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
 
-    copiar_string_desde_memoria(registros.SI, registro.DI, cantidad_de_bytes);
+    copiar_string_desde_memoria(registros.SI, registro.DI, cantidad_de_bytes);  // FALTA IMPLEMENTAR 
 
     return;
 }
 
 
 //IO_STDIN_READ//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
+/** ,
  * IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): 
  * Esta instrucción solicita al Kernel que mediante la interfaz ingresada 
  * se lea desde el STDIN (Teclado) un valor cuyo tamaño está delimitado 
  * por el valor del Registro Tamaño y el mismo se guarde a partir 
  * de la Dirección Lógica almacenada en el Registro Dirección.
- * 
+ *
  * Ej: IO_STDIN_READ Int2 EAX AX
  * */ 
 void io_stdin_read(void) {
@@ -217,7 +217,7 @@ int tamanio_de_registro(char* registro){
     }
 }
 
-int solicitar_ajustar_tamanioDeProceso_a_memoria(int nuevo_tamanio) {
+int solicitar_ajustar_tamanio_de_proceso_a_memoria(int nuevo_tamanio) {
 
     int respuesta_de_memoria;
 

@@ -11,15 +11,13 @@ void ciclo(void){
 }
 
 void fetch(void){
-    solicitar_instruccion_a_memoria();
-
+    char* instruccion = solicitar_instruccion_a_memoria();
     log_info(cpu_log, "PID: < %d > - FETCH - Program Counter: < %d >", PID, registros.PC);
 
-    registros.PC += 1;                                          // Al finalizar el ciclo, este último deberá ser actualizado (sumarle 1) si corresponde.
-    char* instruccion = recibir_instruccion();                  // Recibimos una instruccion.
+    registros.PC += 1;                                          // PC debe ser actualizado (sumarle 1) después de pedir una instrucción.
     string_array_destroy(instruccion_ejecutando);               // Debemos liberar el string_array anterior, porque cuando le reasignemos un valor a nuestro puntero "instruccion_ejecutando", el puntero al string_array anterior se perderá y generará memory leaks. 
     instruccion_ejecutando = string_split(instruccion, " ");    // Dividimos las partes de la instruccion en un array. 
-    free(instruccion);
+    free(instruccion);                                          // liberamos el string creado con malloc()
 }
 
 
