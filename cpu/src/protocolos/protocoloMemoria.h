@@ -5,11 +5,18 @@
 
 #include <utils/serializacion/serializacion.h>
 
+#include <MMU/MMU.h>
+
 
 char* solicitar_instruccion_a_memoria(void);
 char* _recibir_instruccion(void);
 
 bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int);
-bool recibir_respuesta_por_ajuste_de_tamanio(void);
+bool _recibir_respuesta_por_ajuste_de_tamanio(void);
+
+char* leer_de_memoria(uint32_t direccion_logica);
+void _solicitar_lectura_de_memoria(uint32_t direccion_fisica);
+char* _recibir_string_por_lectura(void);
+
 
 #endif 

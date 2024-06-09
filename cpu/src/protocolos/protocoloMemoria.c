@@ -19,8 +19,8 @@ char* solicitar_instruccion_a_memoria(){
 char* _recibir_instruccion(void){
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != INSTRUCCION){ 
-		perror("No se recibio una instruccion");
-		return "ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
+		perror("El mensaje recibido no es una instruccion.");
+		return "OPCODE ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
@@ -36,6 +36,8 @@ char* _recibir_instruccion(void){
 	return instruccion;                
 }
 
+
+
 // Solicitud a Memoria para cambiar tamaño del proceso (identicado por PID) al tamaño nuevo especificado.
 bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int tamanio_nuevo) {
 	t_paquete* paquete = crear_paquete(CAMBIO_TAMANIO);
@@ -49,14 +51,14 @@ bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int tamanio_nuevo) {
 	enviar_paquete(paquete, fd_conexion_memoria);
 	eliminar_paquete(paquete);
 
-	return recibir_respuesta_por_ajuste_de_tamanio();
+	return _recibir_respuesta_por_ajuste_de_tamanio();
 }
 
-bool recibir_respuesta_por_ajuste_de_tamanio(void) {
+bool _recibir_respuesta_por_ajuste_de_tamanio(void) {
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != ESTADO){ 
-		perror("No se recibio un estado");
-		return "ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
+		perror("El mensaje recibido no es un estado.");
+		return "OPCODE ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
@@ -66,5 +68,87 @@ bool recibir_respuesta_por_ajuste_de_tamanio(void) {
 
 	eliminar_buffer(buffer);
 
-	return estado_respuesta; 
+	return estado_respuesta;
+}
+
+
+
+char* leer_de_memoria(uint32_t direccion_logica) {
+	uint32_t direccion_fisica = dl_a_df(direccion_logica);
+	_solicitar_lectura_de_memoria(); // pedimos a memoria que nos devuelva el string alojado en la dirección física especificada.
+	char* string_recibido = _recibir_string_por_lectura();
+  
+}
+
+//Pedido de lectura de una dirección física
+void _solicitar_lectura_de_memoria(uint32_t direccion_fisica) {
+	
+    t_paquete* paquete = crear_paquete(READ);
+
+    size_t buffer_size = sizeof(direccion_fisica);
+    crear_buffer(paquete, buffer_size);
+
+    buffer_add_uint32(paquete->buffer, direccion_fisica);
+    
+    enviar_paquete(paquete, fd_conexion_memoria);
+    
+    eliminar_paquete(paquete);
+}
+
+//Recepción de lo que había en la dirección física
+char* _recibir_string_por_lectura(void) {
+    int operacion = recibir_operacion(fd_conexion_memoria);
+
+    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
+    void* stream = buffer->stream;
+    size_t string_length = buffer_read_int(&stream); //revisar si se envia el \0 desde memoria
+    char* string_recibido = buffer_read_string(&stream, string_length);
+
+    eliminar_buffer(buffer);
+
+    return string_recibido; 
+}
+
+
+char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
+	uint32_t direccion_fisica = dl_a_df(direccion_logica);
+	_solicitar_escritura_en_memoria(direccion_fisica, string_a_escribir);
+
+    //TODO BIEN?  
+    char* respuesta_peticion = _recibir_respuesta_por_escritura();   
+}
+
+// pasamos la direccion fisica en donde queremos guardar el string.
+void _solicitar_escritura_en_memoria(uint32_t direccion_fisica, char* string) {
+	t_paquete* paquete = crear_paquete(WRITE);
+
+    int buffer_size = sizeof(direccion_fisica)+sizeof(int)+strlen(string)+1;
+
+    crear_buffer(paquete, buffer_size);
+
+    buffer_add_uint32(paquete->buffer, direccion_fisica);
+    buffer_add_int(paquete->buffer, strlen(string)+1);
+    buffer_add_string(paquete->buffer, string);
+
+    enviar_paquete(paquete, fd_conexion_memoria);
+    
+    eliminar_paquete(paquete);
+}
+
+// podemos recibir un "OK" o un "ERROR" desde Memoria
+char* _recibir_respuesta_por_escritura(void) {
+	int operacion = recibir_operacion(fd_conexion_memoria);
+	if(operacion!=ESTADO) {
+		perror("El mensaje recibido no es un ESTADO.");
+		return "OPCODE ERROR";
+	}
+
+    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
+    void* stream = buffer->stream;
+    size_t string_length = buffer_read_int(&stream);
+    char* string_recibido = buffer_read_string(&stream, string_length);
+
+    eliminar_buffer(buffer);
+
+    return string_recibido; 
 }

@@ -23,14 +23,17 @@ typedef enum CODIGOS_DE_OPERACION
 	CONTEXTO_EJECUCION,
 	OPERACION_COMPLETADA,
     CAMBIO_TAMANIO,         
-    ESTADO,                 // Respuesta a una solicitud. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
+    ESTADO,                 // Respuesta a una peticion. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
 	MENSAJE,
-    WRITE_DIRECCION_FISICA,
+    READ,                   // Cuando pido a Memoria leer el contenido al cual apunta una dirección fisica
+    WRITE,                  // Idem pero para escritura
+
+    WRITE_DIRECCION_FISICA, 
     READ_DIRECCION_FISICA,
-    SUCCESFULL_READ,
-    SUCCESFULL_WRITE,
-    FAILED_WRITE,
-    FAILED_READ
+    SUCCESFULL_READ,        // Estos no me parecen apropiados ponerlos como op_codes, 
+    SUCCESFULL_WRITE,       // por que no refieren a ninguna operación, 
+    FAILED_WRITE,           // nomás informan de un estado
+    FAILED_READ             //
 }op_code; 
 
 
