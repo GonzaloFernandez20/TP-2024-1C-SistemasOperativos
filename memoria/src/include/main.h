@@ -7,7 +7,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <commons/config.h>
-
+#include <commons/collections/list.h>
+#include <commons/bitarray.h>
 // ---------------- Librerias Propias
 // ---- INTERNAS
 #include <include/estructuras.h>
