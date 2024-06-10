@@ -74,7 +74,6 @@ void *planificador_corto_plazo(){
 
                     recibir_contexto_ejecucion(pcb_execute);
                 break;
-            
             default:
                 break;
        } 

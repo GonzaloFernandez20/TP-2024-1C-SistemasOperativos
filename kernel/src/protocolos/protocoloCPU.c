@@ -34,7 +34,7 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 
     int es_RR = string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR");
     if (es_RR && !termino_quantum){ 
-        pthread_cancel(manejo_quantum);     
+        pthread_cancel(manejo_quantum);    
     }
 
     if(opcode != CONTEXTO_EJECUCION){perror("Rompiste todo");}
