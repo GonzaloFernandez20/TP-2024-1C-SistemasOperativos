@@ -8,7 +8,6 @@ int pid_nuevo_proceso = 0;
 void *planificador_corto_plazo(){
     t_pcb *pcb_execute;
     t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
-    int *pidsito = malloc(sizeof(int));
 
     pthread_mutex_lock(&mutex_log_debug); // -> Capaz ni es necesario
         log_info(kernel_log_debugg, "Algoritmo de planificacion: < %s >", config_kernel.ALGORITMO_PLANIFICACION);
@@ -17,9 +16,10 @@ void *planificador_corto_plazo(){
     while (1)
     {       
         sem_wait(&proceso_listo);
-        
-       switch (algoritmo_planificacion)
-       {
+        int *pidsito = malloc(sizeof(int));
+
+        switch (algoritmo_planificacion)
+        {
             case FIFO:
                     pcb_execute = pop_estado(ready);
                     push_estado(exec, pcb_execute);
@@ -76,7 +76,7 @@ void *planificador_corto_plazo(){
                 break;
             default:
                 break;
-       } 
+        } 
     }
 }
 
