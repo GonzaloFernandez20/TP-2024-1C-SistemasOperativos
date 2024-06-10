@@ -98,6 +98,9 @@ void recibir_aviso(char* nombre, int fd){
 		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
 	pthread_mutex_unlock(&diccionario_interfaces);
 
-	trasladar(PID, interfaz->bloqueados, ready);
+ 	if (algoritmo_es_VRR()){  // --> PARA EL CASO DE VRR 
+		trasladar(PID, interfaz->bloqueados, ready_plus);
+	}else{ trasladar(PID, interfaz->bloqueados, ready); } 
+	
 }
 

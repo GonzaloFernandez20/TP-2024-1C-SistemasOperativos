@@ -84,14 +84,12 @@ void esperar_dispositivos_IO(){
     pthread_detach(atender_IO);
 }
 
-
 void *atender_entradasalida(){
-    interfaces_conectadas =  dictionary_create();
+    interfaces_conectadas = dictionary_create();
     peticiones_interfaz = dictionary_create();
     while(1)
     atender_interfaz((void *)procesar_conexion_es);
 }
-
 
 void atender_interfaz(void (*procesar_conexion)(void*)){
 
@@ -164,18 +162,24 @@ char* recibir_presentacion_IO(int fd_cliente){
 }
 
 void registrar_interfaz_conectada(char* nombre_interfaz, char* tipo_interfaz, int fd){
+
+    // Cola de bloqueados de la interfaz
     t_estado* cola_bloqueados = malloc(sizeof(t_estado));
     cola_bloqueados->cola = list_create();
     pthread_mutex_init(&(cola_bloqueados->mutex_cola),NULL); 
-    cola_bloqueados->nombre = strdup("BLOCKED");
+    cola_bloqueados->nombre = strdup("BLOCKED: ");
+    string_append(&(cola_bloqueados->nombre), nombre_interfaz);
 
+    // Inicializacion de la interfaz
     t_interfaz* interfaz = malloc(sizeof(t_interfaz));
     interfaz->nombre = strdup(nombre_interfaz);
     interfaz->tipo = strdup(tipo_interfaz);
     interfaz->fd = fd;
     interfaz->bloqueados = cola_bloqueados;
+
     pthread_mutex_init(&(interfaz->interfaz_en_uso), NULL);
     sem_init(&interfaz->hay_peticiones, 0,0);
+    
     pthread_create(&interfaz->peticiones, NULL, (void *)gestionar_peticiones, (void*)interfaz);
     pthread_detach(interfaz->peticiones);
 
@@ -191,7 +195,7 @@ void* gestionar_peticiones(void* interfaz){
         pthread_mutex_lock(&interfaz_actual->interfaz_en_uso);
 
         t_pcb* pcb = list_get(interfaz_actual->bloqueados->cola, 0);
-        char* PID = strdup(string_itoa(pcb->pid));
+        char* PID = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
             t_peticion* peticion = dictionary_get(peticiones_interfaz, PID);

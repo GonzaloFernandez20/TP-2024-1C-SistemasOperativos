@@ -19,8 +19,10 @@
 // ---------- DECLARACIONES DE FUNCIONES
 void crear_proceso(char *path_proceso);
 void extraer_proceso(int pid);
-void _imprimir_estados_procesos(void);
+void imprimir_cola(t_estado *estado);
 
+void _imprimir_estados_procesos(void);
+void imprimir_cola_bloqueados(void);
 int _asignar_PID(void);
 void _mostrar_pcbs(void *pcbDeLista); 
 int _esta_ejecutando(int pid_buscado);
