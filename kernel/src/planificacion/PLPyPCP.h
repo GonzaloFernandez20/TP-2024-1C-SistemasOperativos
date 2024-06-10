@@ -37,7 +37,7 @@ void *iniciar_quantum(void* PID);
 
 t_algoritmo _chequear_algoritmo(void);
 void enviar_interrupcion(t_motivo_desalojo motivo);
-
+void verificar_estado_planificacion(void);
 
 #endif
 

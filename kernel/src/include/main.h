@@ -60,5 +60,9 @@ sem_t proceso_listo;
 sem_t proceso_cargado;
 sem_t grado_multiprogramacion;
 sem_t hay_proceso_exit;
+sem_t planificacion_en_pausa;
+
+int planificacion_pausada;
+int contador_bloqueados;
 
 #endif

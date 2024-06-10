@@ -1,7 +1,5 @@
 #include <consola/consola.h>
 
-int planificacion_pausada = false; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
-
 void *iniciar_Consola(){
 
     pthread_mutex_lock(&mutex_log_debug);
@@ -29,28 +27,29 @@ void *iniciar_Consola(){
                 char * path_proceso = array_del_comando[1];
                 crear_proceso(path_proceso);
                 free(path_proceso);
+
                 break;
 
             case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
-
                 int pid_proceso = atoi(array_del_comando[1]);
                 extraer_proceso(pid_proceso);
                 
                 break;
 
             case DETENER_PLANIFICACION:
-                //pausar_planificacion();
+                pausar_planificacion();
+
                 break;
 
             case INICIAR_PLANIFICACION:
-                if (planificacion_pausada)
-                {
-                    //retomar_planificacion();
-                }            
+                retomar_planificacion();
+
                 break;
 
-            case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]
-                /* EJECUCION CORRESPONDIENTE, LOS PARAMETROS LOS SACO DEL ARRAY DEL COMANDO */
+            case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]           
+                int nuevo_valor_grado = atoi(array_del_comando[1]);
+                actualizar_grado_multiprog(nuevo_valor_grado);
+
                 break;
 
             case PROCESO_ESTADO:

@@ -7,6 +7,7 @@ void init(void){
     _leer_configuracion(path_config);
     inicializar_semaforos();
     iniciar_colas_planificacion();
+    planificacion_pausada = 0;
 }
 
 void _leer_configuracion(char *path_config){

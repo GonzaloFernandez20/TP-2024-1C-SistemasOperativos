@@ -6,8 +6,6 @@ int pid_nuevo_proceso = 0;
 // ----------- PLANIFICADOR CORTO PLAZO
 
 void *planificador_corto_plazo(){
-    //desalojadoAntes = true;
-    //pcbInicial = true;
     t_pcb *pcb_execute;
     t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
     int *pidsito = malloc(sizeof(int));
@@ -19,9 +17,7 @@ void *planificador_corto_plazo(){
     while (1)
     {       
         sem_wait(&proceso_listo);
-        //sem_wait(&planificacionPausada);
-        //sem_post(&planificacionPausada);
-
+        
        switch (algoritmo_planificacion)
        {
             case FIFO:
@@ -113,6 +109,7 @@ void *planificador_largo_plazo(void){ // DIVIDIDO EN 2 PARTES: UNA PARA LLEVAR P
         } 
 
         // ------------------ AGREGA A COLA READY
+        verificar_estado_planificacion();
         trasladar(pcb_a_cargar->pid, new, ready);
     }
 } 
@@ -156,6 +153,7 @@ void inicializar_semaforos(void){
     sem_init(&grado_multiprogramacion, 0, config_kernel.GRADO_MULTIPROGRAMACION);
 
     sem_init(&hay_proceso_exit, 0, 0);
+    sem_init(&planificacion_en_pausa, 0, 0);
 }
 
 void *iniciar_quantum(void* PID_PROCESO){
@@ -177,6 +175,16 @@ void *iniciar_quantum(void* PID_PROCESO){
 
     return NULL;
 }  
+
+void verificar_estado_planificacion(void){
+    // OPCION 1: TENER UN WHILE (1) CON UN SLEEP DONDE CHEQUEE CADA 1SEG EL ESTADO DE LA PLANI
+    // OPCION 2: TENER 1 SEMAFORO PLANIFICACION PAUSADA
+    if (planificacion_pausada)
+    {
+        contador_bloqueados++;
+        sem_wait(&planificacion_en_pausa);
+    }
+}
 
 // ----------- FUNCIONES AUXILIARES
 

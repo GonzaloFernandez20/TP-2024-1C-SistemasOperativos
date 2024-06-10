@@ -86,5 +86,9 @@ extern sem_t proceso_cargado;
 extern sem_t execute_libre;
 extern sem_t grado_multiprogramacion;
 extern sem_t hay_proceso_exit;
+extern sem_t planificacion_en_pausa;
+
+extern int planificacion_pausada;
+extern int contador_bloqueados;
 
 #endif

@@ -60,6 +60,8 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 	    log_info(kernel_log_debugg, "CPU devolvio el contexto de ejecucion de PID < %d >\n", pcb->pid);
 	pthread_mutex_unlock(&mutex_log_debug);
 
+    verificar_estado_planificacion(); // ANTES DE VER QUE HACER CON EL PCB DEVUELTO, SE CLAVA SI ES NECESARIO
+
     interpretar_motivo_desalojo(pcb, stream);
 
 	eliminar_buffer(buffer);
