@@ -14,13 +14,13 @@
 
 // ---------- DECLARACIONES DE FUNCIONES
 void iniciar_colas_planificacion(void);
-void imprimir_cola(t_estado *estado, void(*_mostrar_pcbs)(void*));
 void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino);
 int algoritmo_es_VRR();
 
 t_pcb *pop_estado(t_estado* estado);
 void push_estado(t_estado* estado, t_pcb* pcb);
 void _loggear_ingreso_ready(); 
+void *limpieza_cola_exit();
 
 char* __armar_lista_pids();
 

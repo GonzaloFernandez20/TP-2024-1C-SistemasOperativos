@@ -10,7 +10,8 @@ void *planificador_corto_plazo(){
     //pcbInicial = true;
     t_pcb *pcb_execute;
     t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
-    
+    int *pidsito = malloc(sizeof(int));
+
     pthread_mutex_lock(&mutex_log_debug); // -> Capaz ni es necesario
         log_info(kernel_log_debugg, "Algoritmo de planificacion: < %s >", config_kernel.ALGORITMO_PLANIFICACION);
     pthread_mutex_unlock(&mutex_log_debug);
@@ -46,8 +47,7 @@ void *planificador_corto_plazo(){
 
                     enviar_contexto_ejecucion(pcb_execute);
 
-                    int *pidsito = malloc(sizeof(int));
-                        *pidsito = pcb_execute->pid;
+                    *pidsito = pcb_execute->pid;
 
                     // THREAD QUE CONTROLA EL QUANTUM PARA UN PROCESO EN EJECUCION
                     pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
@@ -57,28 +57,26 @@ void *planificador_corto_plazo(){
             
                 break;
             case VRR:
-                  
-                    /* termino_quantum = 0;
+                    termino_quantum = 0;
 
-                    Chequeo si hay proceso en la cola ready+ 
-                        if(hay_proceso_en_ready+){
-                            pcb_execute = pop_estado(ready_plus);
-                            push_estado(exec, pcb_execute);
-                        }else{
-                            pcb_execute = pop_estado(ready);
-                            push_estado(exec, pcb_execute);
-                        }
+                    //Chequeo si hay proceso en la cola ready+ 
+                    if(list_is_empty(ready_plus->cola)){
+                        pcb_execute = pop_estado(ready);
+                        push_estado(exec, pcb_execute);
+                    }else{
+                        pcb_execute = pop_estado(ready_plus);
+                        push_estado(exec, pcb_execute);
+                    }
+
                     enviar_contexto_ejecucion(pcb_execute);
 
-                    int *pidsito = malloc(sizeof(int));
-                        *pidsito = pcb_execute->pid;
+                    *pidsito = pcb_execute->pid;
 
-                    THREAD QUE CONTROLA EL QUANTUM PARA UN PROCESO EN EJECUCION
+                    //THREAD QUE CONTROLA EL QUANTUM PARA UN PROCESO EN EJECUCION
                     pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
                     pthread_detach(manejo_quantum);
 
-                    recibir_contexto_ejecucion(pcb_execute); */
-                
+                    recibir_contexto_ejecucion(pcb_execute);
                 break;
             
             default:
@@ -89,29 +87,33 @@ void *planificador_corto_plazo(){
 
 // ----------- PLANIFICADOR LARGO PLAZO
 
-void *planificador_largo_plazo(void){
+void *planificador_largo_plazo(void){ // DIVIDIDO EN 2 PARTES: UNA PARA LLEVAR PROCESOS A READY Y OTRA PARA SACARLOS DE LA MEMORIA
+
+    pthread_t garbage_collector;
+    pthread_create(&garbage_collector, NULL, (void *)limpieza_cola_exit, NULL);
+    pthread_detach(garbage_collector);
 
     while (1)
     {
-    sem_wait(&proceso_cargado);
-    sem_wait(&grado_multiprogramacion);
+        sem_wait(&proceso_cargado);
+        sem_wait(&grado_multiprogramacion);
 
-    t_pcb* pcb_a_cargar = list_get(new->cola, 0);
+        t_pcb* pcb_a_cargar = list_get(new->cola, 0);
 
-    // ------------------ COMUNICACION CON MEMORIA
-    
-    enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
-    int rta_memoria = recibir_confirmacion(pcb_a_cargar->pid);
+        // ------------------ COMUNICACION CON MEMORIA
+        
+        enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
+        int rta_memoria = recibir_confirmacion(pcb_a_cargar->pid);
 
-     if (!rta_memoria){
-        pthread_mutex_lock(&mutex_log_debug); 
-            log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
-        pthread_mutex_lock(&mutex_log_debug); 
-        return NULL; 
-    } 
+        if (!rta_memoria){
+            pthread_mutex_lock(&mutex_log_debug); 
+                log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
+            pthread_mutex_lock(&mutex_log_debug); 
+            return NULL; 
+        } 
 
-    // ------------------ AGREGA A COLA READY
-    trasladar(pcb_a_cargar->pid, new, ready);
+        // ------------------ AGREGA A COLA READY
+        trasladar(pcb_a_cargar->pid, new, ready);
     }
 } 
 
@@ -152,6 +154,8 @@ void inicializar_semaforos(void){
     sem_init(&execute_libre, 0, 1);
     sem_init(&proceso_cargado, 0, 0);
     sem_init(&grado_multiprogramacion, 0, config_kernel.GRADO_MULTIPROGRAMACION);
+
+    sem_init(&hay_proceso_exit, 0, 0);
 }
 
 void *iniciar_quantum(void* PID_PROCESO){
@@ -163,7 +167,7 @@ void *iniciar_quantum(void* PID_PROCESO){
         log_info(kernel_log_debugg, "Proceso < %d > comienza su Quantum", PID);
     pthread_mutex_unlock(&mutex_log_debug);
 
-    usleep(config_kernel.QUANTUM * 1000);
+    usleep(config_kernel.QUANTUM * 2000);
     termino_quantum = 1;
     enviar_interrupcion(FIN_DE_QUANTUM);
 

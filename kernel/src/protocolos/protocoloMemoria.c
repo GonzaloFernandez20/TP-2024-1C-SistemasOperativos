@@ -22,7 +22,6 @@ void finalizar_proceso(int PID){
     int buffer_size = sizeof(int); 
     crear_buffer(paquete, buffer_size);
 
-
     buffer_add_int(paquete->buffer, PID);
 
     enviar_paquete(paquete, fd_conexion_memoria);

@@ -21,7 +21,7 @@ void *iniciar_Consola(){
         {
             case EJECUTAR_SCRIPT: // EJECUTAR_SCRIPT [PATH]
                 printf("Ejecutando comando: EJECUTAR_SCRIPT\n");
-                    // DEBERIA LEER UN ARCHIV0 DE COMANDOS, GUARDARLAS EN UN ARRAY E IR EJECUTANDOLAS 1 A 1 
+                // DEBERIA LEER UN ARCHIV0 DE COMANDOS, GUARDARLAS EN UN ARRAY E IR EJECUTANDOLAS 1 A 1 
                 break;
 
             case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
