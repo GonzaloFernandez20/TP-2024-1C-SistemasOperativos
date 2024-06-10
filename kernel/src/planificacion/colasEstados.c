@@ -27,8 +27,8 @@ void iniciar_colas_planificacion(void){
     estado_exit->cola = list_create();
     estado_exit->nombre = string_duplicate("EXIT");
 
+    // READY +
     if (algoritmo_es_VRR()){   
-        // READY +
         ready_plus = malloc(sizeof(t_estado));
         pthread_mutex_init(&(ready_plus->mutex_cola), NULL); 
         ready_plus->cola = list_create();
@@ -67,7 +67,13 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
 
     if (string_equals_ignore_case(destino->nombre, "READY"))
     {
-        _loggear_ingreso_ready();
+        _loggear_ingreso_ready(ready);
+        sem_post(&proceso_listo);
+    }
+
+    if (string_equals_ignore_case(destino->nombre, "READY +")) // Este deberia volar y estar generalizado
+    {
+        _loggear_ingreso_ready(ready_plus);
         sem_post(&proceso_listo);
     }
 
@@ -115,20 +121,20 @@ void *limpieza_cola_exit(){
 // ---------- FUNCIONES AUXILIARES
 
 
-void _loggear_ingreso_ready(){
-    pthread_mutex_lock(&(ready->mutex_cola));
-    char* lista_de_pids = __armar_lista_pids();
-    pthread_mutex_unlock(&(ready->mutex_cola));
+void _loggear_ingreso_ready(t_estado* estado){
+    pthread_mutex_lock(&(estado->mutex_cola));
+    char* lista_de_pids = __armar_lista_pids(estado);
+    pthread_mutex_unlock(&(estado->mutex_cola));
 
     pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "Cola Ready: [%s]", lista_de_pids);
+        log_info(kernel_log, "Cola %s: [%s]", estado->nombre, lista_de_pids);
     pthread_mutex_unlock(&mutex_log);
 
     free(lista_de_pids);
 }
 
-char* __armar_lista_pids() {
-    int size = list_size(ready->cola);
+char* __armar_lista_pids(t_estado* estado) {
+    int size = list_size(estado->cola);
     char* lista = string_duplicate(""); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
     
     if (size < 1)
@@ -138,7 +144,7 @@ char* __armar_lista_pids() {
     }
 
     for (int i = 0; i < size; i++) {
-        t_pcb* pcb = list_get(ready->cola, i);
+        t_pcb* pcb = list_get(estado->cola, i);
         int pid = pcb->pid;
         
         char* num_to_string = string_itoa(pid); // Convierte el PID a cadena

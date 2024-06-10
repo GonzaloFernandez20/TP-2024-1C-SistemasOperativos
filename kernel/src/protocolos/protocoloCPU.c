@@ -32,8 +32,7 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 
     int opcode = recibir_operacion(fd_conexion_dispatch);
 
-    int es_RR = string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR");
-    if (es_RR && !termino_quantum){ 
+    if (_es_algoritmo_con_quantum() && !termino_quantum){ 
         pthread_cancel(manejo_quantum);    
     }
 
@@ -65,4 +64,8 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     interpretar_motivo_desalojo(pcb, stream);
 
 	eliminar_buffer(buffer);
+}
+
+int _es_algoritmo_con_quantum(void){
+    return strcmp(config_kernel.ALGORITMO_PLANIFICACION, "RR") || strcmp(config_kernel.ALGORITMO_PLANIFICACION, "VRR");
 }

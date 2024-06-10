@@ -12,6 +12,8 @@
 void enviar_contexto_ejecucion(t_pcb *pcb_envio);
 void recibir_contexto_ejecucion(t_pcb* pcb);
 
+int _es_algoritmo_con_quantum(void);
+
 // ---------- DECLARACIONES DE ESTRUCTURAS
 
 // ---------- DECLARACIONES DE VARIABLES
