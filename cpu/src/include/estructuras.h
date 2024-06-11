@@ -21,6 +21,14 @@ typedef struct configuraciones_cpu
     char* ALGORITMO_TLB;
     
 }t_config_cpu;
+
+typedef enum RESPUESTA_DE_CONSULTA_A_TLB 
+{
+    HIT,
+    MISS
+}tlb_res;
+
+
 //REGISTROS GENERALES
 typedef struct contexto_ejecucion{
     uint32_t PC;// Program Counter, indica la próxima instrucción a ejecutar
@@ -65,8 +73,11 @@ extern t_registros_cpu registros;
 extern char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}
 extern t_dictionary* opCodes_diccionario;
 extern t_dictionary* registros_diccionario;
+extern t_dictionary* entradas_TLB_diccionario;
 
 extern int se_devolvio_contexto;
 
 extern int PID;
+extern uint32_t PTBR;
+
 #endif

@@ -44,8 +44,11 @@ op_code_instruccion instruccion;
 char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;
+t_dictionary* entradas_TLB_diccionario;
 
 int se_devolvio_contexto;
 
 int PID;
+uint32_t PTBR; // contiene la dirección de la tabla de páginas del proceso en ejecución. Es necesario para traducir una dirección lógica a física.
+
 #endif

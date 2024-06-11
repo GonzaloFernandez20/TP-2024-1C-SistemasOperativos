@@ -42,6 +42,7 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
     registros.EDX  = buffer_read_uint32(&stream); 
     registros.SI   = buffer_read_uint32(&stream);
     registros.DI   = buffer_read_uint32(&stream);
+    PTBR           = buffer_read_uint32(&stream);
 
 	eliminar_buffer(buffer);
 
@@ -67,6 +68,7 @@ void devolver_contexto_ejecucion(int motivo){
     buffer_add_uint32(paquete->buffer, registros.EDX );
     buffer_add_uint32(paquete->buffer, registros.SI );
     buffer_add_uint32(paquete->buffer, registros.DI );
+    buffer_add_uint32(paquete->buffer, PTBR);
 	buffer_add_int(paquete->buffer, motivo);
 
 	enviar_paquete(paquete, fd_dispatch);
@@ -95,6 +97,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     buffer_add_uint32(paquete->buffer, registros.EDX );
     buffer_add_uint32(paquete->buffer, registros.SI );
     buffer_add_uint32(paquete->buffer, registros.DI );
+    buffer_add_uint32(paquete->buffer, PTBR);
 	buffer_add_int(paquete->buffer, motivo);
 	buffer_add_int(paquete->buffer, IO_GEN_SLEEP);
 	buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);

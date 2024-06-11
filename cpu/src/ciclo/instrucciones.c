@@ -185,6 +185,14 @@ void io_stdout_write(void) {
 }
 
 
+void wait(void) {
+    return;
+}
+
+void signal(void) {
+    return;
+}
+
 
 
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
