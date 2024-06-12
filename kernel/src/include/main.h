@@ -45,6 +45,7 @@ int termino_quantum;
 
 t_estado *new;
 t_estado *ready;
+t_estado *ready_plus;
 t_estado *exec;
 t_estado *blocked;
 t_estado *estado_exit;
@@ -58,5 +59,6 @@ sem_t execute_libre;
 sem_t proceso_listo;
 sem_t proceso_cargado;
 sem_t grado_multiprogramacion;
+sem_t hay_proceso_exit;
 
 #endif

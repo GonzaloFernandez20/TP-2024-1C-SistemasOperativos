@@ -17,7 +17,7 @@ void _inicializar_registros_cpu(t_registros_cpu *registro){
     memset(registro, 0, sizeof(t_registros_cpu));
 }
 
-int buscar_y_eliminar_pid(t_estado *estado, int pid_buscado){
+int buscar_y_trasladar_pid(t_estado *estado, int pid_buscado){
     int size = list_size(estado->cola);
     int encontro = (-1);
 
@@ -28,12 +28,16 @@ int buscar_y_eliminar_pid(t_estado *estado, int pid_buscado){
 
         if (pcb->pid == pid_buscado)
         {   
-            free(pcb);
             pthread_mutex_lock(&(estado->mutex_cola));
-                list_remove(estado->cola, i);
-                // Signal a semaforo donde sea q la cola exit tome procesos y los borre de memoria
+                list_remove((estado->cola), i);
             pthread_mutex_unlock(&(estado->mutex_cola));
+
+            pthread_mutex_lock(&(estado_exit->mutex_cola));
+                list_add((estado_exit->cola), pcb);
+            pthread_mutex_unlock(&(estado_exit->mutex_cola));
+
             encontro = 1;
+            free(pcb);
             break;
         }
     }
