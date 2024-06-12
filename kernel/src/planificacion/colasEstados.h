@@ -19,7 +19,7 @@ int algoritmo_es_VRR();
 
 t_pcb *pop_estado(t_estado* estado);
 void push_estado(t_estado* estado, t_pcb* pcb);
-void _loggear_ingreso_ready(t_estado* estado); 
+void _loggear_ingreso(t_estado* estado); 
 void *limpieza_cola_exit();
 
 char* __armar_lista_pids(t_estado* estado);

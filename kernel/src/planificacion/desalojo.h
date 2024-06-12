@@ -7,6 +7,7 @@
 #include <planificacion/pcb.h>
 #include <planificacion/colasEstados.h>
 #include <protocolos/protocoloES.h>
+#include <planificacion/recursos.h>
 
 // ---------- DECLARACIONES DE ESTRUCTURAS
 

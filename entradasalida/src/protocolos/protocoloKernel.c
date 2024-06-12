@@ -33,6 +33,11 @@ void realizar_un_sleep(void){
     pthread_mutex_unlock(&mutex_log);
 
     usleep(1000*unidades_de_trabajo*config_IO.TIEMPO_UNIDAD_TRABAJO);
+
+    pthread_mutex_lock(&mutex_log);
+	log_info(IO_log,"PID: < %d > - Operacion: IO_GEN_SLEEP -> COMPLETADA", PID);
+    pthread_mutex_unlock(&mutex_log);
+
     mandar_aviso_kernel(PID);
     
 }

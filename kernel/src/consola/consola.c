@@ -5,8 +5,7 @@ void *iniciar_Consola(){
     pthread_mutex_lock(&mutex_log_debug);
         log_info(kernel_log_debugg, "Iniciando consola...");
     pthread_mutex_unlock(&mutex_log_debug);
-    
-    //int planificacion_iniciada = 1; // ESTA ME SIRVE PARA SABER EL ESTADO DE LA PLANIFICACION
+
     char* comando_ingresado;
 
 	do{ 
@@ -62,7 +61,7 @@ void *iniciar_Consola(){
             }
 
 		free(comando_ingresado);
-        free(array_del_comando);
+        string_array_destroy(array_del_comando);
 	} while(1);
 }
 

@@ -144,6 +144,7 @@ void inicializar_semaforos(void){
     pthread_mutex_init(&mutex_log, NULL);
     pthread_mutex_init(&diccionario_interfaces, NULL);
     pthread_mutex_init(&diccionario_peticiones, NULL);
+    pthread_mutex_init(&diccionario_recursos, NULL);
 
     // ------- SEMAFOROS DEL PLANIFICADOR DE CORTO PLAZO
     sem_init(&proceso_listo, 0, 0);

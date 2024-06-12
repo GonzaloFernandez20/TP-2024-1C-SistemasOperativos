@@ -65,17 +65,18 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
         log_info(kernel_log, "PID: <%d> - Estado Anterior: < %s > - Estado Actual: < %s >", pid_buscado, origen->nombre, destino->nombre);
     pthread_mutex_unlock(&mutex_log);
 
-    if (string_equals_ignore_case(destino->nombre, "READY"))
+    if (string_equals_ignore_case(destino->nombre, "READY") || string_equals_ignore_case(destino->nombre, "READY +") )
     {
-        _loggear_ingreso_ready(ready);
+        _loggear_ingreso(ready);
+            if (algoritmo_es_VRR()) {  _loggear_ingreso(ready_plus); }
         sem_post(&proceso_listo);
     }
 
-    if (string_equals_ignore_case(destino->nombre, "READY +")) // Este deberia volar y estar generalizado
+    /* if (string_equals_ignore_case(destino->nombre, "READY +")) // Este deberia volar y estar generalizado
     {
         _loggear_ingreso_ready(ready_plus);
         sem_post(&proceso_listo);
-    }
+    } */
 
     if (string_equals_ignore_case(destino->nombre, "EXIT"))
     {   
@@ -121,7 +122,7 @@ void *limpieza_cola_exit(){
 // ---------- FUNCIONES AUXILIARES
 
 
-void _loggear_ingreso_ready(t_estado* estado){
+void _loggear_ingreso(t_estado* estado){
     pthread_mutex_lock(&(estado->mutex_cola));
     char* lista_de_pids = __armar_lista_pids(estado);
     pthread_mutex_unlock(&(estado->mutex_cola));
@@ -135,11 +136,11 @@ void _loggear_ingreso_ready(t_estado* estado){
 
 char* __armar_lista_pids(t_estado* estado) {
     int size = list_size(estado->cola);
-    char* lista = string_duplicate(""); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
+    char* lista = string_new(); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
     
     if (size < 1)
     {
-        char *vacia = string_duplicate("");
+        char *vacia = string_new();
         return vacia;
     }
 

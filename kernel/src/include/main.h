@@ -36,9 +36,10 @@ int fd_conexion_memoria;
 int fd_conexion_dispatch; 
 int fd_conexion_interrupt;
 
-t_dictionary* interfaces_conectadas;
-t_dictionary* instrucciones_por_interfaz;
-t_dictionary* peticiones_interfaz;
+t_dictionary *interfaces_conectadas;
+t_dictionary *instrucciones_por_interfaz;
+t_dictionary *peticiones_interfaz;
+t_dictionary *recursos_disponibles;
 
 pthread_t manejo_quantum;
 int termino_quantum;
@@ -54,6 +55,7 @@ pthread_mutex_t mutex_log_debug;
 pthread_mutex_t mutex_log;
 pthread_mutex_t diccionario_interfaces;
 pthread_mutex_t diccionario_peticiones;
+pthread_mutex_t diccionario_recursos;
 
 sem_t execute_libre;
 sem_t proceso_listo;
