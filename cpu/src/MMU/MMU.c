@@ -17,7 +17,6 @@ uint32_t dl_a_df(uint32_t direccion_logica) {
     // Debo ver qué marco le corresponde al nro_pagina. Hago una consulta a la Tabla de Páginas (TP).
     uint32_t marco = obtener_marco(nro_pagina);
 
-    uint32_t 
 
 
     return 0;
@@ -33,15 +32,23 @@ uint32_t dl_a_df(uint32_t direccion_logica) {
  * */ 
 uint32_t obtener_marco(uint32_t nro_pagina) {
     tlb_res resultado_tlb;    
-    uint32_t marco;
+    uint32_t nro_marco;
     
-    marco = consultar_marco_en_TLB(uint32_t nro_pagina, &res);
+    resultado_tlb = consultar_marco_en_TLB(uint32_t nro_pagina, &nro_marco);
     if (resultado_tlb == MISS) {
-        
+        // se deberá informar el TLB Miss y se deberá consultar a la memoria para obtener el frame correspondiente a la página buscada.
+        uint32_t nro_marco = consultar_marco_en_TP(nro_pagina);
     }
 
-
-    return marco;
+    return nro_marco;
 }
 
-uint32_t consultar_marco_en_memoria()
+uint32_t consultar_marco_en_TP() {
+    // pedirle a Memoria que me traiga el marco en el cual está la página.
+    uint32_t nro_marco = pedir_marco_a_Memoria(nro_pagina); // FALTA IMPLEMENTARR
+
+    
+
+
+    return 1;
+}

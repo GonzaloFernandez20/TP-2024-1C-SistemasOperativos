@@ -185,11 +185,11 @@ void io_stdout_write(void) {
 }
 
 
-void wait(void) {
+void wait_kernel(void) {
     return;
 }
 
-void signal(void) {
+void signal_kernel(void) {
     return;
 }
 

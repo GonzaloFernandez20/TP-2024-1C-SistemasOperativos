@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <utils/serializacion/serializacion.h>
 #include <commons/collections/dictionary.h>
+#include <commons/collections/list.h>
 
 // ---------- ESTRUCTURAS 
 typedef struct configuraciones_cpu
@@ -73,7 +74,6 @@ extern t_registros_cpu registros;
 extern char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}
 extern t_dictionary* opCodes_diccionario;
 extern t_dictionary* registros_diccionario;
-extern t_dictionary* entradas_TLB_diccionario;
 
 extern int se_devolvio_contexto;
 

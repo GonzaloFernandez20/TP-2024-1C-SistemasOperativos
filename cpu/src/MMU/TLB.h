@@ -5,12 +5,17 @@
 #include <MMU/MMU.h>
 
 
-typedef struct 
+typedef struct ENTRADA_DE_TLB {
+    int pid;
+    uint32_t nro_pagina;
+    uint32_t nro_marco;
+}t_entrada_tlb;
 
 
 // constantes globales
-const size_t MAX_ENTRADAS = config_cpu.CANTIDAD_ENTRADAS_TLB;
-const char* ALGORITMO_TLB = config_cpu.ALGORITMO_TLB;
+size_t MAX_ENTRADAS;
+char* ALGORITMO_TLB;
+t_list* tabla_tlb;  //guardará un array de t_entrada_tlb 
 
 
 tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, tlb_res *res);
