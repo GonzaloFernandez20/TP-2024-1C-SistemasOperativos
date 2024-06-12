@@ -11,8 +11,7 @@
 #include <pthread.h>
 #include <semaphore.h>
 // ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
-typedef struct configuraciones_kernel
-{
+typedef struct configuraciones_kernel{
     char* IP_KERNEL;
     char* PUERTO_ESCUCHA; 
     char* IP_MEMORIA;
@@ -28,14 +27,13 @@ typedef struct configuraciones_kernel
 
 } t_config_kernel;
 
-typedef struct estado
-{
+typedef struct estado{
     pthread_mutex_t mutex_cola;
     t_list *cola;
     char* nombre;
 }t_estado;
-typedef struct interfaz_conectada
-{
+
+typedef struct interfaz_conectada{
     char* nombre;
     char* tipo;
     int fd;
@@ -47,8 +45,7 @@ typedef struct interfaz_conectada
 
 } t_interfaz;
 
-typedef struct t_peticion
-{
+typedef struct t_peticion{
     int unidades_trabajo;
     //agregaremos los argumentos que otras funciones necesiten
     void (*funcion)(struct t_peticion*, int, int);
@@ -75,6 +72,7 @@ extern int termino_quantum;
 
 extern t_estado *new;
 extern t_estado *ready;
+extern t_estado *ready_plus;
 extern t_estado *exec;
 extern t_estado *estado_exit;
 
@@ -87,5 +85,6 @@ extern sem_t proceso_listo;
 extern sem_t proceso_cargado;
 extern sem_t execute_libre;
 extern sem_t grado_multiprogramacion;
+extern sem_t hay_proceso_exit;
 
 #endif

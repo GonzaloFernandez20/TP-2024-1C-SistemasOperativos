@@ -11,6 +11,27 @@
   },
   "tasks": [
     {
+      "label": "tail logs",
+      "command": "tail",
+      "args": ["-f", "${this_module}.log", "${this_module}_debug.log"],
+      "type": "shell",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "new",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "group": {
+        "kind": "none",
+        "isDefault": true
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
       "label": "build kernel",
       "command": "make all",
       "type": "shell",

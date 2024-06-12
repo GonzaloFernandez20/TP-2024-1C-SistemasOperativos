@@ -3,6 +3,7 @@
 
 // ------------- LIBRERIAS
 #include <include/estructuras.h>
+//#include <planificacion/colasEstados.h>
 
 #include <commons/collections/list.h>
 
@@ -10,7 +11,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 // ------------- ESTRUCTURAS
-// TODO: TENDRIA QUE TENER TODA LA INFO DEL CONTEXTO NECESARIO DE UN PROCESO
 typedef struct registros_cpu{
     uint8_t AX;     // Registro Numérico de propósito general
     uint8_t BX;     // idem
@@ -37,6 +37,6 @@ typedef struct pcb
 
 t_pcb *crear_pcb(int pid, char* path_pseudocodigo);
 void _inicializar_registros_cpu(t_registros_cpu *registro);
-int buscar_y_eliminar_pid(t_estado *estado, int pid_buscado);
+int buscar_y_trasladar_pid(t_estado *estado, int pid_buscado);
 extern int pid_nuevo_proceso; // No se si esta bien declarada esta global
 #endif

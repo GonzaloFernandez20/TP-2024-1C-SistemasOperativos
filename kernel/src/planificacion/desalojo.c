@@ -16,7 +16,7 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
             break;
 
         case INTERRUPCION:
-            trasladar(pcb->pid, exec, estado_exit); // ENTIENDO QUE ES CUANDO SE INGRESA FINALIZAR_PROCESO POR CONSOLA.
+            trasladar(pcb->pid, exec, estado_exit);
             pthread_mutex_lock(&mutex_log);
                 log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
             pthread_mutex_unlock(&mutex_log);
@@ -72,8 +72,10 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
             nueva_peticion->unidades_trabajo = unidades_trabajo;
             nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
 
+            char *pid_string = string_itoa(pcb->pid);
+
             pthread_mutex_lock(&diccionario_peticiones);
-                dictionary_put(peticiones_interfaz, string_itoa(pcb->pid), nueva_peticion);
+                dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
             pthread_mutex_unlock(&diccionario_peticiones);
 
             pthread_mutex_lock(&diccionario_interfaces);
@@ -85,6 +87,7 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
             sem_post(&interfaz->hay_peticiones);
 
             free(nombre_interfaz);
+            free(pid_string);
         }
 }
 
@@ -125,8 +128,6 @@ int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo){
     else   
         return 0;
 }
-
-
 
 int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion array[]) {
     int i = 0;

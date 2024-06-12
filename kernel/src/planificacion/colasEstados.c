@@ -27,10 +27,14 @@ void iniciar_colas_planificacion(void){
     estado_exit->cola = list_create();
     estado_exit->nombre = string_duplicate("EXIT");
 
-}
+    if (algoritmo_es_VRR()){   
+        // READY +
+        ready_plus = malloc(sizeof(t_estado));
+        pthread_mutex_init(&(ready_plus->mutex_cola), NULL); 
+        ready_plus->cola = list_create();
+        ready_plus->nombre = string_duplicate("READY +");
+    }
 
-void imprimir_cola(t_estado *estado, void(*_mostrar_pcbs)(void*)) {
-    list_iterate(estado->cola, _mostrar_pcbs);
 }
 
 void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
@@ -62,15 +66,15 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
     pthread_mutex_unlock(&mutex_log);
 
     if (string_equals_ignore_case(destino->nombre, "READY"))
-            {
-                _loggear_ingreso_ready();
-                sem_post(&proceso_listo);
-            }
-
-    /* if (string_equals_ignore_case(destino->nombre, "EXIT"))
     {
-        sem_post(&hay_proceso_exec);
-    } */  // SI LA COLA EXEC LA MANEJA UN HILO PROPIO QUE SE ENCARGA DE LIBERAR LOS RECURSOS, LE DAMOS AVISO ACA
+        _loggear_ingreso_ready();
+        sem_post(&proceso_listo);
+    }
+
+    if (string_equals_ignore_case(destino->nombre, "EXIT"))
+    {   
+        sem_post(&hay_proceso_exit);
+    }
     
 }
 
@@ -87,6 +91,25 @@ void push_estado(t_estado* estado, t_pcb* pcb){
         list_add(estado->cola, pcb);
     pthread_mutex_unlock(&(estado->mutex_cola));
 
+}
+
+void *limpieza_cola_exit(){
+
+    while (1)
+    {
+        sem_wait(&hay_proceso_exit);
+
+        t_pcb* pcb_basura = pop_estado(estado_exit);
+
+        finalizar_proceso(pcb_basura->pid); // MEMORIA LIBERA RECURSOS DEL PROCESO
+
+        free(pcb_basura->path_pseudocodigo);
+        free(pcb_basura);
+
+        // TENEMOS UN NUEVO LUGAR PARA EL GRADO DE MULTIPROGRAMACION
+        sem_post(&grado_multiprogramacion); 
+    }
+    return NULL;
 }
 
 // ---------- FUNCIONES AUXILIARES
@@ -130,3 +153,6 @@ char* __armar_lista_pids() {
     return lista;
 }
 
+int algoritmo_es_VRR(){
+    return (string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "VRR")) ? 1 : 0;
+}
