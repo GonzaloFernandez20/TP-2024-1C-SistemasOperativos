@@ -48,6 +48,5 @@ t_dictionary* registros_diccionario;
 int se_devolvio_contexto;
 
 int PID;
-uint32_t PTBR; // contiene la dirección de la tabla de páginas del proceso en ejecución. Es necesario para traducir una dirección lógica a física.
 
 #endif

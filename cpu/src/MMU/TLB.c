@@ -37,43 +37,45 @@ void _agregar_nueva_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
     
 // }
 void _eliminar_entrada_donde(int pid, uint32_t nro_pagina) {
-    
+    size_t i = 0;
+    t_entrada_tlb entrada;
+    res_busqueda res = buscar_entrada_tlb(&entrada, &indice, pid, nro_pagina) {
     
     return;
 }
 
-bool buscar_entrada_tlb(t_entrada_tlb *entrada, size_t *indice, int pid, uint32_t nro_pagina) {
-    for(; i<MAX_ENTRADAS; i++) {
+res_busqueda buscar_entrada_tlb(t_entrada_tlb *entrada, size_t *indice, int pid, uint32_t nro_pagina) {
+    for(; indice<MAX_ENTRADAS; indice++) {
         t_entrada_tlb elemento = list_get(tabla_tlb, i);
         if(elemento.pid == pid && elemento.nro_pagina == nro_pagina) {
             entrada = elemento;
-            return 1; // 1 significa que todo bien
+            return SEARCH_OK;
         }
     }
-    return 0; // 0 significa ERROR
+    return SEARCH_ERROR;
 }
 
 /**
- * @brief Se consulta la TLB para ver si la página tiene un marco asignado.
+ * @brief Se consulta la TLB para ver si la página dada del proceso actual tiene un marco asignado.
  * 
  * @param nro_pagina El número de página del cual se quiere saber su marco.
- * @param El número de marco en el cual está la página pasada por parámetro.
- * @return *res Espera la direccion de una variable tlb_res en donde se almacenará la respuesta (HIT o MISS) de la consulta a la TLB.
+ * @param nro_marco Un puntero a una variable en donde se guardará el nro de marco encontrado.
  * 
 */
 tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, uint32_t* nro_marco) {
-    size_t indice = 0;
+    size_t indice = 0; // empezar desde el indice 0 a buscar
     t_entrada_tlb entrada;
-    int ok = buscar_entrada_tlb(&entrada, &indice, PID, 1);
+    res_busqueda res = buscar_entrada_tlb(&entrada, &indice, PID, nro_pagina);
 
     // SI LA ENCUENTRA
-    if(ok) {
+    if(res == SEARCH_OK) {
        nro_marco = entrada.nro_marco;
+       log_info(logger, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
     }
 
     // SI NO LA ENCUENTRA
-    
+    log_info(logger, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
     return MISS;
 }
 

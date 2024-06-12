@@ -28,6 +28,9 @@ typedef enum CODIGOS_DE_OPERACION
     READ,                   // Cuando pido a Memoria leer el contenido al cual apunta una dirección fisica
     WRITE,                  // Idem pero para escritura
 
+    OBTENER_NRO_MARCO,      // Para solicitar la busqueda del nro_marco correspondiente a un nro_pagina dado
+    NRO_MARCO,              // El nro_marco que se buscaba
+
     WRITE_DIRECCION_FISICA, 
     READ_DIRECCION_FISICA,
     SUCCESFULL_READ,        // Estos no me parecen apropiados ponerlos como op_codes, 

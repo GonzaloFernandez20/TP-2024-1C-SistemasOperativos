@@ -78,6 +78,5 @@ extern t_dictionary* registros_diccionario;
 extern int se_devolvio_contexto;
 
 extern int PID;
-extern uint32_t PTBR;
 
 #endif
