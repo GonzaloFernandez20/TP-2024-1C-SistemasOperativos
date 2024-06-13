@@ -1,6 +1,8 @@
 #include <consola/funcionesConsola.h>
 
 
+// ------------------------ FUNCIONES PRINCIPALES DE LA CONSOLA
+
 void crear_proceso(char *path_proceso){
     
     int pid_asignado = _asignar_PID();
@@ -47,12 +49,67 @@ void extraer_proceso(int pid){
         }
     }
 
-    // Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
+    // TODO: Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
 }
 
-int _asignar_PID(void){
-    return pid_nuevo_proceso++;
-}//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
+void pausar_planificacion(void){ // Este mensaje se encargará de pausar la planificación de corto y largo plazo
+
+    if (!planificacion_pausada)
+    {
+        planificacion_pausada = true;
+    }else
+    {
+        puts("La planificacion ya esta pausada");
+    }
+    
+}
+
+void retomar_planificacion(void){
+    if (planificacion_pausada)
+    {   
+        planificacion_pausada = false;
+
+        for (int i = 0; i < contador_bloqueados; i++)
+        {
+            sem_post(&planificacion_en_pausa); // HAGO UN SIGNAL POR CADA HILO BLOQUEADO
+        }
+        contador_bloqueados = 0;
+    }
+}
+// El tema de esto es que la cantidad de hilos en wait puede variar porque a veces puedo tener que justo un proceso vuelve de IO
+// y el enunciado me dice: De la misma forma, los procesos bloqueados van a pausar su transición a la cola de Ready.
+// Entonces pauso a los planificadores (2) y a veces a los q vuelven de IO(x).
+//Entonces pauso toda transicion a ready y todo proceso devuelto por cpu.
+
+void actualizar_grado_multiprog(int nuevo_valor){
+    int valor_actual = config_kernel.GRADO_MULTIPROGRAMACION;
+    int diferencia = nuevo_valor - valor_actual;
+
+    if (diferencia > 0) // AUMENTO EL GRADO DE MULTIPROGRAMACION
+    {
+        for (int i = 0; i < diferencia; i++) // i CON VALOR POSITIVO
+        {
+            sem_post(&grado_multiprogramacion);
+        }
+        
+    }else if (diferencia < 0) // REDUZCO EL GRADO DE MULTIPROGRAMACION
+    {
+        for (int i = diferencia; i > 0; i++) // i CON VALOR NEGATIVO
+        {
+            sem_wait(&grado_multiprogramacion);
+        }
+        
+    }else
+    {
+        puts("El valor ingresado es igual al actual");
+    }
+
+    config_kernel.GRADO_MULTIPROGRAMACION = nuevo_valor;
+
+    pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Se actualizo grado de multiprogramacion a: < %d >", nuevo_valor);
+    pthread_mutex_unlock(&mutex_log);
+}
 
 void _imprimir_estados_procesos(void){
 
@@ -77,6 +134,12 @@ void _imprimir_estados_procesos(void){
     imprimir_cola(estado_exit);
 }
 
+// ------------------------ FUNCIONES AUXILIARES
+
+int _asignar_PID(void){
+    return pid_nuevo_proceso++;
+}//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
+
 // CAPAZ ESTAS 3 FUNCIONES DEBERIAN IR EN colasEstados.c
 void imprimir_cola(t_estado *estado) {
     list_iterate(estado->cola, _mostrar_pcbs);
@@ -87,7 +150,7 @@ void _mostrar_pcbs(void *pcbDeLista) {
     printf("\t\tPID: %d\n", pcb->pid);
 }
 
-void imprimir_cola_bloqueados(){
+void imprimir_cola_bloqueados(void){
 
     t_list* interfaces = dictionary_elements(interfaces_conectadas); // Lista de elementos de tipo t_interfaz*
     int cant_interfaces = list_size(interfaces);

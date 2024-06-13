@@ -12,7 +12,6 @@
 #include <readline/readline.h>
 
 #include <stdlib.h>
-#include <stdbool.h>
 #include <pthread.h>
 
 // ------------- COMANDOS DE CONSOLA
@@ -29,11 +28,7 @@ typedef enum comandos_consola{
 }t_comandos_consola;
 
 
-
-
 // ------------- VARIABLES
-
-extern int planificacion_pausada;
 
 
 // ------------- FUNCIONES DE CONSOLA

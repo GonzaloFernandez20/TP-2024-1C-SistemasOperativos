@@ -15,11 +15,16 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <unistd.h>
+#include <stdbool.h>
+#include <stdlib.h>
 
 // ---------- DECLARACIONES DE FUNCIONES
 void crear_proceso(char *path_proceso);
 void extraer_proceso(int pid);
 void imprimir_cola(t_estado *estado);
+void actualizar_grado_multiprog(int nuevo_valor);
+void pausar_planificacion(void);
+void retomar_planificacion(void);
 
 void _imprimir_estados_procesos(void);
 void imprimir_cola_bloqueados(void);

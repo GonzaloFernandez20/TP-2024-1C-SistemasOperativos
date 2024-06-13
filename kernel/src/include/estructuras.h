@@ -10,7 +10,8 @@
 #include <string.h>
 #include <pthread.h>
 #include <semaphore.h>
-// ---------- ESTRUCTURAS PARA EL ARCHIVO CONFIG
+
+// ---------- ESTRUCTURAS
 typedef struct configuraciones_kernel{
     char* IP_KERNEL;
     char* PUERTO_ESCUCHA; 
@@ -21,10 +22,9 @@ typedef struct configuraciones_kernel{
     char* PUERTO_CPU_INTERRUPT;
     char* ALGORITMO_PLANIFICACION;
     int QUANTUM;
-    char* RECURSOS;
-    char* INSTANCIAS_RECURSOS;
+    char** RECURSOS;
+    char** INSTANCIAS_RECURSOS;
     int GRADO_MULTIPROGRAMACION;
-
 } t_config_kernel;
 
 typedef struct estado{
@@ -42,7 +42,6 @@ typedef struct interfaz_conectada{
     pthread_t peticiones;
     sem_t hay_peticiones;
     pthread_mutex_t interfaz_en_uso;
-
 } t_interfaz;
 
 typedef struct t_peticion{
@@ -51,7 +50,15 @@ typedef struct t_peticion{
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;
 
-//VARIABLES GLOBALES
+
+typedef struct recurso{
+    char* nombre_recurso;
+    int instancias_recursos;
+    t_estado* cola_recurso;
+}t_recurso;
+
+// ---------- VARIABLES GLOBALES
+
 extern t_log* kernel_log;
 extern t_log* kernel_log_debugg;
 
@@ -63,9 +70,11 @@ extern int fd_conexion_memoria;
 extern int fd_conexion_dispatch; 
 extern int fd_conexion_interrupt;
 
-extern t_dictionary* interfaces_conectadas;
-extern t_dictionary* instrucciones_por_interfaz;
-extern t_dictionary* peticiones_interfaz;
+extern t_dictionary *interfaces_conectadas;
+extern t_dictionary *instrucciones_por_interfaz;
+extern t_dictionary *peticiones_interfaz;
+
+extern t_dictionary *recursos_disponibles;
 
 extern pthread_t manejo_quantum;
 extern int termino_quantum;
@@ -80,11 +89,16 @@ extern pthread_mutex_t mutex_log_debug;
 extern pthread_mutex_t mutex_log;
 extern pthread_mutex_t diccionario_interfaces;
 extern pthread_mutex_t diccionario_peticiones;
+extern pthread_mutex_t diccionario_recursos;
 
 extern sem_t proceso_listo;
 extern sem_t proceso_cargado;
 extern sem_t execute_libre;
 extern sem_t grado_multiprogramacion;
 extern sem_t hay_proceso_exit;
+extern sem_t planificacion_en_pausa;
+
+extern int planificacion_pausada;
+extern int contador_bloqueados;
 
 #endif

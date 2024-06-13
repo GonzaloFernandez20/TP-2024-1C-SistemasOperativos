@@ -32,9 +32,8 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 
     int opcode = recibir_operacion(fd_conexion_dispatch);
 
-    int es_RR = string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR");
-    if (es_RR && !termino_quantum){ 
-        pthread_cancel(manejo_quantum);     
+    if (_es_algoritmo_con_quantum() && !termino_quantum){ 
+        pthread_cancel(manejo_quantum);    
     }
 
     if(opcode != CONTEXTO_EJECUCION){perror("Rompiste todo");}
@@ -60,7 +59,13 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 	    log_info(kernel_log_debugg, "CPU devolvio el contexto de ejecucion de PID < %d >\n", pcb->pid);
 	pthread_mutex_unlock(&mutex_log_debug);
 
+    verificar_estado_planificacion(); // ANTES DE VER QUE HACER CON EL PCB DEVUELTO, SE CLAVA SI ES NECESARIO
+
     interpretar_motivo_desalojo(pcb, stream);
 
 	eliminar_buffer(buffer);
+}
+
+int _es_algoritmo_con_quantum(void){
+    return strcmp(config_kernel.ALGORITMO_PLANIFICACION, "RR") || strcmp(config_kernel.ALGORITMO_PLANIFICACION, "VRR");
 }
