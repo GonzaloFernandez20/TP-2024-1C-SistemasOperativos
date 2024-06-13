@@ -72,12 +72,6 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
         sem_post(&proceso_listo);
     }
 
-    /* if (string_equals_ignore_case(destino->nombre, "READY +")) // Este deberia volar y estar generalizado
-    {
-        _loggear_ingreso_ready(ready_plus);
-        sem_post(&proceso_listo);
-    } */
-
     if (string_equals_ignore_case(destino->nombre, "EXIT"))
     {   
         sem_post(&hay_proceso_exit);

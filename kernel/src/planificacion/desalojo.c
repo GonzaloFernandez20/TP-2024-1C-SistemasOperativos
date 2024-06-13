@@ -26,6 +26,17 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
             ejecutar_llamada_io(pcb, stream);
             break;
 
+        case RECURSO_INVALIDO: 
+            trasladar(pcb->pid, exec, estado_exit);
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_RESOURCE >", pcb->pid);
+            pthread_mutex_unlock(&mutex_log);
+            break;
+
+        case PROCESO_BLOQUEADO:
+            puts("EL PROCESO ESTA BLOQUEADO PORQUE NO HAY RECURSOS");
+            break;
+
         case EXIT:
             trasladar(pcb->pid, exec, estado_exit);
 
@@ -105,18 +116,21 @@ void case_recurso(t_pcb* pcb, void* stream, int op_code){
     {   
         t_recurso *recurso = dictionary_get(recursos_disponibles, nombre_recurso);
 
-        if (op_code == WAIT){ 
+        if (op_code == SIGNAL){ 
+            case_SIGNAL(pcb->pid, recurso);
+            enviar_contexto_ejecucion(pcb);
+        }else{ 
             int resultado = case_WAIT(pcb->pid, recurso);
             enviar_contexto_ejecucion(pcb);
             send(fd_conexion_dispatch, &resultado, sizeof(int), 0);
-        }else{ 
-            case_SIGNAL(pcb->pid, recurso);
-            enviar_contexto_ejecucion(pcb);
         }
         recibir_contexto_ejecucion(pcb);
-    }else
-    {
-        trasladar(pcb->pid, exec, estado_exit);
+    }else // LE DIGO QUE ME DEVUELVA EL PROCESO Y YO LO MANDO A EXIT
+    {   
+        int orden_de_desalojo = RECURSO_INVALIDO;
+        enviar_contexto_ejecucion(pcb);
+        send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
+        recibir_contexto_ejecucion(pcb);
     }
 }
 
@@ -127,21 +141,24 @@ int case_WAIT(int PID, t_recurso *recurso){
             return 1;
         }else{
             trasladar(PID, exec, recurso->cola_recurso);
-            return 0;
+            return PROCESO_BLOQUEADO;
         }  
 }
 
 void case_SIGNAL(int PID, t_recurso *recurso){
+    eliminar_instancia_recurso(PID, recurso);
     if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento en la cola
-    {
-        t_pcb* pcb_liberado = pop_estado(recurso->cola_recurso);
+    {   
+        pthread_mutex_lock(&recurso->cola_recurso->mutex_cola);
+        t_pcb* pcb_liberado = list_get(recurso->cola_recurso->cola, 0);
+        pthread_mutex_unlock(&recurso->cola_recurso->mutex_cola);
+
         agregar_instancia_recurso(pcb_liberado->pid, recurso);
         trasladar(pcb_liberado->pid, recurso->cola_recurso, ready); // Como no vuelve de IO no vuelve a Ready+
         // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
     }else{
         recurso->instancias_recursos++;
     }
-    eliminar_instancia_recurso(PID, recurso);
 }
 
 // --------------- FUNCIONES AUXILIARES

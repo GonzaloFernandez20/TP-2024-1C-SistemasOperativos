@@ -42,6 +42,8 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso){
         list_add(recursos_usados, nuevo_recurso);
     pthread_mutex_unlock(&cola_recursos_usados);
 
+
+
     printf("Agregada instancia del recurso: %s a PID: %d \n", nuevo_recurso->nombre_recurso, nuevo_recurso->PID);
 }
 
@@ -53,12 +55,14 @@ void eliminar_instancia_recurso(int PID, t_recurso *recurso){
         t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
     
         if (PID == recurso_usado->PID){   
-            list_remove(recursos_usados, i);
-            pthread_mutex_unlock(&cola_recursos_usados);
+            t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
             printf("Eliminado el recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
-            break;
+            i = cant_instancias;
+            free(instancia_recurso);
         }
+
     }   
+    pthread_mutex_unlock(&cola_recursos_usados);
 }
 
 void liberar_recursos(int PID){
@@ -69,9 +73,10 @@ void liberar_recursos(int PID){
         t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
     
         if (PID == recurso_usado->PID){   
-            list_remove(recursos_usados, i);
+            t_recurso_usado* recurso_usado = list_remove(recursos_usados, i);
             t_recurso *recurso = dictionary_get(recursos_disponibles, recurso_usado->nombre_recurso);
-            recurso->instancias_recursos++;            
+            recurso->instancias_recursos++;      
+            free(recurso_usado);      
         }
     }  
     pthread_mutex_unlock(&cola_recursos_usados);

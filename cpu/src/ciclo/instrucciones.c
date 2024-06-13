@@ -1,6 +1,5 @@
 #include <ciclo/instrucciones.h>
 
-
 //SET////////////////////////////////////////////////////////////////////////////////////
 //asigna al registro seleccionado el valor pasado como argumento
 void set(void){
@@ -86,21 +85,22 @@ void exit_os(void){
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
 }
-
+//WAIT////////////////////////////////////////////////////////////////////////////////////////////////
 void wait_kernel(void){
     char* recurso = strdup(instruccion_ejecutando[1]);
     devolver_contexto_ejecucion_RECURSO(recurso, WAIT);
     int cod_op = recibir_operacion(fd_dispatch);
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
-    int respuesta_exitosa;
-    recv(fd_dispatch, &respuesta_exitosa, sizeof(int), 0);
+    int respuesta;
+    recv(fd_dispatch, &respuesta, sizeof(int), 0);
 
-    if (!respuesta_exitosa){   
+    if (respuesta == PROCESO_BLOQUEADO){   
         hay_interrupcion = 1;
+        tipo_interrupcion = PROCESO_BLOQUEADO;
     }
 }
-
+//SIGNAL////////////////////////////////////////////////////////////////////////////////////////////////
 void signal_kernel(void){
     char* recurso = strdup(instruccion_ejecutando[1]);
     devolver_contexto_ejecucion_RECURSO(recurso, SIGNAL);

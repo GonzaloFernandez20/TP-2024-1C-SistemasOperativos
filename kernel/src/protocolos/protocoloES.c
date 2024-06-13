@@ -18,7 +18,7 @@ void *procesar_conexion_es(void *nombre_interfaz){
 			recibir_aviso(nombre, interfaz->fd);
 			pthread_mutex_unlock(&(interfaz->interfaz_en_uso));
 			break;
-		
+
 		case -1:
 
 			pthread_mutex_lock(&mutex_log_debug);
