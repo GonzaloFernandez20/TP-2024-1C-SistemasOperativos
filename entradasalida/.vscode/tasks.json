@@ -11,16 +11,40 @@
   },
   "tasks": [
     {
-      "label": "tail logs",
-      "command": "terminator",
-      "args": ["-x", "tail", "-f", "${this_module}.log", "${this_module}_debug.log"],
+      "label": "touch logs",
+      "command": "touch ${this_module}.log ; touch ${this_module}_debug.log",
       "type": "shell",
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "clear": false,
+      },
+      "problemMatcher": [
+        "$gcc"
+      ]
+    },
+    {
+      "label": "tail logs",
+      "command": "terminator -x tail -f ${this_module}.log ${this_module}_debug.log",
+      "type": "shell",
+      "presentation": {
+        "echo": false,
+        "reveal": "never",
+        "focus": false,
+        "panel": "shared",
+        "clear": false,
+      },
       "group": {
         "kind": "none",
         "isDefault": true
       },
       "problemMatcher": [
-        "$gcc"
+        "$armcc5"
+      ], 
+      "dependsOn":[
+        "touch logs"
       ]
     },
     {
@@ -34,9 +58,9 @@
       "problemMatcher": [
         "$gcc"
       ],
-      "dependsOn": [
-        "tail logs"
-      ]
+      // "dependsOn": [
+      //   "tail logs"
+      // ]
     },
     {
       "label": "clean entradasalida",
