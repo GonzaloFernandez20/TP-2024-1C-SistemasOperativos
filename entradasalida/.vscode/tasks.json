@@ -12,17 +12,9 @@
   "tasks": [
     {
       "label": "tail logs",
-      "command": "tail",
-      "args": ["-f", "${this_module}.log", "${this_module}_debug.log"],
+      "command": "terminator",
+      "args": ["-x", "tail", "-f", "${this_module}.log", "${this_module}_debug.log"],
       "type": "shell",
-      "presentation": {
-        "echo": true,
-        "reveal": "always",
-        "focus": false,
-        "panel": "new",
-        "showReuseMessage": true,
-        "clear": false
-      },
       "group": {
         "kind": "none",
         "isDefault": true
@@ -41,6 +33,9 @@
       },
       "problemMatcher": [
         "$gcc"
+      ],
+      "dependsOn": [
+        "tail logs"
       ]
     },
     {
@@ -74,7 +69,9 @@
       "args": [
         "${log_file}"
       ],
-      "group": "test",
+      "group": {
+        "kind": "test"
+      },
       "dependsOn": [
         "valgrind-leak-check"
       ],
