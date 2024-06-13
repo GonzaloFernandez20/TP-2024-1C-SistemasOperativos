@@ -20,6 +20,10 @@ void jnz(void);
 
 void io_gen_sleep(void);
 
+void wait_kernel(void);
+
+void signal_kernel(void);
+
 void exit_os(void);
 
 void* direccion_del_registro(char* nombre_registro);

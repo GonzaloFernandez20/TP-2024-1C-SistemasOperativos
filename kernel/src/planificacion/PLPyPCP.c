@@ -59,6 +59,7 @@ void *planificador_corto_plazo(){
                     if(list_is_empty(ready_plus->cola)){
                         pcb_execute = pop_estado(ready);
                         push_estado(exec, pcb_execute);
+                        pcb_execute->quantum = config_kernel.QUANTUM; // RESETEO SI ES QUE LO NECESITA
                     }else{
                         pcb_execute = pop_estado(ready_plus);
                         push_estado(exec, pcb_execute);
@@ -145,6 +146,7 @@ void inicializar_semaforos(void){
     pthread_mutex_init(&diccionario_interfaces, NULL);
     pthread_mutex_init(&diccionario_peticiones, NULL);
     pthread_mutex_init(&diccionario_recursos, NULL);
+    pthread_mutex_init(&cola_recursos_usados, NULL);
 
     // ------- SEMAFOROS DEL PLANIFICADOR DE CORTO PLAZO
     sem_init(&proceso_listo, 0, 0);
@@ -165,7 +167,11 @@ void *iniciar_quantum(void* PID_PROCESO){
         log_info(kernel_log_debugg, "Proceso < %d > comienza su Quantum", PID);
     pthread_mutex_unlock(&mutex_log_debug);
 
-    usleep(config_kernel.QUANTUM * 2000);
+    t_pcb* pcb = list_get(exec->cola, 0); // Para tener generalizado el Quantum
+
+    quantum_proceso = temporal_create(); // INICIO EL CONTADOR DEL QUANTUM
+
+    usleep(pcb->quantum * 2000); // DEBERIA SER * 1000
     termino_quantum = 1;
     enviar_interrupcion(FIN_DE_QUANTUM);
 

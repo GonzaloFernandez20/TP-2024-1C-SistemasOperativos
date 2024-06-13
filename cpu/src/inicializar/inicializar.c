@@ -40,8 +40,8 @@ void init_opCodes_dictionary(void){
     dictionary_put(opCodes_diccionario, "JNZ",            (void*)jnz);
     // dictionary_put(opCodes_diccionario, RESIZE,         (void*)resize);
     // dictionary_put(opCodes_diccionario, COPY_STRING,    (void*)copy_string);
-    // dictionary_put(opCodes_diccionario, WAIT,           (void*)wait);
-    // dictionary_put(opCodes_diccionario, SIGNAL,         (void*)signal_kernel);
+    dictionary_put(opCodes_diccionario, "WAIT",           (void*)wait_kernel);
+    dictionary_put(opCodes_diccionario, "SIGNAL",         (void*)signal_kernel);
     dictionary_put(opCodes_diccionario, "IO_GEN_SLEEP",   (void*)io_gen_sleep);
     // dictionary_put(opCodes_diccionario, IO_STDIN_READ,  (void*)io_stdin_read);
     // dictionary_put(opCodes_diccionario, IO_STDOUT_WRITE,(void*)io_stdout_write);

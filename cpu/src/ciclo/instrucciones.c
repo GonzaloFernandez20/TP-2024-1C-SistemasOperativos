@@ -87,6 +87,28 @@ void exit_os(void){
     hay_interrupcion = 0;
 }
 
+void wait_kernel(void){
+    char* recurso = strdup(instruccion_ejecutando[1]);
+    devolver_contexto_ejecucion_RECURSO(recurso, WAIT);
+    int cod_op = recibir_operacion(fd_dispatch);
+    if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
+    recibir_contexto_ejecucion();
+    int respuesta_exitosa;
+    recv(fd_dispatch, &respuesta_exitosa, sizeof(int), 0);
+
+    if (!respuesta_exitosa){   
+        hay_interrupcion = 1;
+    }
+}
+
+void signal_kernel(void){
+    char* recurso = strdup(instruccion_ejecutando[1]);
+    devolver_contexto_ejecucion_RECURSO(recurso, SIGNAL);
+    int cod_op = recibir_operacion(fd_dispatch);
+    if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
+    recibir_contexto_ejecucion();
+}
+
 //Auxiliares
 void* direccion_del_registro(char* nombre_registro){
     return dictionary_get(registros_diccionario, nombre_registro); // retorna tipo void*. Se debe definir fuera de la función si se interpreta como uint8_t o como uint32_t.

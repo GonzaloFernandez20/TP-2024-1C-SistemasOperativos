@@ -33,7 +33,13 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
     int opcode = recibir_operacion(fd_conexion_dispatch);
 
     if (_es_algoritmo_con_quantum() && !termino_quantum){ 
-        pthread_cancel(manejo_quantum);    
+        temporal_stop(quantum_proceso);
+        pthread_cancel(manejo_quantum);
+        if (algoritmo_es_VRR())
+        {   
+            int64_t quantum_restante = temporal_gettime(quantum_proceso);
+            pcb->quantum = (config_kernel.QUANTUM - quantum_restante);
+        }   
     }
 
     if(opcode != CONTEXTO_EJECUCION){perror("Rompiste todo");}
@@ -67,5 +73,5 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
 }
 
 int _es_algoritmo_con_quantum(void){
-    return strcmp(config_kernel.ALGORITMO_PLANIFICACION, "RR") || strcmp(config_kernel.ALGORITMO_PLANIFICACION, "VRR");
+    return string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "RR") || string_equals_ignore_case(config_kernel.ALGORITMO_PLANIFICACION, "VRR");
 }

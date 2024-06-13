@@ -110,9 +110,10 @@ void *limpieza_cola_exit(){
 
         finalizar_proceso(pcb_basura->pid); // MEMORIA LIBERA RECURSOS DEL PROCESO
 
+        liberar_recursos(pcb_basura->pid); // LIBERO LOS RECURSOS QUE HAYA PEDIDO EL PROCESO
+
         free(pcb_basura->path_pseudocodigo);
         free(pcb_basura);
-
         // TENEMOS UN NUEVO LUGAR PARA EL GRADO DE MULTIPROGRAMACION
         sem_post(&grado_multiprogramacion); 
     }

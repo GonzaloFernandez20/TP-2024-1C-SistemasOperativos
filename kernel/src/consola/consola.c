@@ -61,7 +61,7 @@ void *iniciar_Consola(){
             }
 
 		free(comando_ingresado);
-        string_array_destroy(array_del_comando);
+        free(array_del_comando);
 	} while(1);
 }
 

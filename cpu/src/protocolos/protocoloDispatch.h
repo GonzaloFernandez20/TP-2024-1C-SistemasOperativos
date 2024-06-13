@@ -10,6 +10,8 @@ void procesar_operacion_dispatch(void);
 
 // ------------------- 
 void recibir_contexto_ejecucion();
+
 void devolver_contexto_ejecucion(int motivo);
 void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidades_trabajo);
+void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso);
 #endif 

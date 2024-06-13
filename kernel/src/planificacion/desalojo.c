@@ -48,10 +48,10 @@ void ejecutar_llamada_io(t_pcb* pcb, void* stream){
         case_IO_GEN_SLEEP(pcb, stream);
         break;
     case WAIT: // (Recurso)
-        case_WAIT(pcb, stream, op_code_io);
+        case_recurso(pcb, stream, op_code_io);
         break;
     case SIGNAL: // (Recurso)
-        case_SIGNAL(pcb, stream, op_code_io);
+        case_recurso(pcb, stream, op_code_io);
         break;
     
     default:
@@ -97,8 +97,6 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
         }
 }
 
-// TODO: Agregar las declaraciones al .h
-
 void case_recurso(t_pcb* pcb, void* stream, int op_code){ 
     int size_nombre_recurso = buffer_read_int(&stream);
     char* nombre_recurso = strdup(buffer_read_string(&stream, size_nombre_recurso));
@@ -108,51 +106,42 @@ void case_recurso(t_pcb* pcb, void* stream, int op_code){
         t_recurso *recurso = dictionary_get(recursos_disponibles, nombre_recurso);
 
         if (op_code == WAIT){ 
-            case_WAIT(pcb, recurso);
+            int resultado = case_WAIT(pcb->pid, recurso);
+            enviar_contexto_ejecucion(pcb);
+            send(fd_conexion_dispatch, &resultado, sizeof(int), 0);
         }else{ 
-            case_SIGNAL(pcb, recurso);
+            case_SIGNAL(pcb->pid, recurso);
+            enviar_contexto_ejecucion(pcb);
         }
-        /*
-        *Tomo de un issue: al enviar wait o signal el proceso debe volver al kernel, y como bien lo indica el enunciado, en caso de signal vuelve el mismo proceso a ejecutar, en caso de wait si hay recursos disponibles vuelve a ejecutar sino, se bloquea
-        !Propuesta:
-        ? Podriamos hacer un mini switch que reanude la planificacion desde la parte de enviar el pcb a cpu total la funcion enviar_pcb y recibir_pcb es la misma, el switch viene por el lado de contemplar el quantum en el algoritmo. 
-        !retomar_ejecucion(pcb);
-        */
+        recibir_contexto_ejecucion(pcb);
     }else
     {
         trasladar(pcb->pid, exec, estado_exit);
     }
-
-
 }
 
-/*
-? A la hora de recibir de la CPU un Contexto de Ejecución desalojado por WAIT, el Kernel deberá verificar primero que exista el recurso solicitado y en caso de que exista restarle 1 a la cantidad de instancias del mismo. En caso de que el número sea estrictamente menor a 0, el proceso que realizó WAIT se bloqueará en la cola de bloqueados correspondiente al recurso.
-*/
-
-void case_WAIT(t_pcb* pcb, t_recurso *recurso){
-        
+int case_WAIT(int PID, t_recurso *recurso){
         if(recurso->instancias_recursos > 0){
             recurso->instancias_recursos--;
+            agregar_instancia_recurso(PID, recurso);
+            return 1;
         }else{
-            trasladar(pcb->pid, exec, recurso->cola_recurso);
+            trasladar(PID, exec, recurso->cola_recurso);
+            return 0;
         }  
 }
-/*
-? A la hora de recibir de la CPU un Contexto de Ejecución desalojado por SIGNAL, el Kernel deberá verificar primero que exista el recurso solicitado, luego sumarle 1 a la cantidad de instancias del mismo. En caso de que corresponda, desbloquea al primer proceso de la cola de bloqueados de ese recurso. Una vez hecho esto, se devuelve la ejecución al proceso que peticiona el SIGNAL.
-*/
-void case_SIGNAL(t_pcb* pcb, t_recurso *recurso){ //! No usa el pcb, deberia sacarlo
-    /*
-        Tomo de un issue: Buenas! "En caso de que corresponda" Seria el caso en el que hay al menos un elemento bloqueado en la cola, porque en caso de no haber ningún proceso tomando el recurso, solo se debe aumentar la cantidad de instancias del mismo en 1.
-    */
-    if (!list_is_empty(recurso->cola_recurso))
+
+void case_SIGNAL(int PID, t_recurso *recurso){
+    if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento en la cola
     {
-        t_pcb* pcb = pop_estado(recurso->cola_recurso);
-        // trasladar(pcb->pid, recurso->cola_recurso, ready); // Como no vuelve de IO no vuelve a Ready+
+        t_pcb* pcb_liberado = pop_estado(recurso->cola_recurso);
+        agregar_instancia_recurso(pcb_liberado->pid, recurso);
+        trasladar(pcb_liberado->pid, recurso->cola_recurso, ready); // Como no vuelve de IO no vuelve a Ready+
         // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
     }else{
         recurso->instancias_recursos++;
     }
+    eliminar_instancia_recurso(PID, recurso);
 }
 
 // --------------- FUNCIONES AUXILIARES

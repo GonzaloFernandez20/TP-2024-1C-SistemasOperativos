@@ -106,4 +106,37 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
 	eliminar_paquete(paquete);
+    free(nombre_interfaz);
+}
+
+void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
+	int motivo = LLAMADA_IO;
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+
+    int buffer_size = 4 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(recurso) + 1; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID );
+    buffer_add_uint32(paquete->buffer, registros.PC );
+    buffer_add_uint8(paquete->buffer, registros.AX );
+    buffer_add_uint8(paquete->buffer, registros.BX );
+    buffer_add_uint8(paquete->buffer, registros.CX );
+    buffer_add_uint8(paquete->buffer, registros.DX );
+    buffer_add_uint32(paquete->buffer, registros.EAX );
+    buffer_add_uint32(paquete->buffer, registros.EBX );
+    buffer_add_uint32(paquete->buffer, registros.ECX );
+    buffer_add_uint32(paquete->buffer, registros.EDX );
+    buffer_add_uint32(paquete->buffer, registros.SI );
+    buffer_add_uint32(paquete->buffer, registros.DI );
+	buffer_add_int(paquete->buffer, motivo);
+	buffer_add_int(paquete->buffer, codigo_recurso);
+	buffer_add_int(paquete->buffer, strlen(recurso) + 1);
+	buffer_add_string(paquete->buffer, recurso);
+	
+	enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando operacion con recurso PID: < %d > a KERNEL.", PID);
+
+	eliminar_paquete(paquete);
+    free(recurso);
 }
