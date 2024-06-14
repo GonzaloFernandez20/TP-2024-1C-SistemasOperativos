@@ -120,45 +120,51 @@ void case_recurso(t_pcb* pcb, void* stream, int op_code){
             case_SIGNAL(pcb->pid, recurso);
             enviar_contexto_ejecucion(pcb);
         }else{ 
-            int resultado = case_WAIT(pcb->pid, recurso);
+            case_WAIT(pcb->pid, recurso);
             enviar_contexto_ejecucion(pcb);
-            send(fd_conexion_dispatch, &resultado, sizeof(int), 0);
         }
         recibir_contexto_ejecucion(pcb);
     }else // LE DIGO QUE ME DEVUELVA EL PROCESO Y YO LO MANDO A EXIT
     {   
-        int orden_de_desalojo = RECURSO_INVALIDO;
+        //int orden_de_desalojo = RECURSO_INVALIDO;
+        enviar_interrupcion(RECURSO_INVALIDO);
         enviar_contexto_ejecucion(pcb);
-        send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
+        //send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
         recibir_contexto_ejecucion(pcb);
     }
 }
 
-int case_WAIT(int PID, t_recurso *recurso){
+void case_WAIT(int PID, t_recurso *recurso){
         if(recurso->instancias_recursos > 0){
             recurso->instancias_recursos--;
             agregar_instancia_recurso(PID, recurso);
-            return 1;
         }else{
             trasladar(PID, exec, recurso->cola_recurso);
-            return PROCESO_BLOQUEADO;
+            enviar_interrupcion(PROCESO_BLOQUEADO);
         }  
 }
-
+/*
+Si no hice signal antes, solamente hago un ++ a la instancia.
+*/
 void case_SIGNAL(int PID, t_recurso *recurso){
-    eliminar_instancia_recurso(PID, recurso);
-    if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento en la cola
+    int hay_proceso_esperando = 0; // Supongo que inicialmente no hay procesos bloqueados
+    t_pcb* pcb_liberado;
+
+    if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento bloqueado en la cola del recurso
     {   
         pthread_mutex_lock(&recurso->cola_recurso->mutex_cola);
-        t_pcb* pcb_liberado = list_get(recurso->cola_recurso->cola, 0);
+        pcb_liberado = list_get(recurso->cola_recurso->cola, 0);
         pthread_mutex_unlock(&recurso->cola_recurso->mutex_cola);
-
-        agregar_instancia_recurso(pcb_liberado->pid, recurso);
-        trasladar(pcb_liberado->pid, recurso->cola_recurso, ready); // Como no vuelve de IO no vuelve a Ready+
-        // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
-    }else{
-        recurso->instancias_recursos++;
+        hay_proceso_esperando = 1; // declaro que hay procesos bloqueados esperando
     }
+
+    eliminar_instancia_recurso(PID, recurso);
+
+    if (hay_proceso_esperando){
+        agregar_instancia_recurso(pcb_liberado->pid, recurso);
+        trasladar(pcb_liberado->pid, recurso->cola_recurso, ready);
+        // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
+    } 
 }
 
 // --------------- FUNCIONES AUXILIARES

@@ -42,27 +42,30 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso){
         list_add(recursos_usados, nuevo_recurso);
     pthread_mutex_unlock(&cola_recursos_usados);
 
-
-
     printf("Agregada instancia del recurso: %s a PID: %d \n", nuevo_recurso->nombre_recurso, nuevo_recurso->PID);
 }
 
 void eliminar_instancia_recurso(int PID, t_recurso *recurso){
     pthread_mutex_lock(&cola_recursos_usados);
     int cant_instancias = list_size(recursos_usados);
+    int encontro_instancia = 0; // SI NO ENCUENTRA INSTANCIA EN LA LISTA QUIERE DECIR QUE NO HUBO WAIT PREVIO
 
-    for (int i = 0; i < cant_instancias; i++){
+    for (int i = 0; i < cant_instancias; i++){ 
         t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
     
-        if (PID == recurso_usado->PID){   
+        if (PID == recurso_usado->PID && string_equals_ignore_case(recurso->nombre_recurso, recurso_usado->nombre_recurso)){   
             t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
-            printf("Eliminado el recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
-            i = cant_instancias;
+            printf("Eliminada instancia del recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
+            //i = cant_instancias;
+            free(instancia_recurso->nombre_recurso);
             free(instancia_recurso);
+            encontro_instancia = 1;
+            break;
         }
 
     }   
     pthread_mutex_unlock(&cola_recursos_usados);
+    if (!encontro_instancia){ recurso->instancias_recursos++; } // GENERO UNA INSTANCIA DEL AIRE
 }
 
 void liberar_recursos(int PID){

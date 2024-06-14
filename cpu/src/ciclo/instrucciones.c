@@ -92,13 +92,6 @@ void wait_kernel(void){
     int cod_op = recibir_operacion(fd_dispatch);
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
-    int respuesta;
-    recv(fd_dispatch, &respuesta, sizeof(int), 0);
-
-    if (respuesta == PROCESO_BLOQUEADO){   
-        hay_interrupcion = 1;
-        tipo_interrupcion = PROCESO_BLOQUEADO;
-    }
 }
 //SIGNAL////////////////////////////////////////////////////////////////////////////////////////////////
 void signal_kernel(void){
