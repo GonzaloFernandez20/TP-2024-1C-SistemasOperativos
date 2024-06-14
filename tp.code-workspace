@@ -10,7 +10,11 @@
 			"array": "c",
 			"string_view": "c",
 			"initializer_list": "c",
-			"utility": "c"
+			"utility": "c",
+			"atomic": "c",
+			"*.tcc": "c",
+			"cstdint": "c",
+			"random": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},

@@ -4,71 +4,69 @@
 //SET////////////////////////////////////////////////////////////////////////////////////
 //asigna al registro seleccionado el valor pasado como argumento
 void set(void){
-    char* registro = strdup(instruccion_ejecutando[1]);
+    char* registro = strcpy(instruccion_ejecutando[1]);
     int valor = atoi(instruccion_ejecutando[2]);  // string to int
 
-    void* registro_CPU = direccion_del_registro(registro);
+    void* ptr_registro = direccion_del_registro(registro);
 
     //necesito hacer el cast a uint8_t o uint32_t por el void* que no se puede desreferenciar
     if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
-        *(uint8_t*)registro_CPU = valor;  // convierte el puntero void* a tipo uint8_t* y lo desreferencia para poder cambiar el valor del espacio de memoria al que apunta.
+        *(uint8_t*)ptr_registro = valor;  // convierte el puntero void* a tipo uint8_t* y lo desreferencia para poder cambiar el valor del espacio de memoria al que apunta.
     }
     else {
-        *(uint32_t*)registro_CPU = valor; // idem pero para uint32_t
+        *(uint32_t*)ptr_registro = valor; // idem pero para uint32_t
     }
-    free(registro);
 }
 //SUM////////////////////////////////////////////////////////////////////////////////////
 //Suma al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
     //Vale sumar un registro de 32bits a uno de 8bits   
 void sum(void){
-    char* parametro_registro_destino = strdup(instruccion_ejecutando[1]);
-    char* parametro_registro_origen = strdup(instruccion_ejecutando[2]);
-    
-    void* registro_destino = direccion_del_registro(parametro_registro_destino);
-    void* registro_origen = direccion_del_registro(parametro_registro_origen);
+    char* registro_destino = strcpy(instruccion_ejecutando[1]);
+    char* registro_origen = strcpy(instruccion_ejecutando[2]);
 
-    free(parametro_registro_destino);
-    free(parametro_registro_origen);
+    void* ptr_registro_destino = direccion_del_registro(registro_destino);
+    void* ptr_registro_origen = direccion_del_registro(registro_origen);
 
     if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
-        *(uint8_t*)registro_destino += *(uint8_t*)registro_origen;
+        *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
     }
     else{
-        *(uint32_t*)registro_destino += *(uint32_t*)registro_origen;
+        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
     }
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////
 //Resta al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
 void sub(void){
-    char* parametro_registro_destino = strdup(instruccion_ejecutando[1]);
-    char* parametro_registro_origen = strdup(instruccion_ejecutando[2]);
+    char* registro_destino = strcpy(instruccion_ejecutando[1]);
+    char* registro_origen = strcpy(instruccion_ejecutando[2]);
 
-    void* registro_destino = direccion_del_registro(parametro_registro_destino);
-    void* registro_origen = direccion_del_registro(parametro_registro_origen);
-
-    free(parametro_registro_destino);
-    free(parametro_registro_origen);
+    void* ptr_registro_destino = direccion_del_registro(registro_destino);
+    void* ptr_registro_origen = direccion_del_registro(registro_origen);
 
     if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
-        *(uint8_t*)registro_destino -= *(uint8_t*)registro_origen;
+        *(uint8_t*)ptr_registro_destino -= *(uint8_t*)ptr_registro_origen;
     }
     else{
-        *(uint32_t*)registro_destino -= *(uint32_t*)registro_origen;
+        *(uint32_t*)ptr_registro_destino -= *(uint32_t*)ptr_registro_origen;
     }
 }
 //JNZ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Si el valor del registro es distinto de cero, actualiza el program counter al número de instrucción pasada por parámetro.
 void jnz(void){
-    char* registro = strdup(instruccion_ejecutando[1]);
+    char* registro = strcpy(instruccion_ejecutando[1]);
     int PC_de_instruccion = atoi(instruccion_ejecutando[2]);  // se espera un program counter
 
-    void* registro_CPU = direccion_del_registro(registro);
-    free(registro);
+    void* ptr_registro = direccion_del_registro(registro);
 
-    uint32_t valor_del_registro = *(uint32_t*)registro_CPU;
-    if(valor_del_registro != 0){
-        registros.PC = PC_de_instruccion; 
+    if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
+        uint8_t valor_del_registro = *(uint8_t*)ptr_registro;    
+    }
+    else {
+        uint32_t valor_del_registro = *(uint32_t*)ptr_registro;
+    } 
+    
+    if(valor_del_registro != 0){ // si es distinto de 0
+        registros.PC = PC_de_instruccion; // salta al valor de PC indicado
     }
 }
 
@@ -82,12 +80,18 @@ void jnz(void){
  * Ej: MOV_IN EDX ECX
  * */ 
 void mov_in(void) {
-    void* registro_datos = direccion_del_registro(instruccion_ejecutando[1]);   
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    char* registro_datos = instruccion_ejecutando[1];
+    char* registro_direccion = instruccion_ejecutando[2];    
+    
+    void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
+    void* ptr_registro_datos = direccion_del_registro(registro_datos);
 
+    // ya sabemos que todo registro dirección es de 32 bits.
+    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
+    
+    char* dato_leido = leer_de_memoria(direccion_logica);
 
-
-    return;
+    *ptr_registro_datos = (void*)dato_leido;
 }
 
 
@@ -101,12 +105,17 @@ void mov_in(void) {
  * Ej: MOV_OUT EDX ECX
  * */ 
 void mov_out(void) {
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[1]);    
-    void* registro_datos = direccion_del_registro(instruccion_ejecutando[2]);        
+    char* registro_direccion = instruccion_ejecutando[1];    
+    char* registro_datos = instruccion_ejecutando[2];
+    
+    void* ptr_registro_direccion = direccion_del_registro(registro_direccion); 
+    void* ptr_registro_datos = direccion_del_registro(registro_datos);
 
+    // ya sabemos que todo registro dirección es de 32 bits.
+    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
+    char* datos_a_escribir = *(char*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO.
 
-
-    return;
+    escribir_en_memoria(direccion_logica, datos_a_escribir);    
 }
 
 //RESIZE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -121,14 +130,13 @@ void mov_out(void) {
 void resize(void) {
     int tamanio = atoi(instruccion_ejecutando[1]);
 
-    int ok = solicitar_ajustar_tamanio_de_proceso_a_memoria(tamanio); // FALTA IMPLEMENTAR
+    int ok = solicitar_ajustar_tamanio_de_proceso_a_memoria(tamanio);
     
     if(!ok) { // El error Out of Memory será representada con un 0. Si not ok entonces devolvemos contexto de ejecución con el motivo 
         int motivo = OUT_OF_MEMORY;
         devolver_contexto_ejecucion(motivo);
     }
 
-    return;
 }
 
 
@@ -143,9 +151,14 @@ void resize(void) {
 void copy_string(void) {
     int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
 
-    copiar_string_desde_memoria(registros.SI, registros.DI, cantidad_de_bytes);  // FALTA IMPLEMENTAR 
+    uint32_t dl_origen = registro.SI;   // dirección lógica orígen
+    uint32_t dl_destino = registro.DI;  // dirección lógica destino
 
-    return;
+    for(size_t offset=0; offset<cantidad_de_bytes; offset++) {
+        char* string_leido = leer_de_memoria(dl_origen + offset);
+        escribir_en_memoria(dl_destino + offset, string_leido);
+    }
+
 }
 
 
@@ -164,7 +177,7 @@ void io_stdin_read(void) {
     void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-
+    solicitar_kernel_
 
     return;
 }
@@ -211,8 +224,10 @@ void exit_os(void){
 }
 
 //Auxiliares
+
+// Retorna la direccion casteado a void* del registro dado  
 void* direccion_del_registro(char* nombre_registro){
-    return dictionary_get(registros_diccionario, nombre_registro); // retorna tipo void*. Se debe definir fuera de la función si se interpreta como uint8_t o como uint32_t.
+    return dictionary_get(registros_diccionario, nombre_registro); // retorna tipo void*. Se debe definir fuera de la función si se interpreta como uint8_t* o como uint32_t*.
 }
 
 int tamanio_de_registro(char* registro){
@@ -223,13 +238,4 @@ int tamanio_de_registro(char* registro){
     else{
         return sizeof(uint8_t);
     }
-}
-
-// Toma direcciones lógicas de origen y destino y la cantidad de bytes que se quieren copiar de un lado para el otro.
-void copiar_string_desde_memoria(uint32_t dl_origen, uint32_t dl_destino, uint32_t cantidad_de_bytes) {
-
-    
-
-    
-    return;
 }

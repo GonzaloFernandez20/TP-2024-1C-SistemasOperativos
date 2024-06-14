@@ -16,11 +16,22 @@ void inicializar_TLB(void) {
  * @brief Guardamos número de página, número de marco y PID en el diccionario de la TLB.
 */
 void agregar_a_TLB(uint32_t nro_pagina, uint32_t nro_marco) {
-    if (list_size(entradas_TLB_diccionario) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las páginas
-        return;
+    if (list_size(entradas_TLB_diccionario) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las entradas (independientemente del PID).
+        _reemplazar_una_entrada_por(PID, nro_pagina, nro_marco);
     }
-    
-    return;
+    _agregar_nueva_entrada(PID, nro_pagina, nro_marco);
+}
+
+void _reemplazar_una_entrada_por(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
+    size_t indice = _elegir_entrada_victima();
+    list_remove(tabla_tlb, indice);
+}
+
+size_t _elegir_entrada_victima(void) {
+
+
+
+    return 1;
 }
 
 void _agregar_nueva_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
@@ -29,7 +40,7 @@ void _agregar_nueva_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
     entrada.nro_pagina = nro_pagina;
     entrada.nro_marco = nro_marco;
 
-    list_add(TLB, (void*)entrada);
+    list_add(tabla_tlb, (void*)entrada);
 }
 
 
@@ -41,6 +52,7 @@ void _eliminar_entrada_donde(int pid, uint32_t nro_pagina) {
     t_entrada_tlb entrada;
     res_busqueda res = buscar_entrada_tlb(&entrada, &indice, pid, nro_pagina) {
     
+    list_remove(tabla_tlb, indice);
     return;
 }
 
@@ -69,7 +81,7 @@ tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, uint32_t* nro_marco) {
 
     // SI LA ENCUENTRA
     if(res == SEARCH_OK) {
-       nro_marco = entrada.nro_marco;
+       *nro_marco = entrada.nro_marco;
        log_info(logger, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
     }

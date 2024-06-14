@@ -32,9 +32,7 @@ uint32_t dl_a_df(uint32_t direccion_logica) {
 uint32_t obtener_marco_de(uint32_t nro_pagina) {
     log_info(logger, "PID: %d - OBTENER MARCO - Página: %d - Marco: %d", PID, nro_pagina, nro_marco);
     
-    tlb_res res;
-    
-    uint32_t nro_marco = consultar_marco_en_TLB(nro_pagina, &res);
+    tlb_res res = consultar_marco_en_TLB(nro_pagina, &nro_marco);
 
     if (res == MISS) { // si no se encuentra en la TLB, entonces busco en la TP del PID actual en Memoria
         uint32_t nro_marco = consultar_marco_en_TP(nro_pagina);
