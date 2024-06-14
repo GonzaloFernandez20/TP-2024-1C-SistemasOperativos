@@ -23,6 +23,8 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso);
 void eliminar_instancia_recurso(int PID, t_recurso *recurso);
 void liberar_recursos(int PID);
 
-
+int _coincide_pid(t_recurso_usado* recurso, int PID);
+void _destruir(t_recurso_usado *recurso);
+void imprimir_lista(t_list *lista);
 
 #endif

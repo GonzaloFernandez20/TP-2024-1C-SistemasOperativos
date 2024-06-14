@@ -12,39 +12,40 @@ void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
     switch (op_code_motivo_desalojo)
     {
         case FIN_DE_QUANTUM:
-            trasladar(pcb->pid, exec, ready);
+                trasladar(pcb->pid, exec, ready);
             break;
 
         case INTERRUPCION:
-            trasladar(pcb->pid, exec, estado_exit);
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
+                trasladar(pcb->pid, exec, estado_exit);
+                pthread_mutex_lock(&mutex_log);
+                    log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
+                pthread_mutex_unlock(&mutex_log);
             break;
 
         case LLAMADA_IO: // DEBERIA LLAMARSE "OPERACION" POR EL TEMA DE WAIT Y SIGNAL? 
-            ejecutar_llamada_io(pcb, stream);
+                ejecutar_llamada_io(pcb, stream);
             break;
 
         case RECURSO_INVALIDO: 
-            trasladar(pcb->pid, exec, estado_exit);
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_RESOURCE >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
+                trasladar(pcb->pid, exec, estado_exit);
+                pthread_mutex_lock(&mutex_log);
+                    log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_RESOURCE >", pcb->pid);
+                pthread_mutex_unlock(&mutex_log);
             break;
 
         case PROCESO_BLOQUEADO:
-            puts("EL PROCESO ESTA BLOQUEADO PORQUE NO HAY RECURSOS");
+                pthread_mutex_lock(&mutex_log);
+                    log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED: RECURSO >", pcb->pid);
+                pthread_mutex_unlock(&mutex_log);
             break;
 
         case EXIT:
-            trasladar(pcb->pid, exec, estado_exit);
+                trasladar(pcb->pid, exec, estado_exit);
 
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < SUCCESS >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
+                pthread_mutex_lock(&mutex_log);
+                    log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < SUCCESS >", pcb->pid);
+                pthread_mutex_unlock(&mutex_log);
             break;
-
         default:
             break;
     }
@@ -139,7 +140,10 @@ void case_WAIT(int PID, t_recurso *recurso){
             recurso->instancias_recursos--;
             agregar_instancia_recurso(PID, recurso);
         }else{
-            trasladar(PID, exec, recurso->cola_recurso);
+            //trasladar(PID, exec, recurso->cola_recurso);
+            t_pcb *pcb = pop_estado(exec);
+            push_estado(recurso->cola_recurso, pcb);
+
             enviar_interrupcion(PROCESO_BLOQUEADO);
         }  
 }

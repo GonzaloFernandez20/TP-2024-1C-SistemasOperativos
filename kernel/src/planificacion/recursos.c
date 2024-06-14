@@ -42,7 +42,7 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso){
         list_add(recursos_usados, nuevo_recurso);
     pthread_mutex_unlock(&cola_recursos_usados);
 
-    printf("Agregada instancia del recurso: %s a PID: %d \n", nuevo_recurso->nombre_recurso, nuevo_recurso->PID);
+    imprimir_lista(recursos_usados);
 }
 
 void eliminar_instancia_recurso(int PID, t_recurso *recurso){
@@ -56,7 +56,7 @@ void eliminar_instancia_recurso(int PID, t_recurso *recurso){
         if (PID == recurso_usado->PID && string_equals_ignore_case(recurso->nombre_recurso, recurso_usado->nombre_recurso)){   
             t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
             printf("Eliminada instancia del recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
-            //i = cant_instancias;
+            recurso->instancias_recursos++;
             free(instancia_recurso->nombre_recurso);
             free(instancia_recurso);
             encontro_instancia = 1;
@@ -68,35 +68,55 @@ void eliminar_instancia_recurso(int PID, t_recurso *recurso){
     if (!encontro_instancia){ recurso->instancias_recursos++; } // GENERO UNA INSTANCIA DEL AIRE
 }
 
+/* void liberar_recursos(int PID) { 
+    t_link_element **elemento = &recursos_usados->head;
+    while (*elemento != NULL) {
+        if (_coincide_pid((*elemento)->data, PID)) {
+            t_link_element *temp = *elemento; // Guarda el puntero al nodo actual
+            *elemento = (*elemento)->next; // Avanza al siguiente nodo
+            _destruir(temp->data); // Libera la memoria del recurso
+            free(temp); // Libera la memoria del nodo
+        } else {
+            elemento = &(*elemento)->next; // Avanza al siguiente nodo
+        }
+    }
+    imprimir_lista(recursos_usados);
+} */
+
 void liberar_recursos(int PID){
     pthread_mutex_lock(&cola_recursos_usados);
     int cant_instancias = list_size(recursos_usados);
-
-    for (int i = 0; i < cant_instancias; i++){
+    for (int i = 0; i < cant_instancias;) {
         t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
-    
-        if (PID == recurso_usado->PID){   
-            t_recurso_usado* recurso_usado = list_remove(recursos_usados, i);
-            t_recurso *recurso = dictionary_get(recursos_disponibles, recurso_usado->nombre_recurso);
-            recurso->instancias_recursos++;      
-            free(recurso_usado);      
+
+        if (PID == recurso_usado->PID) {
+            t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
+
+            printf("Eliminada instancia del recurso: %s de PID: %d\n", recurso_usado->nombre_recurso, recurso_usado->PID);
+            
+            free(instancia_recurso->nombre_recurso);
+            free(instancia_recurso);
+        } else {
+            i++; // AVANZA AL SIGUIENTE SOLO SI NO ELIMINO.
         }
-    }  
+    }
     pthread_mutex_unlock(&cola_recursos_usados);
 }
 
+int _coincide_pid(t_recurso_usado* recurso, int PID){
+    return recurso->PID == PID;
+}
 
-/* void retomar_ejecucion(pcb_execute){
-    t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
-    
-    switch (algoritmo_planificacion){
-        case FIFO:
-            recibir_contexto_ejecucion(pcb_execute);
-            break;
-        default:
-            // EL QUANTUM NO SE RESETEA -> SI MANDA LA INTERRUPCION LA MANDA Y EL PROCESO DESALOJA.
-            recibir_contexto_ejecucion(pcb_execute);
-        break;
+void _destruir(t_recurso_usado *recurso){
+    free(recurso->nombre_recurso);
+    free(recurso);
+}
+
+void imprimir_lista(t_list *lista) {
+    t_link_element *elemento = lista->head;
+    while (elemento != NULL) {
+        t_recurso_usado *recurso = elemento->data;
+        printf("PID: %d, Recurso: %s\n", recurso->PID, recurso->nombre_recurso);
+        elemento = elemento->next;
     }
-} */
-
+}
