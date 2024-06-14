@@ -1,6 +1,8 @@
 #include <protocolos/protocoloKernel.h>
 
 
+//TODO: Crear un algoritmo que valide las operaciones permitidas por cada interfaz
+// Para que alguien por ejemplo la interfaz generica no meta operaciones de dialfs
 void atender_peticiones_kernel(void){
     while(1){
         int cod_op = recibir_operacion(fd_conexion_kernel);
@@ -26,10 +28,12 @@ void atender_peticiones_kernel(void){
 }
 
 void realizar_un_stdin_read(){
+    //TODO: Como anular la repeticion de logica de esto
     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
 	void* stream = buffer->stream;
 	int PID = buffer_read_int(&stream);
-//Hasta acá igual en todas las interfaces
+
+    //Hasta acá igual en todas las interfaces
     int* resultado_de_operacion = malloc(sizeof(int));
 
     uint32_t direccionFisica = buffer_read_uint32(&stream);
@@ -49,11 +53,11 @@ void realizar_un_stdin_read(){
     eliminar_buffer(bufferRTA);
 
     if(*resultado_de_operacion == FAILED_WRITE){//LOGGEAR ERROR TMB
-
+        pthread_mutex_lock(&mutex_log_debug);
+        log_warning(IO_log_debug,"STDIN: Fallo en la lectura de memoria\n");
+        pthread_mutex_unlock(&mutex_log_debug);
     }else{//LOGGEAR TRIUNFO?
     }
-
-
 
     free(resultado_de_operacion);
 
