@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <utils/serializacion/serializacion.h>
 #include <commons/collections/dictionary.h>
+#include <commons/collections/list.h>
 
 // ---------- ESTRUCTURAS 
 typedef struct configuraciones_cpu
@@ -21,13 +22,21 @@ typedef struct configuraciones_cpu
     char* ALGORITMO_TLB;
     
 }t_config_cpu;
+
+typedef enum RESPUESTA_DE_CONSULTA_A_TLB 
+{
+    HIT,
+    MISS
+}tlb_res;
+
+
 //REGISTROS GENERALES
 typedef struct contexto_ejecucion{
     uint32_t PC;// Program Counter, indica la próxima instrucción a ejecutar
-    uint8_t  AX;     // Registro Numérico de propósito general
-    uint8_t  BX;     // idem
-    uint8_t  CX;     // idem 
-    uint8_t  DX;     // idem
+    uint8_t  AX;    // Registro Numérico de propósito general
+    uint8_t  BX;    // idem
+    uint8_t  CX;    // idem 
+    uint8_t  DX;    // idem
     uint32_t EAX;   // idem
     uint32_t EBX;   // idem
     uint32_t ECX;   // idem
@@ -49,7 +58,7 @@ extern pthread_mutex_t mutex_log_debug;
 extern char *path_config;
 extern t_config_cpu config_cpu;
 
-extern int fd_dispatch_server;
+extern int fd_dispatch_server;l
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
 extern int fd_dispatch;
@@ -60,6 +69,12 @@ extern int tipo_interrupcion;
 
 extern t_registros_cpu registros;
 
+extern int TAM_PAGINA; 
+
+extern int MAX_ENTRADAS;
+extern char* ALGORITMO_TLB;
+extern t_list* tabla_tlb;  //guardará un array de t_entrada_tlb
+
 //extern op_code_instruccion instruccion;
 
 extern char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}
@@ -69,4 +84,5 @@ extern t_dictionary* registros_diccionario;
 extern int se_devolvio_contexto;
 
 extern int PID;
+
 #endif

@@ -150,8 +150,8 @@ void ampliar_proceso(t_list* tabla, int tamanio_a_ampliar){
 	}
 	else{
 
-		int error_out_of_memory = OUT_OF_MEMORY;
-		send(fd_cpu, &error_out_of_memory, sizeof(int), 0);
+		int mensaje_error = 0;
+		send(fd_cpu, &mensaje_error, sizeof(int), 0);
 	}
 }
 
