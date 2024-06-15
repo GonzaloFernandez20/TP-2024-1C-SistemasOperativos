@@ -5,6 +5,7 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/collections/dictionary.h>
+#include <commons/temporal.h>
 
 #include <stdio.h>
 #include <string.h>
@@ -55,7 +56,15 @@ typedef struct recurso{
     char* nombre_recurso;
     int instancias_recursos;
     t_estado* cola_recurso;
+    pthread_mutex_t mutex_recurso;
+    
 }t_recurso;
+
+typedef struct recurso_usado{
+    int PID;
+    char* nombre_recurso;
+}t_recurso_usado;
+
 
 // ---------- VARIABLES GLOBALES
 
@@ -73,11 +82,11 @@ extern int fd_conexion_interrupt;
 extern t_dictionary *interfaces_conectadas;
 extern t_dictionary *instrucciones_por_interfaz;
 extern t_dictionary *peticiones_interfaz;
-
 extern t_dictionary *recursos_disponibles;
 
 extern pthread_t manejo_quantum;
 extern int termino_quantum;
+extern t_temporal *quantum_proceso;
 
 extern t_estado *new;
 extern t_estado *ready;
@@ -90,6 +99,7 @@ extern pthread_mutex_t mutex_log;
 extern pthread_mutex_t diccionario_interfaces;
 extern pthread_mutex_t diccionario_peticiones;
 extern pthread_mutex_t diccionario_recursos;
+extern pthread_mutex_t cola_recursos_usados;
 
 extern sem_t proceso_listo;
 extern sem_t proceso_cargado;
@@ -101,4 +111,5 @@ extern sem_t planificacion_en_pausa;
 extern int planificacion_pausada;
 extern int contador_bloqueados;
 
+extern t_list *recursos_usados;
 #endif

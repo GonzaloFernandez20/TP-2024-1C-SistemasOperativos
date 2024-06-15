@@ -14,8 +14,12 @@
 // ---------- DECLARACIONES DE FUNCIONES
 void interpretar_motivo_desalojo(t_pcb* pcb, void* stream);
 void ejecutar_llamada_io(t_pcb* pcb, void* stream);
+void case_recurso(t_pcb* pcb, void* stream, int op_code);
 
 void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream);
+void case_IO_STDIN_READ(t_pcb* pcb, void* stream);
+void case_WAIT(int PID, t_recurso *recurso);
+void case_SIGNAL(int PID, t_recurso *recurso);
 
 int validar_peticion(char* interfaz, op_code_instruccion llamada);
 int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo);

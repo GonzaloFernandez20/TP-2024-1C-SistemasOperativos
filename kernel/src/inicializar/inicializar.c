@@ -2,8 +2,8 @@
 
 
 void init(void){
-    kernel_log = iniciar_logger("kernel.log", "KERNEL", 0, LOG_LEVEL_DEBUG);
-    kernel_log_debugg = iniciar_logger("kernel_debug.log", "KERNEL", 0, LOG_LEVEL_DEBUG);
+    kernel_log = iniciar_logger("kernel.log", "KERNEL", 1, LOG_LEVEL_DEBUG);
+    kernel_log_debugg = iniciar_logger("kernel_debug.log", "KERNEL", 1, LOG_LEVEL_DEBUG);
     _leer_configuracion(path_config);
     inicializar_semaforos();
     iniciar_colas_planificacion();

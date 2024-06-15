@@ -65,6 +65,8 @@ char* _enum_interrupcion_string(){
 
     if (tipo_interrupcion == FIN_DE_QUANTUM){ return "FIN DE QUANTUM"; }
     if (tipo_interrupcion == INTERRUPCION){ return "FIN DE PROCESO"; }
+    if (tipo_interrupcion == RECURSO_INVALIDO){ return "RECURSO_INVALIDO"; }
+    if (tipo_interrupcion == PROCESO_BLOQUEADO){ return "PROCESO BLOQUEADO"; }
     
     return "DESCONOCIDO";
 }

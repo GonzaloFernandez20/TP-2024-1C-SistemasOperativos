@@ -1,6 +1,5 @@
 #include <ciclo/instrucciones.h>
 
-
 //SET////////////////////////////////////////////////////////////////////////////////////
 //asigna al registro seleccionado el valor pasado como argumento
 void set(void){
@@ -230,6 +229,33 @@ void exit_os(void){
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
 }
+//WAIT////////////////////////////////////////////////////////////////////////////////////////////////
+void wait_kernel(void){
+    char* recurso = strdup(instruccion_ejecutando[1]);
+    devolver_contexto_ejecucion_RECURSO(recurso, WAIT);
+    int cod_op = recibir_operacion(fd_dispatch);
+    if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
+    recibir_contexto_ejecucion();
+}
+//SIGNAL////////////////////////////////////////////////////////////////////////////////////////////////
+void signal_kernel(void){
+    char* recurso = strdup(instruccion_ejecutando[1]);
+    devolver_contexto_ejecucion_RECURSO(recurso, SIGNAL);
+    int cod_op = recibir_operacion(fd_dispatch);
+    if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
+    recibir_contexto_ejecucion();
+}
+
+/*
+IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): Esta instrucción solicita al Kernel que mediante la interfaz ingresada se lea desde el STDIN (Teclado) un valor cuyo tamaño está delimitado por el valor del Registro Tamaño y el mismo se guarde a partir de la Dirección Lógica almacenada en el Registro Dirección.
+*/
+
+//IO_STDIN_READ////////////////////////////////////////////////////////////////////////////////////////////////
+void io_stdin_read(char* interfaz, char* registro_direccion, char* registro_tamanio){
+    // traduccion de direcciones
+    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, registro_tamanio);
+}
+
 
 //Auxiliares
 

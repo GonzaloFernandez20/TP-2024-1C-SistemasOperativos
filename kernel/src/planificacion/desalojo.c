@@ -3,166 +3,286 @@
 #define INSTRUCCIONES_GENERICA IO_GEN_SLEEP, X
 #define INSTRUCCIONES_STDIN IO_STDIN_READ, X
 #define INSTRUCCIONES_STDOUT IO_STDOUT_WRITE, X
-#define INSTRUCCIONES_DIALFS IO_FS_CREATE,IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ, X
+#define INSTRUCCIONES_DIALFS IO_FS_CREATE, IO_FS_DELETE, IO_FS_TRUNCATE, IO_FS_READ, IO_FS_READ, X
 
 // --------------- PROCESAMOS EL PEDIDO DE IO POR PARTE DE CPU
 
-void interpretar_motivo_desalojo(t_pcb* pcb, void* stream){
+void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
+{
     int op_code_motivo_desalojo = buffer_read_int(&stream);
     switch (op_code_motivo_desalojo)
     {
-        case FIN_DE_QUANTUM:
-            trasladar(pcb->pid, exec, ready);
-            break;
-
-        case INTERRUPCION:
-            trasladar(pcb->pid, exec, estado_exit);
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
-            break;
-
-        case LLAMADA_IO: // DEBERIA LLAMARSE "OPERACION" POR EL TEMA DE WAIT Y SIGNAL? 
-            ejecutar_llamada_io(pcb, stream);
-            break;
-
-        case EXIT:
-            trasladar(pcb->pid, exec, estado_exit);
-
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < SUCCESS >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
-            break;
-
-        default:
-            break;
-    }
-}
-
-void ejecutar_llamada_io(t_pcb* pcb, void* stream){
-    int op_code_io = buffer_read_int(&stream);
-
-    switch (op_code_io)
-    {
-    case IO_GEN_SLEEP: // (Interfaz, Unidades de trabajo)
-        case_IO_GEN_SLEEP(pcb, stream);
+    case FIN_DE_QUANTUM:
+        trasladar(pcb->pid, exec, ready);
         break;
-    case WAIT: // (Recurso)
-        case_WAIT(pcb, stream, op_code_io);
+
+    case INTERRUPCION:
+        trasladar(pcb->pid, exec, estado_exit);
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
         break;
-    case SIGNAL: // (Recurso)
-        case_SIGNAL(pcb, stream, op_code_io);
+
+    case LLAMADA_IO: // DEBERIA LLAMARSE "OPERACION" POR EL TEMA DE WAIT Y SIGNAL?
+        ejecutar_llamada_io(pcb, stream);
         break;
-    
+
+    case RECURSO_INVALIDO:
+        trasladar(pcb->pid, exec, estado_exit);
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_RESOURCE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        break;
+
+    case PROCESO_BLOQUEADO:
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED: RECURSO >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        break;
+
+    case EXIT:
+        trasladar(pcb->pid, exec, estado_exit);
+
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < SUCCESS >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        break;
     default:
         break;
     }
 }
 
-void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream){
-    
-        int size_interfaz = buffer_read_int(&stream);
-        char* nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
-        int unidades_trabajo = buffer_read_int(&stream);
+void ejecutar_llamada_io(t_pcb *pcb, void *stream)
+{
+    int op_code_io = buffer_read_int(&stream);
 
-        if(!validar_peticion(nombre_interfaz, IO_GEN_SLEEP)){
-            pthread_mutex_lock(&mutex_log);
-                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
-            pthread_mutex_unlock(&mutex_log);
-            trasladar(pcb->pid, exec, estado_exit);
-            free(nombre_interfaz);
-        }
-        else{
+    switch (op_code_io)
+    {
+    case IO_GEN_SLEEP: // (Interfaz, Unidades de trabajo)
+            case_IO_GEN_SLEEP(pcb, stream);
+        break;
+    case WAIT: // (Recurso)
+            case_recurso(pcb, stream, op_code_io);
+        break;
+    case SIGNAL: // (Recurso)
+            case_recurso(pcb, stream, op_code_io);
+        break;
+    case IO_STDIN_READ: // (Interfaz, Registro Dirección, Registro Tamaño)
+            case_IO_STDIN_READ(pcb, stream);
+        break;
+    case IO_STDOUT_WRITE: // (Interfaz, Registro Dirección, Registro Tamaño)
+            case_IO_STDOUT_WRITE(pcb, stream);
+        break;
 
-            t_peticion* nueva_peticion = malloc(sizeof(t_peticion));
-            nueva_peticion->unidades_trabajo = unidades_trabajo;
-            nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
-
-            char *pid_string = string_itoa(pcb->pid);
-
-            pthread_mutex_lock(&diccionario_peticiones);
-                dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
-            pthread_mutex_unlock(&diccionario_peticiones);
-
-            pthread_mutex_lock(&diccionario_interfaces);
-                t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
-            pthread_mutex_unlock(&diccionario_interfaces);
-
-            trasladar(pcb->pid, exec, interfaz->bloqueados);
-
-            sem_post(&interfaz->hay_peticiones);
-
-            free(nombre_interfaz);
-            free(pid_string);
-        }
+    default:
+        break;
+    }
 }
 
-// TODO: Agregar las declaraciones al .h
+void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
+{
 
-void case_recurso(t_pcb* pcb, void* stream, int op_code){ 
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    int unidades_trabajo = buffer_read_int(&stream);
+
+    if (!validar_peticion(nombre_interfaz, IO_GEN_SLEEP))
+    {
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->unidades_trabajo = unidades_trabajo;
+        nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
+    }
+}
+
+void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
+{
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+
+    if (!validar_peticion(nombre_interfaz, IO_STDIN_READ))
+    {
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        // PARAMETROS QUE NECESITE LA FUNCION
+        //nueva_peticion->PARAM1 = ...
+        nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
+    }
+}
+
+void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
+{
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+
+    if (!validar_peticion(nombre_interfaz, IO_STDOUT_WRITE))
+    {
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        // PARAMETROS QUE NECESITE LA FUNCION
+        //nueva_peticion->PARAM1 = ...
+        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
+    }
+}
+
+void case_recurso(t_pcb *pcb, void *stream, int op_code)
+{
     int size_nombre_recurso = buffer_read_int(&stream);
-    char* nombre_recurso = strdup(buffer_read_string(&stream, size_nombre_recurso));
+    char *nombre_recurso = strdup(buffer_read_string(&stream, size_nombre_recurso));
 
     if (existe_recurso(nombre_recurso))
-    {   
+    {
         t_recurso *recurso = dictionary_get(recursos_disponibles, nombre_recurso);
 
-        if (op_code == WAIT){ 
-            case_WAIT(pcb, recurso);
-        }else{ 
-            case_SIGNAL(pcb, recurso);
+        if (op_code == SIGNAL)
+        {
+            case_SIGNAL(pcb->pid, recurso);
+            enviar_contexto_ejecucion(pcb);
         }
-        /*
-        *Tomo de un issue: al enviar wait o signal el proceso debe volver al kernel, y como bien lo indica el enunciado, en caso de signal vuelve el mismo proceso a ejecutar, en caso de wait si hay recursos disponibles vuelve a ejecutar sino, se bloquea
-        !Propuesta:
-        ? Podriamos hacer un mini switch que reanude la planificacion desde la parte de enviar el pcb a cpu total la funcion enviar_pcb y recibir_pcb es la misma, el switch viene por el lado de contemplar el quantum en el algoritmo. 
-        !retomar_ejecucion(pcb);
-        */
-    }else
+        else
+        {
+            case_WAIT(pcb->pid, recurso);
+            enviar_contexto_ejecucion(pcb);
+        }
+        recibir_contexto_ejecucion(pcb);
+    }
+    else // LE DIGO QUE ME DEVUELVA EL PROCESO Y YO LO MANDO A EXIT
     {
-        trasladar(pcb->pid, exec, estado_exit);
+        // int orden_de_desalojo = RECURSO_INVALIDO;
+        enviar_interrupcion(RECURSO_INVALIDO);
+        enviar_contexto_ejecucion(pcb);
+        // send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
+        recibir_contexto_ejecucion(pcb);
+    }
+}
+
+void case_WAIT(int PID, t_recurso *recurso)
+{
+    if (recurso->instancias_recursos > 0)
+    {
+        recurso->instancias_recursos--;
+        agregar_instancia_recurso(PID, recurso);
+    }
+    else
+    {
+        // trasladar(PID, exec, recurso->cola_recurso);
+        t_pcb *pcb = pop_estado(exec);
+        push_estado(recurso->cola_recurso, pcb);
+
+        enviar_interrupcion(PROCESO_BLOQUEADO);
+    }
+}
+/*
+Si no hice signal antes, solamente hago un ++ a la instancia.
+*/
+void case_SIGNAL(int PID, t_recurso *recurso)
+{
+    int hay_proceso_esperando = 0; // Supongo que inicialmente no hay procesos bloqueados
+    t_pcb *pcb_liberado;
+
+    if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento bloqueado en la cola del recurso
+    {
+        pthread_mutex_lock(&recurso->cola_recurso->mutex_cola);
+        pcb_liberado = list_get(recurso->cola_recurso->cola, 0);
+        pthread_mutex_unlock(&recurso->cola_recurso->mutex_cola);
+        hay_proceso_esperando = 1; // declaro que hay procesos bloqueados esperando
     }
 
+    eliminar_instancia_recurso(PID, recurso);
 
-}
-
-/*
-? A la hora de recibir de la CPU un Contexto de Ejecución desalojado por WAIT, el Kernel deberá verificar primero que exista el recurso solicitado y en caso de que exista restarle 1 a la cantidad de instancias del mismo. En caso de que el número sea estrictamente menor a 0, el proceso que realizó WAIT se bloqueará en la cola de bloqueados correspondiente al recurso.
-*/
-
-void case_WAIT(t_pcb* pcb, t_recurso *recurso){
-        
-        if(recurso->instancias_recursos > 0){
-            recurso->instancias_recursos--;
-        }else{
-            trasladar(pcb->pid, exec, recurso->cola_recurso);
-        }  
-}
-/*
-? A la hora de recibir de la CPU un Contexto de Ejecución desalojado por SIGNAL, el Kernel deberá verificar primero que exista el recurso solicitado, luego sumarle 1 a la cantidad de instancias del mismo. En caso de que corresponda, desbloquea al primer proceso de la cola de bloqueados de ese recurso. Una vez hecho esto, se devuelve la ejecución al proceso que peticiona el SIGNAL.
-*/
-void case_SIGNAL(t_pcb* pcb, t_recurso *recurso){ //! No usa el pcb, deberia sacarlo
-    /*
-        Tomo de un issue: Buenas! "En caso de que corresponda" Seria el caso en el que hay al menos un elemento bloqueado en la cola, porque en caso de no haber ningún proceso tomando el recurso, solo se debe aumentar la cantidad de instancias del mismo en 1.
-    */
-    if (!list_is_empty(recurso->cola_recurso))
+    if (hay_proceso_esperando)
     {
-        t_pcb* pcb = pop_estado(recurso->cola_recurso);
-        // trasladar(pcb->pid, recurso->cola_recurso, ready); // Como no vuelve de IO no vuelve a Ready+
+        agregar_instancia_recurso(pcb_liberado->pid, recurso);
+        trasladar(pcb_liberado->pid, recurso->cola_recurso, ready);
         // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
-    }else{
-        recurso->instancias_recursos++;
     }
 }
 
 // --------------- FUNCIONES AUXILIARES
 
-int validar_peticion(char* interfaz, op_code_instruccion llamada){
+int validar_peticion(char *interfaz, op_code_instruccion llamada)
+{
     pthread_mutex_lock(&diccionario_interfaces);
-        t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
+    t_interfaz *interfaz_solicitante = dictionary_get(interfaces_conectadas, interfaz);
     pthread_mutex_unlock(&diccionario_interfaces);
- 
-    if (interfaz_solicitante != NULL){
+
+    if (interfaz_solicitante != NULL)
+    {
         if (admite_operacion_solicitada(llamada, interfaz_solicitante->tipo))
         {
             return 1;
@@ -171,32 +291,40 @@ int validar_peticion(char* interfaz, op_code_instruccion llamada){
     return 0;
 }
 
-int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo){
+int admite_operacion_solicitada(op_code_instruccion instruccion, char *tipo)
+{
 
-    if(strcmp(tipo, "GENERICA") == 0){
+    if (strcmp(tipo, "GENERICA") == 0)
+    {
         op_code_instruccion array[] = {INSTRUCCIONES_GENERICA};
         return _puede_realizar_operacion(instruccion, array);
     }
-    else if(strcmp(tipo, "STDIN") == 0){
+    else if (strcmp(tipo, "STDIN") == 0)
+    {
         op_code_instruccion array[] = {INSTRUCCIONES_STDIN};
         return _puede_realizar_operacion(instruccion, array);
     }
-    else  if(strcmp(tipo, "STDOUT") == 0){
+    else if (strcmp(tipo, "STDOUT") == 0)
+    {
         op_code_instruccion array[] = {INSTRUCCIONES_STDOUT};
         return _puede_realizar_operacion(instruccion, array);
     }
-    else  if(strcmp(tipo, "DIALFS") == 0){
+    else if (strcmp(tipo, "DIALFS") == 0)
+    {
         op_code_instruccion array[] = {INSTRUCCIONES_DIALFS};
         return _puede_realizar_operacion(instruccion, array);
     }
-    else   
+    else
         return 0;
 }
 
-int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion array[]) {
+int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion array[])
+{
     int i = 0;
-    while (array[i] != X) {
-        if (array[i] == numero) {
+    while (array[i] != X)
+    {
+        if (array[i] == numero)
+        {
             return 1; // El elemento está presente en el array
         }
         i++;

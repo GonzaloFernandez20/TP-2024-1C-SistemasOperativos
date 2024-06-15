@@ -18,7 +18,7 @@ void *procesar_conexion_es(void *nombre_interfaz){
 			recibir_aviso(nombre, interfaz->fd);
 			pthread_mutex_unlock(&(interfaz->interfaz_en_uso));
 			break;
-		
+
 		case -1:
 
 			pthread_mutex_lock(&mutex_log_debug);
@@ -80,6 +80,18 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd){
 	enviar_paquete(paquete, fd);
 
 	eliminar_paquete(paquete);
+
+}
+
+void solicitar_operacion_IO_STDIN_READ(){
+
+	// LOGICA PARA PEDIR UNA PETICION A LA INTERFAZ
+
+}
+
+void solicitar_operacion_IO_STDOUT_WRITE(){
+
+	// LOGICA PARA PEDIR UNA PETICION A LA INTERFAZ
 
 }
 

@@ -24,31 +24,99 @@ void inicializar_recursos(){
             dictionary_put(recursos_disponibles, nuevo_recurso->nombre_recurso, nuevo_recurso);
         pthread_mutex_unlock(&diccionario_recursos);
     }   
+
+    //INICIALIZO LISTA PARA PROCESOS QUE TIENEN RECURSOS EN USO:
+    recursos_usados = list_create();
 }
 
 int existe_recurso(char* nombre_recurso){
     return dictionary_has_key(recursos_disponibles, nombre_recurso);
 }
 
-/*
-retomar_ejecucion(pcb_execute){
-    t_algoritmo algoritmo_planificacion = _chequear_algoritmo();
+void agregar_instancia_recurso(int PID, t_recurso *recurso){
+    t_recurso_usado *nuevo_recurso = malloc(sizeof(t_recurso_usado));
+    nuevo_recurso->PID = PID;
+    nuevo_recurso->nombre_recurso = strdup(recurso->nombre_recurso);
+
+    pthread_mutex_lock(&cola_recursos_usados);
+        list_add(recursos_usados, nuevo_recurso);
+    pthread_mutex_unlock(&cola_recursos_usados);
+
+    imprimir_lista(recursos_usados);
+}
+
+void eliminar_instancia_recurso(int PID, t_recurso *recurso){
+    pthread_mutex_lock(&cola_recursos_usados);
+    int cant_instancias = list_size(recursos_usados);
+    int encontro_instancia = 0; // SI NO ENCUENTRA INSTANCIA EN LA LISTA QUIERE DECIR QUE NO HUBO WAIT PREVIO
+
+    for (int i = 0; i < cant_instancias; i++){ 
+        t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
     
-    switch (algoritmo_planificacion){
-        case FIFO:
-            enviar_contexto_ejecucion(pcb_execute);
-            recibir_contexto_ejecucion(pcb_execute);
+        if (PID == recurso_usado->PID && string_equals_ignore_case(recurso->nombre_recurso, recurso_usado->nombre_recurso)){   
+            t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
+            printf("Eliminada instancia del recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
+            recurso->instancias_recursos++;
+            free(instancia_recurso->nombre_recurso);
+            free(instancia_recurso);
+            encontro_instancia = 1;
             break;
-        default:
-            enviar_contexto_ejecucion(pcb_execute);
-                int *pidsito = malloc(sizeof(int));
-                *pidsito = pcb_execute->pid;
+        }
 
-                pthread_create(&manejo_quantum, NULL, (void *)iniciar_quantum, (void *)pidsito);
-                pthread_detach(manejo_quantum);
+    }   
+    pthread_mutex_unlock(&cola_recursos_usados);
+    if (!encontro_instancia){ recurso->instancias_recursos++; } // GENERO UNA INSTANCIA DEL AIRE
+}
 
-                recibir_contexto_ejecucion(pcb_execute);
-            break;
+/* void liberar_recursos(int PID) { 
+    t_link_element **elemento = &recursos_usados->head;
+    while (*elemento != NULL) {
+        if (_coincide_pid((*elemento)->data, PID)) {
+            t_link_element *temp = *elemento; // Guarda el puntero al nodo actual
+            *elemento = (*elemento)->next; // Avanza al siguiente nodo
+            _destruir(temp->data); // Libera la memoria del recurso
+            free(temp); // Libera la memoria del nodo
+        } else {
+            elemento = &(*elemento)->next; // Avanza al siguiente nodo
+        }
+    }
+    imprimir_lista(recursos_usados);
+} */
+
+void liberar_recursos(int PID){
+    pthread_mutex_lock(&cola_recursos_usados);
+    int cant_instancias = list_size(recursos_usados);
+    for (int i = 0; i < cant_instancias;) {
+        t_recurso_usado *recurso_usado = list_get(recursos_usados, i);
+
+        if (PID == recurso_usado->PID) {
+            t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
+
+            printf("Eliminada instancia del recurso: %s de PID: %d\n", recurso_usado->nombre_recurso, recurso_usado->PID);
+            
+            free(instancia_recurso->nombre_recurso);
+            free(instancia_recurso);
+        } else {
+            i++; // AVANZA AL SIGUIENTE SOLO SI NO ELIMINO.
+        }
+    }
+    pthread_mutex_unlock(&cola_recursos_usados);
+}
+
+int _coincide_pid(t_recurso_usado* recurso, int PID){
+    return recurso->PID == PID;
+}
+
+void _destruir(t_recurso_usado *recurso){
+    free(recurso->nombre_recurso);
+    free(recurso);
+}
+
+void imprimir_lista(t_list *lista) {
+    t_link_element *elemento = lista->head;
+    while (elemento != NULL) {
+        t_recurso_usado *recurso = elemento->data;
+        printf("PID: %d, Recurso: %s\n", recurso->PID, recurso->nombre_recurso);
+        elemento = elemento->next;
     }
 }
-*/

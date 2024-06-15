@@ -72,12 +72,6 @@ void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
         sem_post(&proceso_listo);
     }
 
-    /* if (string_equals_ignore_case(destino->nombre, "READY +")) // Este deberia volar y estar generalizado
-    {
-        _loggear_ingreso_ready(ready_plus);
-        sem_post(&proceso_listo);
-    } */
-
     if (string_equals_ignore_case(destino->nombre, "EXIT"))
     {   
         sem_post(&hay_proceso_exit);
@@ -110,9 +104,10 @@ void *limpieza_cola_exit(){
 
         finalizar_proceso(pcb_basura->pid); // MEMORIA LIBERA RECURSOS DEL PROCESO
 
+        liberar_recursos(pcb_basura->pid); // LIBERO LOS RECURSOS QUE HAYA PEDIDO EL PROCESO
+
         free(pcb_basura->path_pseudocodigo);
         free(pcb_basura);
-
         // TENEMOS UN NUEVO LUGAR PARA EL GRADO DE MULTIPROGRAMACION
         sem_post(&grado_multiprogramacion); 
     }

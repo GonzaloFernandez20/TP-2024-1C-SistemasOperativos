@@ -43,6 +43,7 @@ t_dictionary *recursos_disponibles;
 
 pthread_t manejo_quantum;
 int termino_quantum;
+t_temporal *quantum_proceso;
 
 t_estado *new;
 t_estado *ready;
@@ -56,6 +57,7 @@ pthread_mutex_t mutex_log;
 pthread_mutex_t diccionario_interfaces;
 pthread_mutex_t diccionario_peticiones;
 pthread_mutex_t diccionario_recursos;
+pthread_mutex_t cola_recursos_usados;
 
 sem_t execute_libre;
 sem_t proceso_listo;
@@ -66,5 +68,7 @@ sem_t planificacion_en_pausa;
 
 int planificacion_pausada;
 int contador_bloqueados;
+
+t_list *recursos_usados;
 
 #endif

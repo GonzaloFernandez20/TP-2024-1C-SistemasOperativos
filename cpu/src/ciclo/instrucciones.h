@@ -21,8 +21,11 @@ void copy_string(void);
 void io_stdin_read(void);
 void io_stdout_write(void);
 void io_gen_sleep(void);
+
 void wait_kernel(void);
+
 void signal_kernel(void);
+
 void exit_os(void);
 
 void* direccion_del_registro(char* nombre_registro);

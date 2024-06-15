@@ -19,6 +19,8 @@ void mandar_procesos_a_exit(t_estado* bloqueados);
 
 void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd);
 
+void solicitar_operacion_IO_STDIN_READ();
+
 void recibir_aviso(char* nombre, int fd);
 
 
