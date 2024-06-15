@@ -118,6 +118,8 @@ char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
     char* respuesta_peticion = _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
 
 	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
+
+	return respuesta_peticion;
 }
 
 // pasamos la direccion fisica en donde queremos guardar el string.
@@ -178,7 +180,7 @@ uint32_t _recibir_marco(void) {
 	op_code operacion = recibir_operacion(fd_conexion_memoria);
 	if(operacion != NRO_MARCO) {
 		perror("El mensaje recibido no es un NRO_MARCO.");
-		return "OPCODE_ERROR";	// medio raro, ver cómo cambiar esto después
+		return -1;  // para q haga overflow y rompa todo.
 	}
 
     t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
