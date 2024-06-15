@@ -91,15 +91,16 @@ int crear_conexion(char* IP, char* PUERTO)
 	
 	// Manejo de error de conexión con servidor
 	if(error == -1){
-			fprintf(stderr, "Error al conectarse con servidor (%s:%s): %s \n",IP, PUERTO, strerror(errno));
+			fprintf(stderr, "\x1B[31mError al conectarse con servidor (%s:%s): %s \n",IP, PUERTO, strerror(errno));
 			intentos_de_conexion++; // contamos este intento
-			while(intentos_de_conexion <= MAX_INTENTOS_CONEXION) { 
-				printf("Reintentando conexion en 5 segundos... \nIntento: %d. ", intentos_de_conexion);
-				printf("Quedan %d intento(s) antes de Timeout!\n\n", MAX_INTENTOS_CONEXION-intentos_de_conexion);
-				sleep(5); // Esperamos 5 segundos antes de reintentar conexión, por si alguno de los otros módulos no se inicio todavía.
+			while(intentos_de_conexion <= MAX_INTENTOS_CONEXION-1) { 
+				printf("Intento: %d. ", intentos_de_conexion);
+				printf("Quedan %d intento(s) antes de Timeout!\n", MAX_INTENTOS_CONEXION-intentos_de_conexion);
+				printf("Reintentando conexion en %d segundos...\n\n\x1B[37m", TIEMPO_ESPERA_RECONEXION);
+				sleep(TIEMPO_ESPERA_RECONEXION); // Esperamos 5 segundos antes de reintentar conexión, por si alguno de los otros módulos no se inicio todavía.
 				return crear_conexion(IP, PUERTO);
 			}
-			puts("Connection timeout!");
+			puts("\x1B[31mConnection timeout!\n\n\x1B[37m");
 			intentos_de_conexion = 0; 
 			return -1; // cuando el conteo de intentos haya superado los 4, se retorna -1 para indicar Timeout.
 		}
