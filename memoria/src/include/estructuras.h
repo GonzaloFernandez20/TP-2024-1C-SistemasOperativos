@@ -9,6 +9,7 @@
 #include <commons/log.h>
 #include <commons/collections/list.h>
 #include <commons/collections/node.h>
+#include <commons/bitarray.h>
 
 #include <pthread.h>
 
@@ -34,6 +35,17 @@ typedef struct proceso_cargado
     char** CODE_segmento;
 }t_proceso;
 
+typedef struct page_table
+{
+    int PID;
+    t_list* tabla_paginas;
+}t_tabla_paginas;
+
+typedef struct page
+{
+    int marco;
+    
+}t_pagina;
 
 
 // ---------- VARIABLES GLOBALES
@@ -49,9 +61,16 @@ extern int fd_cpu;
 extern int fd_IO;
 
 extern t_list* memoria_de_instrucciones;
+extern t_list* tablas_de_paginas;
+extern void* espacio_usuario;
+extern int cantidad_marcos;
+extern t_bitarray* bitarray;
 
 extern pthread_mutex_t mutex_log_debug;
 extern pthread_mutex_t mutex_log;
 extern pthread_mutex_t mutex_memoria_instrucciones;
+extern pthread_mutex_t mutex_espacio_usuario;
+extern pthread_mutex_t mutex_tablas_de_paginas;
+extern pthread_mutex_t mutex_bitarray;
 
 #endif

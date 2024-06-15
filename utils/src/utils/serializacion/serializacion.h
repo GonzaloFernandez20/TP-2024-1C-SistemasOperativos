@@ -22,6 +22,9 @@ typedef enum CODIGOS_DE_OPERACION
 	INSTRUCCION,
 	CONTEXTO_EJECUCION,
 	OPERACION_COMPLETADA,
+    AJUSTAR_TAMANIO,
+    OBTENER_NRO_MARCO,
+    MARCO,
 	MENSAJE
 
 }op_code; 
@@ -45,6 +48,7 @@ typedef enum motivo_desalojo{
     FIN_DE_QUANTUM,
     INTERRUPCION,
     LLAMADA_IO,
+    OUT_OF_MEMORY,
     EXIT
 }t_motivo_desalojo;
 

@@ -8,10 +8,15 @@
 
 
 
-/*Seteamos las configuraciones iniciales de logs y configs y se incializan estructuras globales*/ 
 void init(void);
 
+void iniciar_loggers(void);
+
 void leer_configuracion(char *path_config);
+
+void inicializar_estructuras_memoria(void);
+
+t_bitarray* init_bitarray(void);
 
 void inicializar_semaforos(void);
 

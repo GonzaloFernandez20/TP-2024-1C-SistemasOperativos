@@ -31,12 +31,19 @@ int fd_IO;
 
 
 t_list* memoria_de_instrucciones;
+t_list* tablas_de_paginas;
+void* espacio_usuario;
+int cantidad_marcos;
+t_bitarray* bitarray;
 
 //--semaforos
 
 pthread_mutex_t mutex_log_debug;
 pthread_mutex_t mutex_log;
 pthread_mutex_t mutex_memoria_instrucciones;
+pthread_mutex_t mutex_espacio_usuario;
+pthread_mutex_t mutex_tablas_de_paginas;
+pthread_mutex_t mutex_bitarray;
 
 
 
