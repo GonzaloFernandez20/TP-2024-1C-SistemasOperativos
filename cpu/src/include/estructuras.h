@@ -69,6 +69,12 @@ extern int tipo_interrupcion;
 
 extern t_registros_cpu registros;
 
+extern int TAM_PAGINA; 
+
+extern int MAX_ENTRADAS;
+extern char* ALGORITMO_TLB;
+extern t_list* tabla_tlb;  //guardará un array de t_entrada_tlb
+
 //extern op_code_instruccion instruccion;
 
 extern char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}

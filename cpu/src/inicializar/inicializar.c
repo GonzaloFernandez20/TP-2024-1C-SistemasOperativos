@@ -7,6 +7,7 @@ void init(){
     inicializar_semaforos();
     init_opCodes_dictionary();
     init_registros_dictionary();
+    inicializar_TLB();
 }
 
 void inicializar_semaforos(void){
@@ -43,8 +44,8 @@ void init_opCodes_dictionary(void){
     dictionary_put(opCodes_diccionario, "WAIT",           (void*)wait_kernel);
     dictionary_put(opCodes_diccionario, "SIGNAL",         (void*)signal_kernel);
     dictionary_put(opCodes_diccionario, "IO_GEN_SLEEP",   (void*)io_gen_sleep);
-    dictionary_put(opCodes_diccionario, IO_STDIN_READ,  (void*)io_stdin_read);
-    dictionary_put(opCodes_diccionario, IO_STDOUT_WRITE,(void*)io_stdout_write);
+    dictionary_put(opCodes_diccionario, "IO_STDIN_READ",  (void*)io_stdin_read);
+    dictionary_put(opCodes_diccionario, "IO_STDOUT_WRITE",(void*)io_stdout_write);
     // dictionary_put(opCodes_diccionario, IO_FS_CREATE,   (void*)io_fs_create);
     // dictionary_put(opCodes_diccionario, IO_FS_DELETE,   (void*)io_fs_delete);
     // dictionary_put(opCodes_diccionario, IO_FS_TRUNCATE, (void*)io_fs_truncate);

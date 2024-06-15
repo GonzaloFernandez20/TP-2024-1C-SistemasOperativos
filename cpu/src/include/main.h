@@ -41,6 +41,12 @@ t_registros_cpu registros;
 
 op_code_instruccion instruccion;
 
+int MAX_ENTRADAS;
+char* ALGORITMO_TLB;
+t_list* tabla_tlb;  //guardará un array de t_entrada_tlb
+
+int TAM_PAGINA;     // se debería recibir el tamaño de página al establecer las conexiones con Memoria.
+
 char** instruccion_ejecutando; // array de strings. Ej: {"SUM", "AX", "BX"}
 t_dictionary* opCodes_diccionario;
 t_dictionary* registros_diccionario;

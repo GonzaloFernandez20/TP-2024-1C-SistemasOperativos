@@ -24,7 +24,6 @@ typedef enum CODIGOS_DE_OPERACION
 	OPERACION_COMPLETADA,
     CAMBIO_TAMANIO,         
     ESTADO,                 // Respuesta a una peticion. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
-	MENSAJE,
     READ,                   // Cuando pido a Memoria leer el contenido al cual apunta una dirección fisica
     WRITE,                  // Idem pero para escritura
 

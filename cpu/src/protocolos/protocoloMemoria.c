@@ -77,7 +77,7 @@ char* leer_de_memoria(uint32_t direccion_logica) {
 	uint32_t direccion_fisica = dl_a_df(direccion_logica);	// convertimos la dirección lógica a física 
 	_solicitar_lectura_de_memoria(direccion_fisica); 		// pedimos a memoria que nos devuelva el string alojado en la dirección física especificada.
 	char* string_recibido = _recibir_string_por_lectura();
-	log_info(logger, "PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_recibido);
+	log_info(cpu_log, "PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_recibido);
 	return string_recibido;
 }
 
@@ -117,7 +117,7 @@ char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
 
     char* respuesta_peticion = _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
 
-	log_info(logger, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
+	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
 }
 
 // pasamos la direccion fisica en donde queremos guardar el string.

@@ -4,7 +4,7 @@
 //SET////////////////////////////////////////////////////////////////////////////////////
 //asigna al registro seleccionado el valor pasado como argumento
 void set(void){
-    char* registro = strcpy(instruccion_ejecutando[1]);
+    char* registro =  (instruccion_ejecutando[1]);
     int valor = atoi(instruccion_ejecutando[2]);  // string to int
 
     void* ptr_registro = direccion_del_registro(registro);
@@ -21,8 +21,8 @@ void set(void){
 //Suma al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
     //Vale sumar un registro de 32bits a uno de 8bits   
 void sum(void){
-    char* registro_destino = strcpy(instruccion_ejecutando[1]);
-    char* registro_origen = strcpy(instruccion_ejecutando[2]);
+    char* registro_destino =  (instruccion_ejecutando[1]);
+    char* registro_origen =  (instruccion_ejecutando[2]);
 
     void* ptr_registro_destino = direccion_del_registro(registro_destino);
     void* ptr_registro_origen = direccion_del_registro(registro_origen);
@@ -37,8 +37,8 @@ void sum(void){
 //SUB////////////////////////////////////////////////////////////////////////////////////
 //Resta al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
 void sub(void){
-    char* registro_destino = strcpy(instruccion_ejecutando[1]);
-    char* registro_origen = strcpy(instruccion_ejecutando[2]);
+    char* registro_destino =  (instruccion_ejecutando[1]);
+    char* registro_origen =  (instruccion_ejecutando[2]);
 
     void* ptr_registro_destino = direccion_del_registro(registro_destino);
     void* ptr_registro_origen = direccion_del_registro(registro_origen);
@@ -53,16 +53,18 @@ void sub(void){
 //JNZ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Si el valor del registro es distinto de cero, actualiza el program counter al número de instrucción pasada por parámetro.
 void jnz(void){
-    char* registro = strcpy(instruccion_ejecutando[1]);
+    char* registro = instruccion_ejecutando[1];
     int PC_de_instruccion = atoi(instruccion_ejecutando[2]);  // se espera un program counter
+
+    uint32_t valor_del_registro; // puede almacenar uint8_t también
 
     void* ptr_registro = direccion_del_registro(registro);
 
     if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
-        uint8_t valor_del_registro = *(uint8_t*)ptr_registro;    
+        valor_del_registro = *(uint8_t*)ptr_registro;    
     }
     else {
-        uint32_t valor_del_registro = *(uint32_t*)ptr_registro;
+        valor_del_registro = *(uint32_t*)ptr_registro;
     } 
     
     if(valor_del_registro != 0){ // si es distinto de 0
@@ -91,7 +93,7 @@ void mov_in(void) {
     
     char* dato_leido = leer_de_memoria(direccion_logica);
 
-    *ptr_registro_datos = (void*)dato_leido;
+    *(char*)ptr_registro_datos = dato_leido;
 }
 
 
@@ -151,8 +153,8 @@ void resize(void) {
 void copy_string(void) {
     int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
 
-    uint32_t dl_origen = registro.SI;   // dirección lógica orígen
-    uint32_t dl_destino = registro.DI;  // dirección lógica destino
+    uint32_t dl_origen = registros.SI;   // dirección lógica orígen
+    uint32_t dl_destino = registros.DI;  // dirección lógica destino
 
     for(size_t offset=0; offset<cantidad_de_bytes; offset++) {
         char* string_leido = leer_de_memoria(dl_origen + offset);
@@ -177,7 +179,7 @@ void io_stdin_read(void) {
     void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    solicitar_kernel_
+    
 
     return;
 }

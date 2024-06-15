@@ -1,6 +1,8 @@
 #include <MMU/TLB.h>
 
 
+
+
 /** 
  * @brief Inicializamos un dictionary de la commons para guardar las estructuras [ pid | página | marco ].
  * Obtendremos un marco según una llave con el formato "<pid> <nro_pagina>"
@@ -16,51 +18,74 @@ void inicializar_TLB(void) {
  * @brief Guardamos número de página, número de marco y PID en el diccionario de la TLB.
 */
 void agregar_a_TLB(uint32_t nro_pagina, uint32_t nro_marco) {
-    if (list_size(entradas_TLB_diccionario) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las entradas (independientemente del PID).
-        _reemplazar_una_entrada_por(PID, nro_pagina, nro_marco);
+    if (list_size(tabla_tlb) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las entradas (independientemente del PID).
+        _eliminar_una_entrada_por_algoritmo();
     }
+    
     _agregar_nueva_entrada(PID, nro_pagina, nro_marco);
 }
 
-void _reemplazar_una_entrada_por(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
+void _eliminar_una_entrada_por_algoritmo() {
     size_t indice = _elegir_entrada_victima();
     list_remove(tabla_tlb, indice);
 }
 
-size_t _elegir_entrada_victima(void) {
+int _elegir_entrada_victima(void) {
 
+    int indice;
 
+    if(!strcmp(ALGORITMO_TLB, FIFO))
+    {
+        indice = 0; 
+    }
+    else if(!strcmp(ALGORITMO_TLB, LRU))
+    {
+        indice = elegir_con_algoritmo_LRU();
+    }
+    else {
+        log_error(cpu_log_debug, "Algoritmo de sustitución de TLB inválido.");
+    }
 
-    return 1;
+    return indice;
 }
 
+int elegir_con_algoritmo_LRU() {
+
+
+
+    return 0;
+}
+
+
 void _agregar_nueva_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
-    t_entrada_tlb entrada;
-    entrada.pid = PID; // le asignamos el PID actual
-    entrada.nro_pagina = nro_pagina;
-    entrada.nro_marco = nro_marco;
+    t_entrada_tlb* entrada;
+    entrada->pid = PID; // le asignamos el PID actual
+    entrada->nro_pagina = nro_pagina;
+    entrada->nro_marco = nro_marco;
+    // entrada.tiempo_de_vida = 
 
     list_add(tabla_tlb, (void*)entrada);
 }
 
 
-// t_entrada_tlb _obtener_entrada_donde(int pid, uint32_t nro_pagina) {
+// res_tabla_tlb _eliminar_entrada_donde(int pid, uint32_t nro_pagina) {
+//     size_t i = 0;
+//     t_entrada_tlb entrada;
+//     res_tabla_tlb res = buscar_entrada_tlb(&entrada, &indice, pid, nro_pagina) {
     
+//     if (res == SEARCH_OK) {
+//         list_remove(tabla_tlb, indice);
+//         return REMOVE_OK;
+//     } 
+    
+//     return REMOVE_ERROR;
 // }
-void _eliminar_entrada_donde(int pid, uint32_t nro_pagina) {
-    size_t i = 0;
-    t_entrada_tlb entrada;
-    res_busqueda res = buscar_entrada_tlb(&entrada, &indice, pid, nro_pagina) {
-    
-    list_remove(tabla_tlb, indice);
-    return;
-}
 
-res_busqueda buscar_entrada_tlb(t_entrada_tlb *entrada, size_t *indice, int pid, uint32_t nro_pagina) {
-    for(; indice<MAX_ENTRADAS; indice++) {
-        t_entrada_tlb elemento = list_get(tabla_tlb, i);
-        if(elemento.pid == pid && elemento.nro_pagina == nro_pagina) {
-            entrada = elemento;
+res_busqueda buscar_entrada_tlb(t_entrada_tlb *entrada, int *indice, int pid, uint32_t nro_pagina) {
+    for(; *indice<MAX_ENTRADAS; (*indice)++) {
+        t_entrada_tlb* elemento = list_get(tabla_tlb, *indice);
+        if(elemento->pid == pid && elemento->nro_pagina == nro_pagina) {
+            *entrada = *elemento;   // guardo en el espacio donde apunta "entrada" el valor guardado en el espacio apuntado por "elemento"
             return SEARCH_OK;
         }
     }
@@ -75,19 +100,19 @@ res_busqueda buscar_entrada_tlb(t_entrada_tlb *entrada, size_t *indice, int pid,
  * 
 */
 tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, uint32_t* nro_marco) {
-    size_t indice = 0; // empezar desde el indice 0 a buscar
+    int indice = 0; // empezar desde el indice 0 a buscar
     t_entrada_tlb entrada;
     res_busqueda res = buscar_entrada_tlb(&entrada, &indice, PID, nro_pagina);
 
     // SI LA ENCUENTRA
     if(res == SEARCH_OK) {
        *nro_marco = entrada.nro_marco;
-       log_info(logger, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
+       log_info(cpu_log, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
     }
 
     // SI NO LA ENCUENTRA
-    log_info(logger, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
+    log_info(cpu_log, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
     return MISS;
 }
 
