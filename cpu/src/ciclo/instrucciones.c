@@ -170,7 +170,7 @@ void copy_string(void) {
 
 
 //IO_STDIN_READ//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/** ,
+/** 
  * IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): 
  * Esta instrucción solicita al Kernel que mediante la interfaz ingresada 
  * se lea desde el STDIN (Teclado) un valor cuyo tamaño está delimitado 
@@ -181,16 +181,34 @@ void copy_string(void) {
  * */ 
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    // traduccion de direcciones
-    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, registro_tamanio);
+    /* void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    void* ptr_registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    return;
+    uint8_t* ptr_uint8;
+    uint32_t* ptr_uint32;
+
+    if(tamanio_de_registro(ptr_registro_direccion) == sizeof(uint8_t)) {
+        ptr_uint8 = (uint8_t*)ptr_registro_direccion;
+        // Ahora ptr_uint8 es un puntero a uint8_t
+    }
+    else {
+        ptr_uint32 = (uint32_t*)ptr_registro_direccion;
+        // Ahora ptr_uint32 es un puntero a uint32_t
+    } */
+
+    traducir_direcciones(registro_tamanio, registro_direccion);
+
+    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
 }
 
 
+    if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
+        *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
+    }
+    else{
+        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
+    }
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * IO_STDOUT_WRITE (Interfaz, Registro Dirección, Registro Tamaño): 
@@ -236,12 +254,6 @@ void signal_kernel(void){
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
 }
-
-
-
-
-
-
 
 //Auxiliares
 

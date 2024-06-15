@@ -53,6 +53,8 @@ t_dictionary* registros_diccionario;
 
 int se_devolvio_contexto;
 
+t_list *direcciones;
+
 int PID;
 
 #endif

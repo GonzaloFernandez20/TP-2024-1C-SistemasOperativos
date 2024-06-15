@@ -39,6 +39,14 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
         log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED: RECURSO >", pcb->pid);
         pthread_mutex_unlock(&mutex_log);
         break;
+    
+    case OUT_OF_MEMORY:
+        trasladar(pcb->pid, exec, estado_exit);
+
+        pthread_mutex_lock(&mutex_log);
+        log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < OUT OF MEMORY >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        break;
 
     case EXIT:
         trasladar(pcb->pid, exec, estado_exit);

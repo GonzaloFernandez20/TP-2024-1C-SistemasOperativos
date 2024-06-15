@@ -52,7 +52,7 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
 void devolver_contexto_ejecucion(int motivo){
 	t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
-    int buffer_size = 3 * sizeof(int) + 4*sizeof(uint8_t) + 7*sizeof(uint32_t); 
+    int buffer_size = 2 * sizeof(int) + 4*sizeof(uint8_t) + 7*sizeof(uint32_t); 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID );
@@ -79,7 +79,7 @@ void devolver_contexto_ejecucion(int motivo){
 void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidades_trabajo){
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
-    int buffer_size = 6 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
+    int buffer_size = 5 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID );
@@ -104,8 +104,8 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
 
     log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
 
-	eliminar_paquete(paquete);
     free(nombre_interfaz);
+	eliminar_paquete(paquete);
 }
 
 void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
@@ -135,18 +135,15 @@ void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
 
     log_info(cpu_log_debug, "Enviando operacion con recurso PID: < %d > a KERNEL.", PID);
 
-	eliminar_paquete(paquete);
     free(recurso);
+	eliminar_paquete(paquete);
 }
 
-
-
-void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, char* registro_tamanio){
+void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamanio){
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
-    int cant_direcciones = 0; // DIRECCION
-    int cant_tamanios = 0; // TAMANIO DE LA DIRECCION
+    int cant_direcciones = list_size(direcciones);
 
-    int buffer_size = (5 + cant_direcciones + cant_tamanios) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(registro_tamanio) + 2; 
+    int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(registro_tamanio) + 2; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID );
@@ -165,16 +162,21 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, char* regi
 	buffer_add_int(paquete->buffer, IO_STDIN_READ);
     buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
-    buffer_add_int(paquete->buffer, strlen(registro_tamanio) + 1);
-	buffer_add_string(paquete->buffer, registro_tamanio);
+    buffer_add_int(paquete->buffer, tamanio); 
+    buffer_add_int(paquete->buffer, cant_direcciones);
 
-    int count = 1;
-
-    // Aca se traduce y agrega al paquete
-    for (int i = 0; i < count; i++)
+    for (int i = 0; i < cant_direcciones; i++)
     {
-
-        /* code */
+        t_datos_acceso *dato = list_remove(direcciones, 0);
+        buffer_add_int(paquete->buffer, dato->bytes);
+        buffer_add_int(paquete->buffer, dato->direccion_fisica);
+        free(dato);
     }
     
+    enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
+
+    free(nombre_interfaz);
+	eliminar_paquete(paquete);
 }

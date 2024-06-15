@@ -46,6 +46,13 @@ typedef struct contexto_ejecucion{
 }t_registros_cpu;
 
 
+typedef struct datos_acceso
+{
+    int bytes;
+    int direccion_fisica;
+}t_datos_acceso;
+
+
 //VARIABLES GLOBALES
 
 extern t_log* cpu_log;
@@ -82,6 +89,8 @@ extern t_dictionary* opCodes_diccionario;
 extern t_dictionary* registros_diccionario;
 
 extern int se_devolvio_contexto;
+
+extern t_list *direcciones;
 
 extern int PID;
 
