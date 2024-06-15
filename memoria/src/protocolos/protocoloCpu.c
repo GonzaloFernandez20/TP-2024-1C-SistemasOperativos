@@ -25,6 +25,14 @@ void *procesar_operacion_cpu(void *fd_cpu_casteado){
 			acceso_a_tabla_paginas();
 			break;
 		
+		case LECTURA:
+			realizar_lectura(fd_cpu);
+			break;
+		
+		case ESCRITURA:
+			realizar_escritura(fd_cpu);
+			break;
+		
 		case -1:
 			pthread_mutex_lock(&mutex_log_debug);
 				log_error(memoria_log_debugg, "CPU se desconecto\n");
@@ -101,16 +109,20 @@ void ajustar_tamanio_proceso(void){
 
 	if(tamanio_actual<tamanio){
 		int tamanio_a_ampliar = tamanio-tamanio_actual;
+
 		pthread_mutex_lock(&mutex_log);
 			log_info(memoria_log, "PID: < %d > - Tamaño Actual: < %d > - Tamaño a Ampliar: < %d >", PID, tamanio_actual, tamanio_a_ampliar);
 		pthread_mutex_unlock(&mutex_log);
+
 		ampliar_proceso(tabla->tabla_paginas,tamanio_a_ampliar);
 	}
 	else{
 		int tamanio_a_reducir = tamanio_actual-tamanio;
+
 		pthread_mutex_lock(&mutex_log);
 			log_info(memoria_log, "PID: < %d > - Tamaño Actual: < %d > - Tamaño a Reducir: < %d >", PID, tamanio_actual, tamanio_a_reducir);
 		pthread_mutex_unlock(&mutex_log);
+		
 		reducir_proceso(tabla->tabla_paginas,tamanio_a_reducir);
 	}
 	

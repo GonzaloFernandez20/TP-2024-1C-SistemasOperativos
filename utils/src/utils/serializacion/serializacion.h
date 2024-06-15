@@ -25,8 +25,9 @@ typedef enum CODIGOS_DE_OPERACION
     AJUSTAR_TAMANIO,
     OBTENER_NRO_MARCO,
     MARCO,
-	MENSAJE
-
+    LECTURA,
+    VALOR_LEIDO,
+    ESCRITURA
 }op_code; 
 
 
@@ -85,6 +86,8 @@ void crear_buffer(t_paquete* paquete, int size);
 
 void buffer_add_string(t_buffer *buffer, char *string);
 
+void buffer_add_valor(t_buffer *buffer, void* valor, int bytes);
+
 void buffer_add_int(t_buffer *buffer, int dato);
 
 void buffer_add_uint8(t_buffer *buffer, uint8_t dato);
@@ -115,5 +118,6 @@ uint32_t buffer_read_uint32(void** stream);
 
 char* buffer_read_string(void** stream, int length);
 
+void* buffer_read_valor(void** stream, int bytes);
 
 #endif

@@ -4,6 +4,7 @@
 #include <include/estructuras.h>
 #include <esquemaEstructuras/memoriaInstrucciones.h>
 #include <esquemaEstructuras/paginacion.h>
+#include <protocolos/accesoEspacioUsuario.h>
 
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>

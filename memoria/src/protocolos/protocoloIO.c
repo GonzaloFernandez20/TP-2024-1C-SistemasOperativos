@@ -12,8 +12,12 @@ void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
         int cod_op = recibir_operacion(fd_IO);
 
 		switch (cod_op) {
-		case MENSAJE:
-			//
+		case LECTURA:
+			realizar_lectura(fd_IO);
+			break;
+			
+		case ESCRITURA:
+			realizar_escritura(fd_cpu);
 			break;
 		
 		case -1:
