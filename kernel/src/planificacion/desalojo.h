@@ -20,6 +20,8 @@ void case_IO_GEN_SLEEP(t_pcb* pcb, void* stream);
 void case_IO_STDIN_READ(t_pcb* pcb, void* stream);
 void case_WAIT(int PID, t_recurso *recurso);
 void case_SIGNAL(int PID, t_recurso *recurso);
+void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream);
+
 
 int validar_peticion(char* interfaz, op_code_instruccion llamada);
 int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo);

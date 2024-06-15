@@ -17,7 +17,7 @@ char* chequear_parametros(int argc, char* argv[]){
     if(argc < 2) {
         printf("Faltan parametros de entrada\n");
     }
-    char* path_config = strdup(argv[1]); 
+    char* path_config = strdup(argv[1]);    // recordar liberar el espacio de memoria
     
     return path_config;
 }

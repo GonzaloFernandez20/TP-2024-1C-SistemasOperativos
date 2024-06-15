@@ -21,6 +21,8 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd);
 
 void solicitar_operacion_IO_STDIN_READ();
 
+void solicitar_operacion_IO_STDOUT_WRITE();
+
 void recibir_aviso(char* nombre, int fd);
 
 

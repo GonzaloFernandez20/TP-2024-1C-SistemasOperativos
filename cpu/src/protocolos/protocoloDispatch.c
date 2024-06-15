@@ -167,9 +167,13 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, char* regi
 	buffer_add_string(paquete->buffer, nombre_interfaz);
     buffer_add_int(paquete->buffer, strlen(registro_tamanio) + 1);
 	buffer_add_string(paquete->buffer, registro_tamanio);
+
+    int count = 1;
+
     // Aca se traduce y agrega al paquete
     for (int i = 0; i < count; i++)
     {
+
         /* code */
     }
     

@@ -184,7 +184,8 @@ void io_stdin_read(void) {
     void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    
+    // traduccion de direcciones
+    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, registro_tamanio);
 
     return;
 }
@@ -203,16 +204,6 @@ void io_stdin_read(void) {
 void io_stdout_write(void) {
     return;
 }
-
-
-void wait_kernel(void) {
-    return;
-}
-
-void signal_kernel(void) {
-    return;
-}
-
 
 
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
@@ -246,15 +237,10 @@ void signal_kernel(void){
     recibir_contexto_ejecucion();
 }
 
-/*
-IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): Esta instrucción solicita al Kernel que mediante la interfaz ingresada se lea desde el STDIN (Teclado) un valor cuyo tamaño está delimitado por el valor del Registro Tamaño y el mismo se guarde a partir de la Dirección Lógica almacenada en el Registro Dirección.
-*/
 
-//IO_STDIN_READ////////////////////////////////////////////////////////////////////////////////////////////////
-void io_stdin_read(char* interfaz, char* registro_direccion, char* registro_tamanio){
-    // traduccion de direcciones
-    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, registro_tamanio);
-}
+
+
+
 
 
 //Auxiliares
