@@ -22,20 +22,12 @@ typedef enum CODIGOS_DE_OPERACION
 	INSTRUCCION,            
 	CONTEXTO_EJECUCION,
 	OPERACION_COMPLETADA,
-    CAMBIO_TAMANIO,         
-    ESTADO,                 // Respuesta a una peticion. Estos paquetes informarán si hubo un error en la solicitud o si fue exitoso o sobre cualquier otro estado.
-    READ,                   // Cuando pido a Memoria leer el contenido al cual apunta una dirección fisica
-    WRITE,                  // Idem pero para escritura
-
-    OBTENER_NRO_MARCO,      // Para solicitar la busqueda del nro_marco correspondiente a un nro_pagina dado
-    NRO_MARCO,              // El nro_marco que se buscaba
-
-    WRITE_DIRECCION_FISICA, 
-    READ_DIRECCION_FISICA,
-    SUCCESFULL_READ,        // Estos no me parecen apropiados ponerlos como op_codes, 
-    SUCCESFULL_WRITE,       // por que no refieren a ninguna operación, 
-    FAILED_WRITE,           // nomás informan de un estado
-    FAILED_READ             //
+    AJUSTAR_TAMANIO,
+    OBTENER_NRO_MARCO,
+    MARCO,
+    LECTURA,
+    VALOR_LEIDO,
+    ESCRITURA
 }op_code; 
 
 
@@ -96,6 +88,8 @@ void crear_buffer(t_paquete* paquete, int size);
 
 void buffer_add_string(t_buffer *buffer, char *string);
 
+void buffer_add_valor(t_buffer *buffer, void* valor, int bytes);
+
 void buffer_add_int(t_buffer *buffer, int dato);
 
 void buffer_add_uint8(t_buffer *buffer, uint8_t dato);
@@ -126,5 +120,6 @@ uint32_t buffer_read_uint32(void** stream);
 
 char* buffer_read_string(void** stream, int length);
 
+void* buffer_read_valor(void** stream, int bytes);
 
 #endif

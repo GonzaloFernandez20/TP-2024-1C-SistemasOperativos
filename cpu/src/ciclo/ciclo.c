@@ -2,6 +2,7 @@
 
 void ciclo(void){
     se_devolvio_contexto = 0;
+    
     while(1){
         fetch();              // busca la siguiente instrucción.
         decode_and_execute(); 
@@ -15,7 +16,6 @@ void fetch(void){
     log_info(cpu_log, "PID: < %d > - FETCH - Program Counter: < %d >", PID, registros.PC);
 
     registros.PC += 1;                                          // PC debe ser actualizado (sumarle 1) después de pedir una instrucción.
-    string_array_destroy(instruccion_ejecutando);               // Debemos liberar el string_array anterior, porque cuando le reasignemos un valor a nuestro puntero "instruccion_ejecutando", el puntero al string_array anterior se perderá y generará memory leaks. 
     instruccion_ejecutando = string_split(instruccion, " ");    // Dividimos las partes de la instruccion en un array. 
     free(instruccion);                                          // liberamos el string creado con malloc()
 }
@@ -24,12 +24,13 @@ void fetch(void){
 void decode_and_execute(void) {
     
     char* parametros_string = _armado_parametros(instruccion_ejecutando);
-
     log_info(cpu_log,"PID: < %d > - Ejecutando: < %s > - < %s >", PID ,instruccion_ejecutando[0], parametros_string);
     free(parametros_string);
     
     void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion_ejecutando[0]); // obtenemos la función a partir del string del nombre de la instrucción
     funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el array global instruccion_cpu.   
+    
+    string_array_destroy(instruccion_ejecutando); // Debemos liberar el string_array anterior, porque cuando le reasignemos un valor a nuestro puntero "instruccion_ejecutando", el puntero al string_array anterior se perderá y generará memory leaks. 
 } 
 
 void checkInterrupt(void){

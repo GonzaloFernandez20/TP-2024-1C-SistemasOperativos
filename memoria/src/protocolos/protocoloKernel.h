@@ -5,6 +5,7 @@
 
 #include <include/estructuras.h>
 #include <esquemaEstructuras/memoriaInstrucciones.h>
+#include <esquemaEstructuras/paginacion.h>
 
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>
@@ -14,6 +15,8 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado);
 void crear_proceso(void);
 
 void crear_estructuras_administrativas(int PID, char* path_archivo);
+
+void crear_tabla_de_paginas(int PID);
 
 void cargar_instrucciones(int PID, char* path_archivo);
 
@@ -31,6 +34,6 @@ void liberar_estructuras_asociadas(int PID);
 
 void liberar_segmento_codigo(t_proceso* proceso);
 
-
+void marcar_libre_espacio(int PID);
 
 #endif

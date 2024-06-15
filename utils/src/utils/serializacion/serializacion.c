@@ -53,6 +53,11 @@ void buffer_add_string(t_buffer *buffer, char *string){
 	buffer->offset +=  strlen(string)+1;
 }
 
+void buffer_add_valor(t_buffer *buffer, void* valor, int bytes){
+	memcpy(buffer->stream + buffer->offset, valor, bytes);
+	buffer->offset +=  bytes;
+}
+
 void buffer_add_int(t_buffer *buffer, int dato){
 	memcpy(buffer->stream + buffer->offset, &dato, sizeof(int));
 	buffer->offset +=  sizeof(int);
@@ -194,4 +199,12 @@ char* buffer_read_string(void** stream, int length){
 	*stream += length;
 
 	return string;
+}
+
+void* buffer_read_valor(void** stream, int bytes){
+	void* valor = malloc(bytes);
+	memcpy(valor, *stream, bytes);
+	*stream += bytes;
+
+	return valor;
 }

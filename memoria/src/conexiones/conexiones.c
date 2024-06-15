@@ -25,6 +25,7 @@ void gestionar_conexiones_clientes(void){
 
 void atender_cpu(void){
     atender_cliente(fd_server_memoria, (void *)procesar_operacion_cpu, memoria_log_debugg, "CPU");
+    // enviar tam_pagina
 }
 void atender_kernel(void){
     atender_cliente(fd_server_memoria, (void *)procesar_operacion_kernel, memoria_log_debugg, "KERNEL");

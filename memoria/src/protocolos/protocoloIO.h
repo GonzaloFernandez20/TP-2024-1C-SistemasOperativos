@@ -2,6 +2,7 @@
 #define MEMORIA_PROTOCOLO_IO_H_
 
 #include <include/estructuras.h>
+#include <protocolos/accesoEspacioUsuario.h>
 
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>

@@ -126,26 +126,19 @@ void mov_out(void) {
 }
 
 //RESIZE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- * RESIZE (Tamaño): 
- * Solicitará a la Memoria ajustar el tamaño del proceso al tamaño pasado por parámetro. 
- * En caso de que la respuesta de la memoria sea Out of Memory, 
- * se deberá devolver el contexto de ejecución al Kernel informando de esta situación.
- * 
- * Ej: RESIZE 128
- * */ 
+/*Solicitará a la Memoria ajustar el tamaño del proceso al tamaño pasado por parámetro. En caso de que la respuesta de la memoria sea Out of Memory, 
+se deberá devolver el contexto de ejecución al Kernel informando de esta situación.*/ 
 void resize(void) {
     int tamanio = atoi(instruccion_ejecutando[1]);
 
-    int ok = solicitar_ajustar_tamanio_de_proceso_a_memoria(tamanio);
+    int mensaje_ok = solicitar_ajustar_tamanio(tamanio);
     
-    if(!ok) { // El error Out of Memory será representada con un 0. Si not ok entonces devolvemos contexto de ejecución con el motivo 
-        int motivo = OUT_OF_MEMORY;
-        devolver_contexto_ejecucion(motivo);
+    if(!mensaje_ok) { // El error Out of Memory será representada con un 0. Si not ok entonces devolvemos contexto de ejecución con el motivo 
+        devolver_contexto_ejecucion(OUT_OF_MEMORY);
+        se_devolvio_contexto = 1;
+        hay_interrupcion = 0;
     }
-
 }
-
 
 //COPY_STRING////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
@@ -229,6 +222,7 @@ void io_gen_sleep(void){
     int unidades_de_trabajo = atoi(instruccion_ejecutando[2]);
     devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz,unidades_de_trabajo);
     se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
 }
 
 //EXIT////////////////////////////////////////////////////////////////////////////////////////////////

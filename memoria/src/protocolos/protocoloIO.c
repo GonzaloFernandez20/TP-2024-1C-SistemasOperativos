@@ -12,13 +12,13 @@ void *procesar_operacion_entradaSalida(void *fd_IO_casteado)
 	{
 		int cod_op = recibir_operacion(fd_IO);
 
-		switch (cod_op)
-		{
-		case READ_DIRECCION_FISICA:
-			atender_peticion_de_lectura();
+		switch (cod_op) {
+		case LECTURA:
+			realizar_lectura(fd_IO);
 			break;
-		case WRITE_DIRECCION_FISICA:
-			atender_peticion_de_escritura();
+			
+		case ESCRITURA:
+			realizar_escritura(fd_cpu);
 			break;
 		case -1:
 			pthread_mutex_lock(&mutex_log_debug);

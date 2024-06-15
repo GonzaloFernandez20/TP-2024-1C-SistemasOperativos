@@ -1,6 +1,7 @@
 #include <protocolos/protocoloMemoria.h>
 
 
+///// Peticion de instruccion//////////////////////////////////////////////////////////////////////////////////////////////
 char* solicitar_instruccion_a_memoria(){
 	t_paquete* paquete = crear_paquete(OBTENER_INSTRUCCION);
 
@@ -20,7 +21,7 @@ char* _recibir_instruccion(void){
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != INSTRUCCION){ 
 		perror("El mensaje recibido no es una instruccion.");
-		return "OPCODE ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
+		return "OPCODE ERROR";	
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
@@ -36,11 +37,10 @@ char* _recibir_instruccion(void){
 	return instruccion;                
 }
 
+///// Peticion de cambio de tamaño//////////////////////////////////////////////////////////////////////////////////////////////
 
-
-// Solicitud a Memoria para cambiar tamaño del proceso (identicado por PID) al tamaño nuevo especificado.
-bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int tamanio_nuevo) {
-	t_paquete* paquete = crear_paquete(CAMBIO_TAMANIO);
+int solicitar_ajustar_tamanio(int tamanio_nuevo) {
+	t_paquete* paquete = crear_paquete(AJUSTAR_TAMANIO);
 
 	int buffer_size = 2*sizeof(int);
 	crear_buffer(paquete, buffer_size);
@@ -51,24 +51,10 @@ bool solicitar_ajustar_tamanio_de_proceso_a_memoria(int tamanio_nuevo) {
 	enviar_paquete(paquete, fd_conexion_memoria);
 	eliminar_paquete(paquete);
 
-	return _recibir_respuesta_por_ajuste_de_tamanio();
-}
+	int respuesta;
+	recv(fd_conexion_memoria, &respuesta, sizeof(int), MSG_WAITALL);
 
-bool _recibir_respuesta_por_ajuste_de_tamanio(void) {
-	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
-    if(codigo_operacion != ESTADO){ 
-		perror("El mensaje recibido no es un estado.");
-		return "OPCODE ERROR";	// 	VER DSP CÓMO NOS CONVIENE MANEJAR EL ERROR 
-	}
-
-	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
-	void* stream = buffer->stream;
-
-	int estado_respuesta = buffer_read_int(&stream);
-
-	eliminar_buffer(buffer);
-
-	return estado_respuesta;
+	return respuesta
 }
 
 
