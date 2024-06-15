@@ -83,6 +83,18 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd){
 
 }
 
+void solicitar_operacion_IO_STDIN_READ(){
+
+	// LOGICA PARA PEDIR UNA PETICION A LA INTERFAZ
+
+}
+
+void solicitar_operacion_IO_STDOUT_WRITE(){
+
+	// LOGICA PARA PEDIR UNA PETICION A LA INTERFAZ
+
+}
+
 void recibir_aviso(char* nombre, int fd){
 	t_buffer *buffer = recibir_buffer(fd);
 	void* stream = buffer->stream;

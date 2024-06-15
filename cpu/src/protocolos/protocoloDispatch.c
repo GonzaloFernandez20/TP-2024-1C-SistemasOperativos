@@ -77,7 +77,6 @@ void devolver_contexto_ejecucion(int motivo){
 }
 
 void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidades_trabajo){
-	int motivo = LLAMADA_IO;
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
     int buffer_size = 6 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
@@ -95,7 +94,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     buffer_add_uint32(paquete->buffer, registros.EDX );
     buffer_add_uint32(paquete->buffer, registros.SI );
     buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, motivo);
+	buffer_add_int(paquete->buffer, LLAMADA_IO);
 	buffer_add_int(paquete->buffer, IO_GEN_SLEEP);
 	buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
@@ -110,7 +109,6 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
 }
 
 void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
-	int motivo = LLAMADA_IO;
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 
     int buffer_size = 4 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(recurso) + 1; 
@@ -128,7 +126,7 @@ void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
     buffer_add_uint32(paquete->buffer, registros.EDX );
     buffer_add_uint32(paquete->buffer, registros.SI );
     buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, motivo);
+	buffer_add_int(paquete->buffer, LLAMADA_IO);
 	buffer_add_int(paquete->buffer, codigo_recurso);
 	buffer_add_int(paquete->buffer, strlen(recurso) + 1);
 	buffer_add_string(paquete->buffer, recurso);
@@ -139,4 +137,40 @@ void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
 
 	eliminar_paquete(paquete);
     free(recurso);
+}
+
+
+
+void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, char* registro_tamanio){
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+    int cant_direcciones = 0; // DIRECCION
+    int cant_tamanios = 0; // TAMANIO DE LA DIRECCION
+
+    int buffer_size = (5 + cant_direcciones + cant_tamanios) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(registro_tamanio) + 2; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID );
+    buffer_add_uint32(paquete->buffer, registros.PC );
+    buffer_add_uint8(paquete->buffer, registros.AX );
+    buffer_add_uint8(paquete->buffer, registros.BX );
+    buffer_add_uint8(paquete->buffer, registros.CX );
+    buffer_add_uint8(paquete->buffer, registros.DX );
+    buffer_add_uint32(paquete->buffer, registros.EAX );
+    buffer_add_uint32(paquete->buffer, registros.EBX );
+    buffer_add_uint32(paquete->buffer, registros.ECX );
+    buffer_add_uint32(paquete->buffer, registros.EDX );
+    buffer_add_uint32(paquete->buffer, registros.SI );
+    buffer_add_uint32(paquete->buffer, registros.DI );
+	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	buffer_add_int(paquete->buffer, IO_STDIN_READ);
+    buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
+	buffer_add_string(paquete->buffer, nombre_interfaz);
+    buffer_add_int(paquete->buffer, strlen(registro_tamanio) + 1);
+	buffer_add_string(paquete->buffer, registro_tamanio);
+    // Aca se traduce y agrega al paquete
+    for (int i = 0; i < count; i++)
+    {
+        /* code */
+    }
+    
 }

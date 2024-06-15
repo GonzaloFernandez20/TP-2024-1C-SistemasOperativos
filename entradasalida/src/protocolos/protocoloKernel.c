@@ -6,10 +6,12 @@ void atender_peticiones_kernel(void){
 
         switch (cod_op){
 		case IO_GEN_SLEEP:
-            realizar_un_sleep();
+                realizar_un_sleep();
 			break;
-
-
+        case IO_STDIN_READ:
+			break;
+        case IO_STDOUT_WRITE:
+			break;
         default:
             pthread_mutex_lock(&mutex_log_debug);
             log_warning(IO_log_debug,"Instruccion desconocida\n");
