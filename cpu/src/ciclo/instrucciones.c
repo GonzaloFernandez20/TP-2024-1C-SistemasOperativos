@@ -82,11 +82,14 @@ void jnz(void){
  * Ej: MOV_IN EDX ECX
  * */ 
 void mov_in(void) {
-    char* registro_datos = instruccion_ejecutando[1];
-    char* registro_direccion = instruccion_ejecutando[2];    
+    char* registro_datos = strdup(instruccion_ejecutando[1]);
+    char* registro_direccion = strdup(instruccion_ejecutando[2]);    
     
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
+
+    free(registro_datos);
+    free(registro_direccion);
 
     // ya sabemos que todo registro dirección es de 32 bits.
     uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
@@ -107,11 +110,14 @@ void mov_in(void) {
  * Ej: MOV_OUT EDX ECX
  * */ 
 void mov_out(void) {
-    char* registro_direccion = instruccion_ejecutando[1];    
-    char* registro_datos = instruccion_ejecutando[2];
+    char* registro_datos = strdup(instruccion_ejecutando[2]);
+    char* registro_direccion = strdup(instruccion_ejecutando[1]);    
     
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion); 
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
+
+    free(registro_datos);
+    free(registro_direccion);
 
     // ya sabemos que todo registro dirección es de 32 bits.
     uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
