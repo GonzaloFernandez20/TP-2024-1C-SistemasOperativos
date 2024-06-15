@@ -121,9 +121,9 @@ void recibir_handshake(int fd_cliente, t_log* logger){
     int handshake_ok = 0;
     int handshake_error = -1;
     
-    int operacion = recibir_operacion(fd_cliente);
+    int handshake = recibir_operacion(fd_cliente);
 
-    if(operacion == HANDSHAKE){
+    if(handshake == 1){
         send(fd_cliente, &handshake_ok, sizeof(int), 0);
         recibir_presentacion(fd_cliente, logger);
     }

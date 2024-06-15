@@ -17,7 +17,7 @@ char* chequear_parametros(int argc, char* argv[]){
     if(argc < 2) {
         printf("Faltan parametros de entrada\n");
     }
-    char* path_config = strdup(argv[1]);    // recordar liberar el espacio de memoria
+    char* path_config = strdup(argv[1]); 
     
     return path_config;
 }
@@ -31,14 +31,4 @@ t_config* iniciar_config(char* path_config){
 	}
 
 	return nuevo_config;
-}
-
-void inicializar_tail_logs(char* nombre_archivo_log, char* nombre_archivo_log_debug) {
-	
-    // char* cmd_touch = string_from_format("touch %s ; touch %s", nombre_archivo_log, nombre_archivo_log_debug);
-	char* cmd_limpiar_logs_pasados = string_from_format("cat /dev/null > %s ; cat /dev/null > %s", nombre_archivo_log, nombre_archivo_log_debug);
-    char* cmd_tail_logs_in_new_terminal = string_from_format("terminator -x tail -f %s %s & > /dev/null", nombre_archivo_log, nombre_archivo_log_debug);
-
-    system(cmd_limpiar_logs_pasados);
-    system(cmd_tail_logs_in_new_terminal);
 }

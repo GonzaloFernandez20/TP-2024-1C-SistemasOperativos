@@ -1,6 +1,5 @@
 #include <protocolos/protocoloCpu.h>
 
-// Procesa la solicitud de CPU para obtener la instrucción
 void *procesar_operacion_cpu(void *fd_cpu_casteado){
 
     fd_cpu = _deshacer_casting(fd_cpu_casteado);

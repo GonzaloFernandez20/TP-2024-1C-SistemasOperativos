@@ -1,9 +1,6 @@
 #ifndef UTILS_CONEXIONES_H_
 #define UTILS_CONEXIONES_H_
 
-#define MAX_INTENTOS_CONEXION 5
-#define TIEMPO_ESPERA_RECONEXION 5
-
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
