@@ -143,7 +143,7 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamani
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
     int cant_direcciones = list_size(direcciones);
 
-    int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(registro_tamanio) + 2; 
+    int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID );

@@ -74,7 +74,7 @@ bool _recibir_respuesta_por_ajuste_de_tamanio(void) {
 
 
 char* leer_de_memoria(uint32_t direccion_logica) {
-	uint32_t direccion_fisica = dl_a_df(direccion_logica);	// convertimos la dirección lógica a física 
+	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);	// convertimos la dirección lógica a física 
 	_solicitar_lectura_de_memoria(direccion_fisica); 		// pedimos a memoria que nos devuelva el string alojado en la dirección física especificada.
 	char* string_recibido = _recibir_string_por_lectura();
 	log_info(cpu_log, "PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_recibido);
@@ -98,7 +98,7 @@ void _solicitar_lectura_de_memoria(uint32_t direccion_fisica) {
 
 //Recepción de lo que había en la dirección física
 char* _recibir_string_por_lectura(void) {
-    int operacion = recibir_operacion(fd_conexion_memoria);
+    recibir_operacion(fd_conexion_memoria);
 
     t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
     void* stream = buffer->stream;
@@ -112,10 +112,10 @@ char* _recibir_string_por_lectura(void) {
 
 
 char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
-	uint32_t direccion_fisica = dl_a_df(direccion_logica);
+	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);
 	_solicitar_escritura_en_memoria(direccion_fisica, string_a_escribir);
 
-    char* respuesta_peticion = _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
+    _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
 
 	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
 }
@@ -178,7 +178,6 @@ uint32_t _recibir_marco(void) {
 	op_code operacion = recibir_operacion(fd_conexion_memoria);
 	if(operacion != NRO_MARCO) {
 		perror("El mensaje recibido no es un NRO_MARCO.");
-		return "OPCODE_ERROR";	// medio raro, ver cómo cambiar esto después
 	}
 
     t_buffer* buffer = recibir_buffer(fd_conexion_memoria);

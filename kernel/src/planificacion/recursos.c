@@ -68,21 +68,6 @@ void eliminar_instancia_recurso(int PID, t_recurso *recurso){
     if (!encontro_instancia){ recurso->instancias_recursos++; } // GENERO UNA INSTANCIA DEL AIRE
 }
 
-/* void liberar_recursos(int PID) { 
-    t_link_element **elemento = &recursos_usados->head;
-    while (*elemento != NULL) {
-        if (_coincide_pid((*elemento)->data, PID)) {
-            t_link_element *temp = *elemento; // Guarda el puntero al nodo actual
-            *elemento = (*elemento)->next; // Avanza al siguiente nodo
-            _destruir(temp->data); // Libera la memoria del recurso
-            free(temp); // Libera la memoria del nodo
-        } else {
-            elemento = &(*elemento)->next; // Avanza al siguiente nodo
-        }
-    }
-    imprimir_lista(recursos_usados);
-} */
-
 void liberar_recursos(int PID){
     pthread_mutex_lock(&cola_recursos_usados);
     int cant_instancias = list_size(recursos_usados);

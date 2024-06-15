@@ -197,18 +197,11 @@ void io_stdin_read(void) {
         // Ahora ptr_uint32 es un puntero a uint32_t
     } */
 
-    traducir_direcciones(registro_tamanio, registro_direccion);
+    //traducir_direcciones(registro_tamanio, registro_direccion);
 
-    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
+    //devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
 }
 
-
-    if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
-        *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
-    }
-    else{
-        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
-    }
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /**
  * IO_STDOUT_WRITE (Interfaz, Registro Dirección, Registro Tamaño): 
