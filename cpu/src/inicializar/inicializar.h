@@ -1,6 +1,7 @@
 #ifndef CPU_INICIALIZAR_H_
 #define CPU_INICIALIZAR_H_
 
+
 #include <commons/log.h>
 #include <commons/config.h>
 #include <include/estructuras.h>
