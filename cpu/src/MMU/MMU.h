@@ -3,6 +3,7 @@
 
 #include <include/estructuras.h>
 #include <MMU/TLB.h>
+#include <protocolos/protocoloMemoria.h>
 
 uint32_t traducir_DL_a_DF(uint32_t direccion_logica);
 uint32_t obtener_marco(uint32_t nro_pagina);

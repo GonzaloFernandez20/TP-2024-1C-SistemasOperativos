@@ -12,7 +12,9 @@
       "args": ["${workspaceFolder}/${workspaceFolderBasename}.config"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
-      "environment": [],
+      // "environment": [
+      //   {"name": "root", "value": "${workspaceFolder}"}
+      // ],
       "externalConsole": false,
       "MIMode": "gdb",
       "setupCommands": [

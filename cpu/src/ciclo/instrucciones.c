@@ -213,6 +213,12 @@ void io_stdin_read(void) {
  * Ej: IO_STDOUT_WRITE Int3 BX EAX
  * */ 
 void io_stdout_write(void) {
+    char* interfaz = strdup(instruccion_ejecutando[1]);
+    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
+
+    
+
     return;
 }
 

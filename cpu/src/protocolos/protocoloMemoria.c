@@ -118,6 +118,8 @@ char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
     _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
 
 	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
+
+	return respuesta_peticion;
 }
 
 // pasamos la direccion fisica en donde queremos guardar el string.
