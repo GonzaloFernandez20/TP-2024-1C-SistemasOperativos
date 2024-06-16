@@ -21,4 +21,8 @@ void realizar_un_stdin_read();
 void realizar_un_stdout_write();
 
 char* truncar_cadena(char *cadena, int tamanio);
+
+void* leer_de_memoria(int PID, int direccion_fisica, int bytes); // DESPUES VUELA
+
+void peticion_lectura_memoria(int PID, int direccion_fisica, int bytes); // tambien esta
 #endif

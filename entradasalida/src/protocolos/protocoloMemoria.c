@@ -29,16 +29,16 @@ char* leer_direccion_fisica(uint32_t direccionFisica, int* resultado_de_operacio
     return "";
 }
 
-void enviar_a_memoria(void* particion, int bytes, int direccion_fisica){
+void enviar_a_memoria(int PID, void* particion, int bytes, int direccion_fisica){
 
     t_paquete* paquete = crear_paquete(ESCRITURA);
 
-    int buffer_size = sizeof(bytes) + 2 * sizeof(int);
+    int buffer_size = bytes + 2 * sizeof(int);
 
     crear_buffer(paquete, buffer_size);
-
-    buffer_add_int(paquete->buffer, bytes);
+    buffer_add_int(paquete->buffer, PID);
     buffer_add_int(paquete->buffer, direccion_fisica);
+    buffer_add_int(paquete->buffer, bytes);
     buffer_add_valor(paquete->buffer, particion, bytes);
 
     enviar_paquete(paquete, fd_conexion_memoria);

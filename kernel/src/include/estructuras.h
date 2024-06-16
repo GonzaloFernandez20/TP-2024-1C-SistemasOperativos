@@ -54,7 +54,6 @@ typedef struct t_peticion{
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;
 
-
 typedef struct recurso{
     char* nombre_recurso;
     int instancias_recursos;

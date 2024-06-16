@@ -180,3 +180,64 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamani
     free(nombre_interfaz);
 	eliminar_paquete(paquete);
 }
+
+void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tamanio){
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+    int cant_direcciones = list_size(direcciones);
+
+    int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID );
+    buffer_add_uint32(paquete->buffer, registros.PC );
+    buffer_add_uint8(paquete->buffer, registros.AX );
+    buffer_add_uint8(paquete->buffer, registros.BX );
+    buffer_add_uint8(paquete->buffer, registros.CX );
+    buffer_add_uint8(paquete->buffer, registros.DX );
+    buffer_add_uint32(paquete->buffer, registros.EAX );
+    buffer_add_uint32(paquete->buffer, registros.EBX );
+    buffer_add_uint32(paquete->buffer, registros.ECX );
+    buffer_add_uint32(paquete->buffer, registros.EDX );
+    buffer_add_uint32(paquete->buffer, registros.SI );
+    buffer_add_uint32(paquete->buffer, registros.DI );
+	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	buffer_add_int(paquete->buffer, IO_STDOUT_WRITE);
+    buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
+	buffer_add_string(paquete->buffer, nombre_interfaz);
+    buffer_add_int(paquete->buffer, tamanio); 
+    buffer_add_int(paquete->buffer, cant_direcciones);
+
+    for (int i = 0; i < cant_direcciones; i++)
+    {
+        t_datos_acceso *dato = list_remove(direcciones, 0);
+        buffer_add_int(paquete->buffer, dato->bytes);
+        buffer_add_int(paquete->buffer, dato->direccion_fisica);
+        free(dato);
+    }
+    
+    enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
+
+    free(nombre_interfaz);
+	eliminar_paquete(paquete);
+}
+/* 
+int cantidad_direcciones = list_size(direcciones);
+    int offset = 0;
+    
+    for(int i = 0; i < cantidad_direcciones; i++){
+        t_datos_acceso* datos =list_remove(direcciones, 0);
+        int bytes = datos->bytes;
+        int DF = datos->direccion_fisica;
+        free(datos);
+    
+        void* particion = leer_de_memoria(DF,bytes);
+        memcpy(ptr_registro_datos + offset, particion, bytes);
+        offset += bytes;
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(int*)particion);
+        pthread_mutex_unlock(&mutex_log);
+
+    } */

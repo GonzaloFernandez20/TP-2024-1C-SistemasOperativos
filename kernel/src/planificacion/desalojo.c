@@ -143,7 +143,6 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
     }
     else
     {
-
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         nueva_peticion->tamanio_a_leer = buffer_read_int(&stream);
         nueva_peticion->cant_direcciones = buffer_read_int(&stream);
@@ -184,10 +183,10 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
     }
     else
     {
-
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        // PARAMETROS QUE NECESITE LA FUNCION
-        //nueva_peticion->PARAM1 = ...
+        nueva_peticion->tamanio_a_leer = buffer_read_int(&stream);
+        nueva_peticion->cant_direcciones = buffer_read_int(&stream);
+        recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE;
 
         char *pid_string = string_itoa(pcb->pid);

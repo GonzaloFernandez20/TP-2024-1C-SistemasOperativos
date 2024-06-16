@@ -186,13 +186,11 @@ void copy_string(void) {
  * */ 
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
-    //void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    //void* ptr_registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
-    
-    uint32_t registro_direccion = (uint32_t)direccion_del_registro(instruccion_ejecutando[2]);
-    uint32_t tamanio_a_leer = (uint32_t)direccion_del_registro(instruccion_ejecutando[3]);
 
-    traducir_direcciones(tamanio_a_leer, registro_direccion);
+    uintptr_t registro_direccion = (uintptr_t)direccion_del_registro(instruccion_ejecutando[2]);
+    uintptr_t tamanio_a_leer = (uintptr_t)direccion_del_registro(instruccion_ejecutando[3]);
+
+    traducir_direcciones((int)tamanio_a_leer, (uint32_t)registro_direccion);
 
     devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, (int)tamanio_a_leer);
 }
@@ -208,13 +206,14 @@ void io_stdin_read(void) {
  * Ej: IO_STDOUT_WRITE Int3 BX EAX
  * */ 
 void io_stdout_write(void) {
-    char* interfaz = strdup(instruccion_ejecutando[1]);
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
-
+    char* interfaz = instruccion_ejecutando[1];
     
+    uintptr_t registro_direccion = (uintptr_t)direccion_del_registro(instruccion_ejecutando[2]);
+    uintptr_t tamanio_a_leer = (uintptr_t)direccion_del_registro(instruccion_ejecutando[3]);
 
-    return;
+    traducir_direcciones((int)tamanio_a_leer, (uint32_t)registro_direccion);
+
+    devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, (int)tamanio_a_leer);
 }
 
 
@@ -265,24 +264,4 @@ int tamanio_de_registro(char* registro){
     else{
         return sizeof(uint8_t);
     }
-}
-
-void obtener_direcciones_fisicas(void){
-    char* registro_datos = instruccion_ejecutando[1];
-    char* registro_direccion = instruccion_ejecutando[2];    
-    
-    void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
-    void* ptr_registro_datos = direccion_del_registro(registro_datos);
-
-    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // puede almacenar uint8_t también
-    int tamanio;
-
-    if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {
-        tamanio = 1; // tamaño a leer/escribir es de 1 byte -> tamaño del registro del que se lee o donde se guarda
-    }
-    else {
-        tamanio = 4; // tamaño a leer/escribir es de 4 byte -> tamaño del registro del que se lee o donde se guarda
-    } 
-
-    traducir_direcciones(tamanio, direccion_logica); // genera la lista global con los datos para el acceso a cada pagina
 }

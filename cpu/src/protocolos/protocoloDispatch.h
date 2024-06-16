@@ -15,4 +15,5 @@ void devolver_contexto_ejecucion(int motivo);
 void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidades_trabajo);
 void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso);
 void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamanio);
+void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tamanio);
 #endif 

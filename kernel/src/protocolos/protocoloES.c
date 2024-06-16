@@ -84,8 +84,28 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd){
 }
 
 void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
-
 	t_paquete* paquete = crear_paquete(IO_STDIN_READ);
+
+	int buffer_size = 3 * sizeof(int) + 2 * peticion->cant_direcciones * sizeof(int); 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, peticion->tamanio_a_leer);
+	buffer_add_int(paquete->buffer, peticion->cant_direcciones);
+
+	for (int i = 0; i < peticion->cant_direcciones; i++)
+    {
+        t_datos_acceso *dato = list_remove(peticion->direcciones, 0);
+        buffer_add_int(paquete->buffer, dato->bytes);
+        buffer_add_int(paquete->buffer, dato->direccion_fisica);
+        free(dato);
+    }
+	enviar_paquete(paquete, fd);
+	eliminar_paquete(paquete);
+}
+
+void solicitar_operacion_IO_STDOUT_WRITE(t_peticion* peticion, int PID, int fd){
+	t_paquete* paquete = crear_paquete(IO_STDOUT_WRITE);
 
 	int buffer_size = 3 * sizeof(int) + 2 * peticion->cant_direcciones * sizeof(int); 
 	crear_buffer(paquete, buffer_size);
@@ -103,15 +123,7 @@ void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
     }
 
 	enviar_paquete(paquete, fd);
-
 	eliminar_paquete(paquete);
-
-}
-
-void solicitar_operacion_IO_STDOUT_WRITE(){
-
-	// LOGICA PARA PEDIR UNA PETICION A LA INTERFAZ
-
 }
 
 void recibir_aviso(char* nombre, int fd){

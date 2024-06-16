@@ -31,7 +31,7 @@ void agregar_a_TLB(uint32_t nro_pagina, uint32_t nro_marco) {
 //     free(entrada);
 // }
 
-void _eliminar_una_entrada_con_algoritmo() {
+void _eliminar_una_entrada_con_algoritmo(void){
 
     if(!strcmp(ALGORITMO_TLB, FIFO))  // saco el primero que se metió a la lista, osea el que está en indice 0
     {
@@ -125,21 +125,20 @@ res_busqueda _buscar_entrada_tlb(t_entrada_tlb *ptr_entrada, int *ptr_indice, in
  * @param nro_marco Un puntero a una variable en donde se guardará el nro de marco encontrado.
  * 
 */
-tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, uint32_t* nro_marco) {
+tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, int *nro_marco) {
 
     int indice = 0; // empezar desde el indice 0 a buscar
     t_entrada_tlb entrada;
     res_busqueda res = _buscar_entrada_tlb(&entrada, &indice, PID, nro_pagina);
-
     // SI LA ENCUENTRA
     if(res == SEARCH_OK) {
        *nro_marco = entrada.nro_marco;
        log_info(cpu_log, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
     }
-
     // SI NO LA ENCUENTRA
     log_info(cpu_log, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
     return MISS;
 }
+
 

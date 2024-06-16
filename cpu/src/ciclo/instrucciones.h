@@ -3,6 +3,7 @@
 
 #include <include/estructuras.h>
 #include <pthread.h>
+#include <stdint.h>
 
 #include <commons/collections/dictionary.h>
 #include <commons/string.h>
@@ -41,7 +42,5 @@ void exit_os(void);
 void* direccion_del_registro(char* nombre_registro);
 
 int tamanio_de_registro(char* registro);
-
-void obtener_direcciones_fisicas(void);
 
 #endif
