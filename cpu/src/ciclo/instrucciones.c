@@ -81,21 +81,44 @@ void jnz(void){
  * Ej: MOV_IN EDX ECX
  * */ 
 void mov_in(void) {
-    char* registro_datos = strdup(instruccion_ejecutando[1]);
-    char* registro_direccion = strdup(instruccion_ejecutando[2]);    
+    char* registro_datos = instruccion_ejecutando[1];
+    char* registro_direccion = instruccion_ejecutando[2];    
     
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
 
-    free(registro_datos);
-    free(registro_direccion);
+    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // puede almacenar uint8_t también
+    int tamanio;
 
-    // ya sabemos que todo registro dirección es de 32 bits.
-    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
+    if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {
+        tamanio = 1; // tamaño a leer/escribir es de 1 byte -> tamaño del registro del que se lee o donde se guarda
+    }
+    else {
+        tamanio = 4; // tamaño a leer/escribir es de 4 byte -> tamaño del registro del que se lee o donde se guarda
+    } 
+
+    traducir_direcciones(tamanio, direccion_logica); // genera la lista global con los datos para el acceso a cada pagina
     
-    char* dato_leido = leer_de_memoria(direccion_logica);
+    int cantidad_direcciones = list_size(direcciones);
+    int offset = 0;
+    
+    for(int i = 0; i < cantidad_direcciones; i++){
+        t_datos_acceso* datos =list_remove(direcciones, 0);
+        int bytes = datos->bytes;
+        int DF = datos->direccion_fisica;
+        free(datos);
+    
+        void* particion = leer_de_memoria(DF,bytes);
+        memcpy(ptr_registro_datos + offset, particion, bytes);
+        offset += bytes;
 
-    *(char*)ptr_registro_datos = dato_leido;
+        pthread_mutex_lock(&mutex_log);
+            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(int*)particion);
+        pthread_mutex_unlock(&mutex_log);
+
+    }
+    
+
 }
 
 
@@ -109,20 +132,11 @@ void mov_in(void) {
  * Ej: MOV_OUT EDX ECX
  * */ 
 void mov_out(void) {
-    char* registro_datos = strdup(instruccion_ejecutando[2]);
-    char* registro_direccion = strdup(instruccion_ejecutando[1]);    
     
-    void* ptr_registro_direccion = direccion_del_registro(registro_direccion); 
-    void* ptr_registro_datos = direccion_del_registro(registro_datos);
+    
+    /*char* datos_a_escribir = *(char*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO.
 
-    free(registro_datos);
-    free(registro_direccion);
-
-    // ya sabemos que todo registro dirección es de 32 bits.
-    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
-    char* datos_a_escribir = *(char*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO.
-
-    escribir_en_memoria(direccion_logica, datos_a_escribir);    
+    escribir_en_memoria(direccion_logica, datos_a_escribir); */   
 }
 
 //RESIZE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -149,7 +163,7 @@ void resize(void) {
  * Ej: COPY_STRING 8
  * */
 void copy_string(void) {
-    int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
+    /*int cantidad_de_bytes = atoi(instruccion_ejecutando[1]);
 
     uint32_t dl_origen = registros.SI;   // dirección lógica orígen
     uint32_t dl_destino = registros.DI;  // dirección lógica destino
@@ -157,7 +171,7 @@ void copy_string(void) {
     for(size_t offset=0; offset<cantidad_de_bytes; offset++) {
         char* string_leido = leer_de_memoria(dl_origen + offset);
         escribir_en_memoria(dl_destino + offset, string_leido);
-    }
+    }*/
 
 }
 
@@ -173,9 +187,9 @@ void copy_string(void) {
  * Ej: IO_STDIN_READ Int2 EAX AX
  * */ 
 void io_stdin_read(void) {
-    char* interfaz = instruccion_ejecutando[1];
+    /*char* interfaz = instruccion_ejecutando[1];
 
-    /* void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+     void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
     void* ptr_registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
     uint8_t* ptr_uint8;
@@ -263,4 +277,24 @@ int tamanio_de_registro(char* registro){
     else{
         return sizeof(uint8_t);
     }
+}
+
+void obtener_direcciones_fisicas(void){
+    char* registro_datos = instruccion_ejecutando[1];
+    char* registro_direccion = instruccion_ejecutando[2];    
+    
+    void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
+    void* ptr_registro_datos = direccion_del_registro(registro_datos);
+
+    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // puede almacenar uint8_t también
+    int tamanio;
+
+    if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {
+        tamanio = 1; // tamaño a leer/escribir es de 1 byte -> tamaño del registro del que se lee o donde se guarda
+    }
+    else {
+        tamanio = 4; // tamaño a leer/escribir es de 4 byte -> tamaño del registro del que se lee o donde se guarda
+    } 
+
+    traducir_direcciones(tamanio, direccion_logica); // genera la lista global con los datos para el acceso a cada pagina
 }

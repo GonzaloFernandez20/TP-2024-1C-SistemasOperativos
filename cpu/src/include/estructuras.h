@@ -65,7 +65,7 @@ extern pthread_mutex_t mutex_log_debug;
 extern char *path_config;
 extern t_config_cpu config_cpu;
 
-extern int fd_dispatch_server;l
+extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
 extern int fd_dispatch;

@@ -6,18 +6,17 @@
  * número_página = floor(dirección_lógica / tamaño_página)
  * desplazamiento = dirección_lógica - número_página * tamaño_página
  * 
- * df = número_página
 */
-uint32_t traducir_DL_a_DF(uint32_t direccion_logica) {
+int traducir_DL_a_DF(uint32_t direccion_logica) {
     size_t tamanio_pagina = TAM_PAGINA;  
 
-    uint32_t nro_pagina = direccion_logica / tamanio_pagina;       // en C, una división entre Enteros resulta en un Entero, asi que no es necesario usar floor().
-    uint32_t desplazamiento = direccion_logica % tamanio_pagina;   // el resto de la division 
+    int nro_pagina = direccion_logica / tamanio_pagina;       // en C, una división entre Enteros resulta en un Entero, asi que no es necesario usar floor().
+    int desplazamiento = direccion_logica % tamanio_pagina;   // el resto de la division 
     
     // Debo ver qué marco le corresponde al nro_pagina.
-    uint32_t nro_marco = obtener_marco(nro_pagina);
+    int nro_marco = obtener_marco(nro_pagina);
 
-    uint32_t direccion_fisica = nro_marco * tamanio_pagina + desplazamiento;  // el tamaño del marco es igual al tamaño de página, y el desplazamiento se mantiene igual
+    int direccion_fisica = nro_marco * tamanio_pagina + desplazamiento;  // el tamaño del marco es igual al tamaño de página, y el desplazamiento se mantiene igual
 
     return direccion_fisica;
 }
@@ -29,8 +28,8 @@ uint32_t traducir_DL_a_DF(uint32_t direccion_logica) {
  * la Tabla de Páginas del proceso actual.
  * 
  * */ 
-uint32_t obtener_marco(uint32_t nro_pagina) {
-    uint32_t nro_marco;
+int obtener_marco(int nro_pagina) {
+    int nro_marco;
 
     tlb_res res = consultar_marco_en_TLB(nro_pagina, &nro_marco);
 
@@ -44,8 +43,8 @@ uint32_t obtener_marco(uint32_t nro_pagina) {
     return nro_marco;
 }
 // ARMA UNA LISTA DE LAS DIRECCIONES FISICAS NECESARIAS CON LA CANTIDAD DE BYTES QUE VA EN CADA UNA PARA LA OPERACION QUE SOLICITE
-void traducir_direcciones(uint32_t tamanio, uint32_t direccion_logica){ 
-    int bytes_restantes = (int)tamanio; // INICIALMENTE TODOS
+void traducir_direcciones(int tamanio, uint32_t direccion_logica){ 
+    int bytes_restantes = tamanio; // INICIALMENTE TODOS
     int cant_paginas = 0;
     int bytes_consumidos = 0;
 
@@ -80,7 +79,7 @@ void traducir_direcciones(uint32_t tamanio, uint32_t direccion_logica){
 }
 
 
-void agregar_direccion(uint32_t bytes, uint32_t direccion){
+void agregar_direccion(int bytes, int direccion){
     t_datos_acceso *nueva_direccion = malloc(sizeof(t_datos_acceso));
     nueva_direccion->bytes = bytes;
     nueva_direccion->direccion_fisica = direccion;
