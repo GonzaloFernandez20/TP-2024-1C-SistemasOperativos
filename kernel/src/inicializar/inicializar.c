@@ -4,7 +4,7 @@
 void init(void){
     kernel_log = iniciar_logger(NOMBRE_ARCHIVO_LOG, "KERNEL", 0, LOG_LEVEL_DEBUG);                
     kernel_log_debugg = iniciar_logger(NOMBRE_ARCHIVO_LOG_DEBUG, "KERNEL", 0, LOG_LEVEL_DEBUG);
-    inicializar_tail_logs(NOMBRE_ARCHIVO_LOG, NOMBRE_ARCHIVO_LOG_DEBUG);     // permitirá separar los logs de la consola interactiva del Kernel.
+    //inicializar_tail_logs(NOMBRE_ARCHIVO_LOG, NOMBRE_ARCHIVO_LOG_DEBUG);     // permitirá separar los logs de la consola interactiva del Kernel.
     _leer_configuracion(path_config);
     inicializar_semaforos();
     iniciar_colas_planificacion();
