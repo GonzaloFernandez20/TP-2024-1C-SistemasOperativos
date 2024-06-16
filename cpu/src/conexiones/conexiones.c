@@ -55,6 +55,7 @@ void conectar_memoria(void){
         enviar_handshake(fd_conexion_memoria, "CPU", cpu_log_debug);
 
         int RECORDARME_DESCOMENTAR_ESTO_CUANDO_ESTE_LISTO_MEMORIA = 1;
+        TAM_PAGINA=32;
         // recv(fd_conexion_memoria, &TAM_PAGINA, sizeof(int), MSG_WAITALL);
         // log_info(cpu_log_debug, "Recibido valor de TAM_PAGINA=%d ", TAM_PAGINA);
     }

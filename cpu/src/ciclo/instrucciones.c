@@ -53,7 +53,7 @@ void sub(void){
 //Si el valor del registro es distinto de cero, actualiza el program counter al número de instrucción pasada por parámetro.
 void jnz(void){
     char* registro = instruccion_ejecutando[1];
-    int PC_de_instruccion = atoi(instruccion_ejecutando[2]);  // se espera un program counter
+    int PC_de_instruccion = atoi(instruccion_ejecutando[2]);  // se espera un program counter (número)
 
     uint32_t valor_del_registro; // puede almacenar uint8_t también
 
@@ -213,6 +213,8 @@ void io_stdout_write(void) {
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
     
+
+    free(interfaz);
 
     return;
 }
