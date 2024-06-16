@@ -95,6 +95,8 @@ void realizar_un_stdin_read(){
     // ACA YA RECIBI TODO EL BUFFER ENVIADO DESDE KERNEL
     eliminar_buffer(buffer);
     free(cadena_truncada);
+
+    mandar_aviso_kernel(PID);
 }
 
 
@@ -143,6 +145,8 @@ void realizar_un_stdout_write(){
     pthread_mutex_unlock(&mutex_log_debug);
     
     free(cadena_rearmada);
+
+    mandar_aviso_kernel(PID);
 }
     
 /* 

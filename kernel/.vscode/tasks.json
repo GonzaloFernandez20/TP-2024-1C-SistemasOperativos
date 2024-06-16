@@ -10,7 +10,7 @@
     "cwd": "${workspaceFolder}"
   },
   "tasks": [
-    {
+    /* {
       "label": "touch logs", // crea los archivos log si todavia no fueron creados
       "command": "touch ${this_module}.log ; touch ${this_module}_debug.log",
       "type": "shell",
@@ -24,7 +24,7 @@
       "dependsOn":[
         "touch logs"
       ]
-    },
+    }, */
     {
       "label": "build kernel",
       "command": "make all",

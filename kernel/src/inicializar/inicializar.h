@@ -1,8 +1,5 @@
-#ifndef MEMORIA_INICIALIZAR_H_INCLUDED
-#define MEMORIA_INICIALIZAR_H_INCLUDED
-
-#define NOMBRE_ARCHIVO_LOG "kernel.log"
-#define NOMBRE_ARCHIVO_LOG_DEBUG "kernel_debug.log"
+#ifndef KERNEL_INICIALIZAR_H_INCLUDED
+#define KERNEL_INICIALIZAR_H_INCLUDED
 
 
 #include <include/estructuras.h>
