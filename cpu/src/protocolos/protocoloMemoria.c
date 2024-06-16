@@ -36,6 +36,39 @@ char* _recibir_instruccion(void){
 	return instruccion;                
 }
 
+/// Peticion marco ////////////////////////////////////////////////////////////////////////////////////////
+int consultar_marco_en_TP(int nro_pagina) {
+	t_paquete* paquete = crear_paquete(OBTENER_NRO_MARCO);
+
+	int buffer_size = 2* sizeof(int);
+    crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID);			// le paso el pid del proceso actual.
+    buffer_add_int(paquete->buffer, nro_pagina);	// le paso el número de página del cual quiero saber su marco.
+
+    enviar_paquete(paquete, fd_conexion_memoria);
+    
+    eliminar_paquete(paquete);
+	
+	return recibir_marco();
+}
+
+int recibir_marco(void) {
+	op_code operacion = recibir_operacion(fd_conexion_memoria);
+	if(operacion != MARCO) {
+		perror("El mensaje recibido no es un NRO_MARCO.");
+	}
+
+    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
+    void* stream = buffer->stream;
+
+    int nro_marco = buffer_read_int(&stream);
+
+    eliminar_buffer(buffer);
+
+    return nro_marco;
+} 
+
 ///// Peticion de cambio de tamaño//////////////////////////////////////////////////////////////////////////////////////////////
 
 int solicitar_ajustar_tamanio(int tamanio_nuevo){
@@ -92,122 +125,23 @@ void peticion_lectura_memoria(int direccion_fisica, int bytes) {
 }
 
 
+//// Peticion escritura ////////////////////////////////////////////////////////////////////////////////////////////////
+void escribir_en_memoria(void* particion, int bytes, int direccion_fisica){
 
+    t_paquete* paquete = crear_paquete(ESCRITURA);
 
-
-
-
-
-
-
-
-
-
-//Recepción de lo que había en la dirección física
-char* _recibir_string_por_lectura(void) {
-    recibir_operacion(fd_conexion_memoria);
-
-    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
-    void* stream = buffer->stream;
-    size_t string_length = buffer_read_int(&stream); //revisar si se envia el \0 desde memoria
-    char* string_recibido = buffer_read_string(&stream, string_length);
-
-    eliminar_buffer(buffer);
-
-    return string_recibido; 
-}
-
-
-
-
-
-
-
-
-/*char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
-	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);
-	_solicitar_escritura_en_memoria(direccion_fisica, string_a_escribir);
-
-    _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
-
-	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
-
-	return respuesta_peticion;
-}*/
-
-// pasamos la direccion fisica en donde queremos guardar el string.
-void _solicitar_escritura_en_memoria(uint32_t direccion_fisica, char* string) {
-	t_paquete* paquete = crear_paquete(ESCRITURA);
-
-    int buffer_size = sizeof(direccion_fisica)+sizeof(int)+strlen(string)+1;
+    int buffer_size = bytes + 3 * sizeof(int);
 
     crear_buffer(paquete, buffer_size);
 
-    buffer_add_uint32(paquete->buffer, direccion_fisica);
-    buffer_add_int(paquete->buffer, strlen(string)+1);
-    buffer_add_string(paquete->buffer, string);
+    buffer_add_int(paquete->buffer, PID);
+    buffer_add_int(paquete->buffer, direccion_fisica);
+	buffer_add_int(paquete->buffer, bytes);
+    buffer_add_valor(paquete->buffer, particion, bytes);
 
     enviar_paquete(paquete, fd_conexion_memoria);
-    
     eliminar_paquete(paquete);
+ 
+    int respuesta; // ME QUEDO ESPERANDO LA RESPUESTA DE PARTE DE MEMORIA ...
+    recv(fd_conexion_memoria, &respuesta, sizeof(int), MSG_WAITALL); 
 }
-
-// podemos recibir un "OK" o un "ERROR" desde Memoria
-/*char* _recibir_respuesta_por_escritura(void) {
-	int operacion = recibir_operacion(fd_conexion_memoria);
-	if(operacion!=ESTADO) {
-		perror("El mensaje recibido no es un ESTADO.");
-		return "OPCODE ERROR";
-	}
-
-    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
-    void* stream = buffer->stream;
-    size_t string_length = buffer_read_int(&stream);
-    char* string_recibido = buffer_read_string(&stream, string_length);
-
-    eliminar_buffer(buffer);
-
-    return string_recibido; 
-}*/
-
-uint32_t consultar_marco_en_TP(uint32_t nro_pagina) {
-	_solicitar_busqueda_de_marco_en_TP(nro_pagina);
-	return _recibir_marco();
-}
-
-void _solicitar_busqueda_de_marco_en_TP(uint32_t nro_pagina) {
-	t_paquete* paquete = crear_paquete(OBTENER_NRO_MARCO);
-
-	size_t buffer_size = sizeof(nro_pagina);
-    crear_buffer(paquete, buffer_size);
-
-	buffer_add_int(paquete->buffer, PID);			// le paso el pid del proceso actual.
-    buffer_add_uint32(paquete->buffer, nro_pagina);	// le paso el número de página del cual quiero saber su marco.
-
-    enviar_paquete(paquete, fd_conexion_memoria);
-    
-    eliminar_paquete(paquete);
-}
-
-uint32_t _recibir_marco(void) {
-	op_code operacion = recibir_operacion(fd_conexion_memoria);
-	if(operacion != MARCO) {
-		perror("El mensaje recibido no es un NRO_MARCO.");
-	}
-
-    t_buffer* buffer = recibir_buffer(fd_conexion_memoria);
-    void* stream = buffer->stream;
-    uint32_t nro_marco = buffer_read_uint32(&stream);
-
-    eliminar_buffer(buffer);
-
-    return nro_marco;
-} 
-
-// bool checkear_operacion(op_code codigo_de_operacion) {
-// 	op_code operacion = recibir_operacion(fd_conexion_memoria);
-// 	if(operacion != codigo_de_operacion) {
-// 		perror("El mensaje recibido no es un NRO_MARCO.");
-// 		return 0;	// medio raro, ver cómo cambiar esto después
-// 	}
-// }

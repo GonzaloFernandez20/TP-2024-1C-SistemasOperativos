@@ -59,6 +59,8 @@ void devolver_instruccion(void){
 	int PID = buffer_read_int(&stream);
 	int PC = buffer_read_int(&stream);
 
+	eliminar_buffer(buffer);
+
 	int indice_proceso = buscar_PID_memoria_instrucciones(PID);
 
 	pthread_mutex_lock(&mutex_memoria_instrucciones);
@@ -97,6 +99,8 @@ void ajustar_tamanio_proceso(void){
 
 	int PID = buffer_read_int(&stream);
 	int tamanio = buffer_read_int(&stream);
+
+	eliminar_buffer(buffer);
 
 	int indice_tabla = buscar_PID_tablas_paginas(PID);
 
@@ -172,6 +176,8 @@ void acceso_a_tabla_paginas(void){
 
 	int PID = buffer_read_int(&stream);
 	int pagina = buffer_read_int(&stream);
+
+	eliminar_buffer(buffer);
 
 	int indice_tabla = buscar_PID_tablas_paginas(PID);
 

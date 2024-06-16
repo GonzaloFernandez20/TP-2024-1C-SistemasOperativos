@@ -182,6 +182,9 @@ void eliminar_proceso(void){
 	void* stream = buffer->stream;
 
     int PID = buffer_read_int(&stream);
+
+    eliminar_buffer(buffer);
+    
     liberar_estructuras_asociadas(PID);
     marcar_libre_espacio(PID);
     

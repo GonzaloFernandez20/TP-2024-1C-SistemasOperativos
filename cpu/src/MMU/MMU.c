@@ -8,7 +8,7 @@
  * 
 */
 int traducir_DL_a_DF(uint32_t direccion_logica) {
-    size_t tamanio_pagina = TAM_PAGINA;  
+    int tamanio_pagina = TAM_PAGINA;  
 
     int nro_pagina = direccion_logica / tamanio_pagina;       // en C, una división entre Enteros resulta en un Entero, asi que no es necesario usar floor().
     int desplazamiento = direccion_logica % tamanio_pagina;   // el resto de la division 
