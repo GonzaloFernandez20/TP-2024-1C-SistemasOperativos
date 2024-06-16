@@ -20,8 +20,7 @@ char* solicitar_instruccion_a_memoria(){
 char* _recibir_instruccion(void){
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != INSTRUCCION){ 
-		perror("El mensaje recibido no es una instruccion.");
-		return "OPCODE ERROR";	
+		perror("El mensaje recibido no es una instruccion.");	
 	}
 
 	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
@@ -39,7 +38,7 @@ char* _recibir_instruccion(void){
 
 ///// Peticion de cambio de tamaño//////////////////////////////////////////////////////////////////////////////////////////////
 
-int solicitar_ajustar_tamanio(int tamanio_nuevo) {
+int solicitar_ajustar_tamanio(int tamanio_nuevo){
 	t_paquete* paquete = crear_paquete(AJUSTAR_TAMANIO);
 
 	int buffer_size = 2*sizeof(int);
@@ -57,30 +56,52 @@ int solicitar_ajustar_tamanio(int tamanio_nuevo) {
 	return respuesta;
 }
 
+/////// Peticion de lectura //////////////////////////////////////////////////////////////////
+void* leer_de_memoria(int direccion_fisica, int bytes) {
+	peticion_lectura_memoria(direccion_fisica, bytes);
 
+	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
+    if(codigo_operacion != VALOR_LEIDO){ perror("Rompiste todo.");}
 
-char* leer_de_memoria(uint32_t direccion_logica) {
-	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);	// convertimos la dirección lógica a física 
-	_solicitar_lectura_de_memoria(direccion_fisica); 		// pedimos a memoria que nos devuelva el string alojado en la dirección física especificada.
-	char* string_recibido = _recibir_string_por_lectura();
-	log_info(cpu_log, "PID: %d - Acción: LEER - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_recibido);
-	return string_recibido;
+	t_buffer *buffer = recibir_buffer(fd_conexion_memoria);
+	void* stream = buffer->stream;
+
+	int bytes_leidos = buffer_read_int(&stream);
+	void* valor = malloc(bytes_leidos);
+	valor = buffer_read_valor(&stream, bytes);
+
+	eliminar_buffer(buffer);
+
+	return valor;                
 }
 
-//Pedido de lectura de una dirección física
-void _solicitar_lectura_de_memoria(uint32_t direccion_fisica) {
-	
-    t_paquete* paquete = crear_paquete(READ);
+void peticion_lectura_memoria(int direccion_fisica, int bytes) {
+    t_paquete* paquete = crear_paquete(LECTURA);
 
-    size_t buffer_size = sizeof(direccion_fisica);
+    int buffer_size = 3* sizeof(int);
     crear_buffer(paquete, buffer_size);
 
-    buffer_add_uint32(paquete->buffer, direccion_fisica);
+    buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, direccion_fisica);
+	buffer_add_int(paquete->buffer, bytes);
     
     enviar_paquete(paquete, fd_conexion_memoria);
     
     eliminar_paquete(paquete);
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 //Recepción de lo que había en la dirección física
 char* _recibir_string_por_lectura(void) {
@@ -97,7 +118,13 @@ char* _recibir_string_por_lectura(void) {
 }
 
 
-char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
+
+
+
+
+
+
+/*char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
 	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);
 	_solicitar_escritura_en_memoria(direccion_fisica, string_a_escribir);
 
@@ -106,11 +133,11 @@ char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
 	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
 
 	return respuesta_peticion;
-}
+}*/
 
 // pasamos la direccion fisica en donde queremos guardar el string.
 void _solicitar_escritura_en_memoria(uint32_t direccion_fisica, char* string) {
-	t_paquete* paquete = crear_paquete(WRITE);
+	t_paquete* paquete = crear_paquete(ESCRITURA);
 
     int buffer_size = sizeof(direccion_fisica)+sizeof(int)+strlen(string)+1;
 
@@ -126,7 +153,7 @@ void _solicitar_escritura_en_memoria(uint32_t direccion_fisica, char* string) {
 }
 
 // podemos recibir un "OK" o un "ERROR" desde Memoria
-char* _recibir_respuesta_por_escritura(void) {
+/*char* _recibir_respuesta_por_escritura(void) {
 	int operacion = recibir_operacion(fd_conexion_memoria);
 	if(operacion!=ESTADO) {
 		perror("El mensaje recibido no es un ESTADO.");
@@ -141,7 +168,7 @@ char* _recibir_respuesta_por_escritura(void) {
     eliminar_buffer(buffer);
 
     return string_recibido; 
-}
+}*/
 
 uint32_t consultar_marco_en_TP(uint32_t nro_pagina) {
 	_solicitar_busqueda_de_marco_en_TP(nro_pagina);
@@ -164,7 +191,7 @@ void _solicitar_busqueda_de_marco_en_TP(uint32_t nro_pagina) {
 
 uint32_t _recibir_marco(void) {
 	op_code operacion = recibir_operacion(fd_conexion_memoria);
-	if(operacion != NRO_MARCO) {
+	if(operacion != MARCO) {
 		perror("El mensaje recibido no es un NRO_MARCO.");
 	}
 

@@ -7,6 +7,7 @@ void realizar_lectura(int fd_cliente){
 	int PID = buffer_read_int(&stream);
     int DF = buffer_read_int(&stream);
 	int tamanio_bytes = buffer_read_int(&stream);
+    
     void* valor = malloc(tamanio_bytes);
 
     pthread_mutex_lock(&mutex_log);
