@@ -93,9 +93,9 @@ void mov_in(void) {
     // ya sabemos que todo registro dirección es de 32 bits.
     uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
     
-    char* dato_leido = leer_de_memoria(direccion_logica);
+    uint32_t dato_leido = leer_de_memoria(direccion_logica);
 
-    *(char*)ptr_registro_datos = dato_leido;
+    *(uint32_t*)ptr_registro_datos = dato_leido;
 }
 
 
@@ -114,15 +114,21 @@ void mov_out(void) {
     
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion); 
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
-
-    free(registro_datos);
-    free(registro_direccion);
-
     // ya sabemos que todo registro dirección es de 32 bits.
     uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // casteo el void* a uint32_t* y luego lo desreferencio 
-    char* datos_a_escribir = *(char*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO.
 
-    escribir_en_memoria(direccion_logica, datos_a_escribir);    
+    if(sizeof(ptr_registro_datos) == sizeof(uint32_t)){
+
+        uint32_t datos_a_escribir = *(uint32_t*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO. 
+        escribir_uint32_t_en_memoria(direccion_logica, datos_a_escribir);        
+    }
+    else{
+
+        uint8_t datos_a_escribir = *(uint8_t*)ptr_registro_datos;    // REVISAR ESTO, MEDIO RARO. 
+        escribir_uint8_t_en_memoria(direccion_logica, datos_a_escribir);
+    }
+    free(registro_datos);
+    free(registro_direccion);
 }
 
 //RESIZE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -163,7 +169,7 @@ void copy_string(void) {
 
     for(size_t offset=0; offset<cantidad_de_bytes; offset++) {
         char* string_leido = leer_de_memoria(dl_origen + offset);
-        escribir_en_memoria(dl_destino + offset, string_leido);
+        escribir_string_en_memoria(dl_destino + offset, string_leido);
     }
 
 }
