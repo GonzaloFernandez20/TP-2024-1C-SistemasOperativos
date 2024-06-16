@@ -8,6 +8,8 @@ void realizar_lectura(int fd_cliente){
     int DF = buffer_read_int(&stream);
 	int tamanio_bytes = buffer_read_int(&stream);
     
+    eliminar_buffer(buffer);
+
     void* valor = malloc(tamanio_bytes);
 
     pthread_mutex_lock(&mutex_log);
@@ -45,6 +47,8 @@ void realizar_escritura(int fd_cliente){
 	int tamanio_bytes = buffer_read_int(&stream);
     void* valor = malloc(tamanio_bytes);
     valor =  buffer_read_valor(&stream, tamanio_bytes);
+
+    eliminar_buffer(buffer);
 
     pthread_mutex_lock(&mutex_log);
         log_info(memoria_log, "PID: < %d > - Accion: < ESCRIBIR > - Direccion fisica: < %d > - Tamaño < %d >", PID, DF, tamanio_bytes);
