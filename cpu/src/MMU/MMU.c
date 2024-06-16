@@ -32,11 +32,15 @@ uint32_t traducir_DL_a_DF(uint32_t direccion_logica) {
 uint32_t obtener_marco(uint32_t nro_pagina) {
     uint32_t nro_marco;
 
-    tlb_res res = consultar_marco_en_TLB(nro_pagina, &nro_marco);
+    if (MAX_ENTRADAS > 0) { 
+        tlb_res tlb_busqueda = consultar_marco_en_TLB(nro_pagina, &nro_marco);
 
-    if (res == MISS) { // si no se encuentra en la TLB, entonces busco en la TP del PID actual en Memoria
+        if (tlb_busqueda == MISS) { // si no se encuentra en la TLB, entonces busco en la TP del PID actual en Memoria
+            nro_marco = consultar_marco_en_TP(nro_pagina);
+            agregar_a_TLB(nro_pagina, nro_marco);
+        }
+    } else {// Si es igual a 0, entonces quiere decir que la TLB está deshabilitada.
         nro_marco = consultar_marco_en_TP(nro_pagina);
-        agregar_a_TLB(nro_pagina, nro_marco);
     }
 
     log_info(cpu_log, "PID: %d - OBTENER MARCO - Página: %d - Marco: %d", PID, nro_pagina, nro_marco);
