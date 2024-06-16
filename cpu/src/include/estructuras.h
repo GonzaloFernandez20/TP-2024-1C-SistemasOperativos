@@ -45,14 +45,6 @@ typedef struct contexto_ejecucion{
     uint32_t DI;    // Contiene la dirección lógica de memoria de destino a donde se va a copiar un string.
 }t_registros_cpu;
 
-
-typedef struct datos_acceso
-{
-    int bytes;
-    int direccion_fisica;
-}t_datos_acceso;
-
-
 //VARIABLES GLOBALES
 
 extern t_log* cpu_log;
@@ -65,7 +57,7 @@ extern pthread_mutex_t mutex_log_debug;
 extern char *path_config;
 extern t_config_cpu config_cpu;
 
-extern int fd_dispatch_server;l
+extern int fd_dispatch_server;
 extern int fd_interrupt_server;
 extern int fd_conexion_memoria;
 extern int fd_dispatch;

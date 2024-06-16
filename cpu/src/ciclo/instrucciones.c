@@ -158,10 +158,7 @@ void copy_string(void) {
         char* string_leido = leer_de_memoria(dl_origen + offset);
         escribir_en_memoria(dl_destino + offset, string_leido);
     }
-
 }
-
-
 //IO_STDIN_READ//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /** 
  * IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): 
@@ -174,25 +171,15 @@ void copy_string(void) {
  * */ 
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
+    //void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    //void* ptr_registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
+    
+    uint32_t registro_direccion = (uint32_t)direccion_del_registro(instruccion_ejecutando[2]);
+    uint32_t tamanio_a_leer = (uint32_t)direccion_del_registro(instruccion_ejecutando[3]);
 
-    /* void* ptr_registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    void* ptr_registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
+    traducir_direcciones(tamanio_a_leer, registro_direccion);
 
-    uint8_t* ptr_uint8;
-    uint32_t* ptr_uint32;
-
-    if(tamanio_de_registro(ptr_registro_direccion) == sizeof(uint8_t)) {
-        ptr_uint8 = (uint8_t*)ptr_registro_direccion;
-        // Ahora ptr_uint8 es un puntero a uint8_t
-    }
-    else {
-        ptr_uint32 = (uint32_t*)ptr_registro_direccion;
-        // Ahora ptr_uint32 es un puntero a uint32_t
-    } */
-
-    //traducir_direcciones(registro_tamanio, registro_direccion);
-
-    //devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
+    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, (int)tamanio_a_leer);
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////

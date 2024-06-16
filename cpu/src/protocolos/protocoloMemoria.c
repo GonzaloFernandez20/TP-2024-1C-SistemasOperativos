@@ -54,7 +54,7 @@ int solicitar_ajustar_tamanio(int tamanio_nuevo) {
 	int respuesta;
 	recv(fd_conexion_memoria, &respuesta, sizeof(int), MSG_WAITALL);
 
-	return respuesta
+	return respuesta;
 }
 
 
@@ -101,7 +101,7 @@ char* escribir_en_memoria(uint32_t direccion_logica, char* string_a_escribir) {
 	uint32_t direccion_fisica = traducir_DL_a_DF(direccion_logica);
 	_solicitar_escritura_en_memoria(direccion_fisica, string_a_escribir);
 
-    _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
+    char* respuesta_peticion = _recibir_respuesta_por_escritura();	// nos dice si todo "OK" o si hubo "ERROR".
 
 	log_info(cpu_log, "PID: %d - Acción: ESCRIBIR - Dirección Física: %d - Valor: %s", PID, direccion_fisica, string_a_escribir);
 

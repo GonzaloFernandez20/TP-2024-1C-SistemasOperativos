@@ -76,6 +76,12 @@ typedef enum code_instruccion{
     X
 } op_code_instruccion;
 
+typedef struct datos_acceso
+{
+    int bytes;
+    int direccion_fisica;
+}t_datos_acceso;
+
 void enviar_handshake(int fd_conexion, char* modulo, t_log* logger);
 
 void enviar_presentacion(char* nombre_modulo, int socket_cliente);

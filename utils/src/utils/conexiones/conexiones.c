@@ -57,44 +57,44 @@ int iniciar_servidor(char* IP, char* PUERTO)
 
 int crear_conexion(char* IP, char* PUERTO)
 {
-struct addrinfo hints;
-struct addrinfo *server_info;
+	struct addrinfo hints;
+	struct addrinfo *server_info;
 
 
-memset(&hints, 0, sizeof(hints));
-hints.ai_family = AF_UNSPEC;
-hints.ai_socktype = SOCK_STREAM;
-hints.ai_flags = AI_PASSIVE;
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_UNSPEC;
+	hints.ai_socktype = SOCK_STREAM;
+	hints.ai_flags = AI_PASSIVE;
 
-int error;
-error = getaddrinfo(IP, PUERTO, &hints, &server_info);
-// chequeo valor de retorno
-if(error){
-	fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
-	return -1;
-}
-
-// Ahora vamos a crear el socket.
-int socket_cliente = socket(server_info->ai_family, 
-							server_info->ai_socktype, 
-							server_info->ai_protocol);
-
-// chequeo valor de retorno
-if(socket_cliente == -1){
-	fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
-    return -1;
-}
-
-error = connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
-// chequeo valor de retorno
-if(error == -1){
-		fprintf(stderr, "Error al conectarse: \n%s", strerror(errno));
-        return -1;
+	int error;
+	error = getaddrinfo(IP, PUERTO, &hints, &server_info);
+	// chequeo valor de retorno
+	if(error){
+		fprintf(stderr,"Error en getaddrinfo: %s\n",gai_strerror(error));
+		return -1;
 	}
 
-freeaddrinfo(server_info);
+	// Ahora vamos a crear el socket.
+	int socket_cliente = socket(server_info->ai_family, 
+								server_info->ai_socktype, 
+								server_info->ai_protocol);
 
-return socket_cliente;
+	// chequeo valor de retorno
+	if(socket_cliente == -1){
+		fprintf(stderr, "Error al crear el socket: \n%s", strerror(errno));
+		return -1;
+	}
+
+	error = connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen);
+	// chequeo valor de retorno
+	if(error == -1){
+			fprintf(stderr, "Error al conectarse: \n%s", strerror(errno));
+			return -1;
+		}
+
+	freeaddrinfo(server_info);
+
+	return socket_cliente;
 }
 
 

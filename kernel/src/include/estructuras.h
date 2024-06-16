@@ -47,6 +47,9 @@ typedef struct interfaz_conectada{
 
 typedef struct t_peticion{
     int unidades_trabajo;
+    int tamanio_a_leer;
+    int cant_direcciones;
+    t_list* direcciones;
     //agregaremos los argumentos que otras funciones necesiten
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;

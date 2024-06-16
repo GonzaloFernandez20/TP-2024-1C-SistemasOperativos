@@ -7,6 +7,8 @@
 #include <utils/hilos/hilos.h>
 #include <readline/readline.h>
 #include <readline/history.h>
+#include <commons/collections/list.h>
+
 
 void atender_peticiones_kernel(void);
 
@@ -17,4 +19,6 @@ void mandar_aviso_kernel(int PID);
 void realizar_un_stdin_read();
 
 void realizar_un_stdout_write();
+
+char* truncar_cadena(char *cadena, int tamanio);
 #endif

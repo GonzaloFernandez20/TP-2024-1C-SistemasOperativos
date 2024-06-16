@@ -10,6 +10,7 @@ void atender_peticiones_kernel(void){
                 realizar_un_sleep();
 			break;
         case IO_STDIN_READ:
+                realizar_un_stdin_read();
 			break;
         case IO_STDOUT_WRITE:
 			break;
@@ -19,76 +20,7 @@ void atender_peticiones_kernel(void){
             pthread_mutex_unlock(&mutex_log_debug);
             break;
         }
-
     }
-}
-
-void realizar_un_stdin_read(){
-    t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
-	void* stream = buffer->stream;
-	int PID = buffer_read_int(&stream);
-//Hasta acá igual en todas las interfaces
-    int* resultado_de_operacion = malloc(sizeof(int));
-
-    uint32_t direccionFisica = buffer_read_uint32(&stream);
-    char* inputUsuario = readline("Ingrese la información: ");
-    printf("\n");
-    enviar_a_direccion_fisica(inputUsuario, direccionFisica, resultado_de_operacion);    
-    free(inputUsuario);
-
-    t_buffer* bufferRTA = recibir_buffer(fd_conexion_memoria);//no hay que enviar cod op desde memoria
-    void* streamRTA = bufferRTA->stream;
-    int direccion = buffer_read_uint32(&streamRTA);
-    int stringLength = buffer_read_int(&streamRTA);//revisar si se envia el \0 desde memoria
-    char* respuesta = buffer_read_string(&streamRTA, stringLength);
-
-    printf("%s %d\n", respuesta, direccion);
-
-    eliminar_buffer(bufferRTA);
-
-    if(*resultado_de_operacion == FAILED_WRITE){//LOGGEAR ERROR TMB
-
-    }else{//LOGGEAR TRIUNFO?
-    }
-
-
-
-    free(resultado_de_operacion);
-
-//A partir de acá se repite para todas las interfaces
-    pthread_mutex_lock(&mutex_log);
-	log_info(IO_log,"PID: < %d > - Operacion: IO_STDIN_READ", PID);
-    pthread_mutex_unlock(&mutex_log);
-
-    eliminar_buffer(buffer);
-}
-
-
-void realizar_un_stdout_write(){
-    t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
-	void* stream = buffer->stream;
-	int PID = buffer_read_int(&stream);
-//Hasta acá igual en todas las interfaces
-    int* resultado_de_operacion = malloc(sizeof(int));
-
-    uint32_t direccionFisica = buffer_read_uint32(&stream);
-    char* datoEnDireccionFisica = leer_direccion_fisica(direccionFisica, resultado_de_operacion);
-
-    free(datoEnDireccionFisica);
-
-    if(*resultado_de_operacion == FAILED_READ){//LOGGEAR ERROR TMB
-        printf("%s %d\n", datoEnDireccionFisica, direccionFisica);
-    }else{//LOGGEAR TRIUNFO?
-        printf("En la dirección %d estaba el dato : %s", direccionFisica, datoEnDireccionFisica);    
-    }
-
-    free(resultado_de_operacion);
-//A partir de acá se repite para todas las interfaces
-    pthread_mutex_lock(&mutex_log);
-	log_info(IO_log,"PID: < %d > - Operacion: IO_STDOUT_WRITE", PID);
-    pthread_mutex_unlock(&mutex_log);
-
-    eliminar_buffer(buffer);
 }
 
 void realizar_un_sleep(void){
@@ -96,7 +28,6 @@ void realizar_un_sleep(void){
 	void* stream = buffer->stream;
     
 	int PID = buffer_read_int(&stream);
-//Hasta acá igual en todas las interfaces
 
 	int unidades_de_trabajo = buffer_read_int(&stream);
 
@@ -116,6 +47,80 @@ void realizar_un_sleep(void){
     
 }
 
+void realizar_un_stdin_read(){
+    t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
+	void* stream = buffer->stream;
+	int PID = buffer_read_int(&stream);
+
+    pthread_mutex_lock(&mutex_log);
+	    log_info(IO_log,"PID: < %d > - Operacion: IO_STDIN_READ", PID);
+    pthread_mutex_unlock(&mutex_log);
+
+    char* cadena_ingresada = readline("Ingrese la información: ");
+
+    int tamanio_a_leer = buffer_read_int(&stream);
+    int cant_direcciones = buffer_read_int(&stream);
+
+    char* cadena_truncada = truncar_cadena(cadena_ingresada, tamanio_a_leer);
+
+    int desplazamiento = 0;
+    int bytes;
+    int direccion_fisica;
+
+    for (int i = 0; i < cant_direcciones; i++)
+    {
+        bytes = buffer_read_int(&stream);
+        direccion_fisica = buffer_read_int(&stream);
+
+        void* particion = malloc(bytes);
+
+        void* valor = cadena_truncada;
+
+        memcpy(particion, valor + desplazamiento, bytes);
+
+        desplazamiento += bytes;
+
+        pthread_mutex_lock(&mutex_log_debug);
+            log_info(IO_log_debug,"PID: < %d > - Accion: < ESCRIBIR > - Direccion Fisica: < %d > - Valor: < %s >", PID, direccion_fisica, (char*)particion);
+        pthread_mutex_unlock(&mutex_log_debug);
+
+        enviar_a_memoria(particion, bytes, direccion_fisica);
+
+        free(particion);
+    }
+    // ACA YA RECIBI TODO EL BUFFER ENVIADO DESDE KERNEL
+    eliminar_buffer(buffer);
+    free(cadena_truncada);
+}
+
+
+void realizar_un_stdout_write(){
+/*     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
+	void* stream = buffer->stream;
+	int PID = buffer_read_int(&stream);
+//Hasta acá igual en todas las interfaces
+    int* resultado_de_operacion = malloc(sizeof(int));
+
+    uint32_t direccionFisica = buffer_read_uint32(&stream);
+    char* datoEnDireccionFisica = leer_direccion_fisica(direccionFisica, resultado_de_operacion);
+
+    free(datoEnDireccionFisica);
+
+    if(*resultado_de_operacion == FAILED_READ){//LOGGEAR ERROR TMB
+        printf("%s %d\n", datoEnDireccionFisica, direccionFisica);
+    }else{//LOGGEAR TRIUNFO?
+        printf("En la dirección %d estaba el dato : %s", direccionFisica, datoEnDireccionFisica);    
+    }
+
+    free(resultado_de_operacion);
+    pthread_mutex_lock(&mutex_log);
+	log_info(IO_log,"PID: < %d > - Operacion: IO_STDOUT_WRITE", PID);
+    pthread_mutex_unlock(&mutex_log);
+
+    eliminar_buffer(buffer); */
+}
+
+
 void mandar_aviso_kernel(int PID){
     t_paquete* paquete = crear_paquete(OPERACION_COMPLETADA);
 
@@ -126,4 +131,13 @@ void mandar_aviso_kernel(int PID){
 
 	enviar_paquete(paquete, fd_conexion_kernel);
 	eliminar_paquete(paquete);
+}
+
+char* truncar_cadena(char *cadena, int tamanio){
+    if (strlen(cadena) <= tamanio) {return cadena;}
+    char *cadena_truncada = malloc(tamanio + 1);  // +1 para el caracter nulo
+    memcpy(cadena_truncada, cadena, tamanio);
+    cadena_truncada[tamanio] = '\0';
+
+    return cadena_truncada;
 }

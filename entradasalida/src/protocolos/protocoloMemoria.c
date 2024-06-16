@@ -1,7 +1,7 @@
 #include <protocolos/protocoloMemoria.h>
 
 char* leer_direccion_fisica(uint32_t direccionFisica, int* resultado_de_operacion){
-//Pedido de lectura de una dirección física
+/* //Pedido de lectura de una dirección física
     t_paquete* paquete = crear_paquete(READ_DIRECCION_FISICA);
 
     int bufferSize = sizeof(direccionFisica);
@@ -25,26 +25,25 @@ char* leer_direccion_fisica(uint32_t direccionFisica, int* resultado_de_operacio
 
     eliminar_buffer(buffer);
 
-    return datoEnDirFisica;    
+    return datoEnDirFisica;     */
+    return "";
 }
 
-void enviar_a_direccion_fisica(char* info, uint32_t direccionFisica, int* resultado_de_operacion){
-    t_paquete* paquete = crear_paquete(WRITE_DIRECCION_FISICA);
+void enviar_a_memoria(void* particion, int bytes, int direccion_fisica){
 
-    int bufferSize = sizeof(direccionFisica)+sizeof(int)+strlen(info)+1;
+    t_paquete* paquete = crear_paquete(ESCRITURA);
 
-    crear_buffer(paquete, bufferSize);
+    int buffer_size = sizeof(bytes) + 2 * sizeof(int);
 
-    buffer_add_uint32(paquete->buffer,direccionFisica);
-    buffer_add_int(paquete->buffer,strlen(info)+1);
-    buffer_add_string(paquete->buffer,info);
+    crear_buffer(paquete, buffer_size);
 
-    serializar_paquete(paquete, bufferSize + sizeof(int));//buffer + el código de operacion
-    
+    buffer_add_int(paquete->buffer, bytes);
+    buffer_add_int(paquete->buffer, direccion_fisica);
+    buffer_add_valor(paquete->buffer, particion, bytes);
+
     enviar_paquete(paquete, fd_conexion_memoria);
-    
     eliminar_paquete(paquete);
-
-    //TODO BIEN?  
-    *resultado_de_operacion = recibir_operacion(fd_conexion_memoria);   
+ 
+    int respuesta; // ME QUEDO ESPERANDO LA RESPUESTA DE PARTE DE MEMORIA ...
+    recv(fd_conexion_memoria, &respuesta, sizeof(int), MSG_WAITALL);
 }

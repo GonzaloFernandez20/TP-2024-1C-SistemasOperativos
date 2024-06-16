@@ -26,4 +26,5 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream);
 int validar_peticion(char* interfaz, op_code_instruccion llamada);
 int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo);
 int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion array[]); 
+void recibir_paquete_direcciones(t_peticion* peticion, int cant_direcciones, void *stream);
 #endif

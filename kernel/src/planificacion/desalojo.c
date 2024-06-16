@@ -145,8 +145,9 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
     {
 
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        // PARAMETROS QUE NECESITE LA FUNCION
-        //nueva_peticion->PARAM1 = ...
+        nueva_peticion->tamanio_a_leer = buffer_read_int(&stream);
+        nueva_peticion->cant_direcciones = buffer_read_int(&stream);
+        recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ;
 
         char *pid_string = string_itoa(pcb->pid);
@@ -338,4 +339,18 @@ int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion ar
         i++;
     }
     return 0;
+}
+
+void recibir_paquete_direcciones(t_peticion* peticion, int cant_direcciones, void *stream){
+    peticion->direcciones = list_create();
+
+    for (int i = 0; i < cant_direcciones; i++)
+    {
+        t_datos_acceso* nueva_direccion = malloc(sizeof(t_datos_acceso));
+        nueva_direccion->bytes = buffer_read_int(&stream);
+        nueva_direccion->direccion_fisica = buffer_read_int(&stream);
+
+        list_add(peticion->direcciones, nueva_direccion);
+    }
+        
 }
