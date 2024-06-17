@@ -22,7 +22,9 @@ void realizar_un_stdout_write();
 
 char* truncar_cadena(char *cadena, int tamanio);
 
-void* leer_de_memoria(int PID, int direccion_fisica, int bytes); // DESPUES VUELA
+void* leer_de_memoria(int PID, int direccion_fisica, int bytes);
 
-void peticion_lectura_memoria(int PID, int direccion_fisica, int bytes); // tambien esta
+void peticion_lectura_memoria(int PID, int direccion_fisica, int bytes);
+
+char *generar_cadena(void* particion, int bytes);
 #endif

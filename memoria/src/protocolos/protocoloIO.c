@@ -17,7 +17,7 @@ void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
 			break;
 			
 		case ESCRITURA:
-			realizar_escritura(fd_cpu);
+			realizar_escritura(fd_IO);
 			break;
 		
 		case -1:

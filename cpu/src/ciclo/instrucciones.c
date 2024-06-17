@@ -169,7 +169,7 @@ void* leer_string(int cantidad_de_bytes){
     int offset = 0;
     
     for(int i = 0; i < cantidad_direcciones; i++){
-        t_datos_acceso* datos =list_remove(direcciones, 0);
+        t_datos_acceso* datos = list_remove(direcciones, 0);
         int bytes = datos->bytes;
         int DF = datos->direccion_fisica;
         free(datos);
@@ -178,14 +178,14 @@ void* leer_string(int cantidad_de_bytes){
         memcpy(string_leido + offset, particion, bytes);
         offset += bytes;
 
-        particion = realloc(particion, bytes + 1);
-        ((char*)particion)[bytes] = '\0';
+        char* cadena = generar_cadena(particion, bytes);
 
         pthread_mutex_lock(&mutex_log);
-            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %s >", PID, DF, (char*)particion);
+            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %s >", PID, DF, cadena);
         pthread_mutex_unlock(&mutex_log);
 
         free(particion);
+        free(cadena);
     }
 
     return string_leido;
@@ -207,14 +207,14 @@ void escribir_string(void* string_leido){
         
         escribir_en_memoria(particion, bytes, DF);
 
-        particion = realloc(particion, bytes + 1);
-        ((char*)particion)[bytes] = '\0';
+        char* cadena = generar_cadena(particion, bytes);
 
         pthread_mutex_lock(&mutex_log);
-            log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %s >", PID, DF, (char*)particion);
+            log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %s >", PID, DF, cadena);
         pthread_mutex_unlock(&mutex_log);
 
         free(particion);
+        free(cadena);
     }
 }
 
@@ -231,12 +231,16 @@ void escribir_string(void* string_leido){
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
 
-    uintptr_t registro_direccion = (uintptr_t)direccion_del_registro(instruccion_ejecutando[2]);
-    uintptr_t tamanio_a_leer = (uintptr_t)direccion_del_registro(instruccion_ejecutando[3]);
+    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    traducir_direcciones((int)tamanio_a_leer, (uint32_t)registro_direccion);
+    int tamanio_a_leer = *(int*)registro_tamanio;
+    uint32_t direccion_logica = *(uint32_t*)registro_direccion;
 
-    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, (int)tamanio_a_leer);
+    traducir_direcciones(tamanio_a_leer, direccion_logica);
+
+    devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
+    se_devolvio_contexto = 1;
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -252,12 +256,16 @@ void io_stdin_read(void) {
 void io_stdout_write(void) {
     char* interfaz = instruccion_ejecutando[1];
     
-    uintptr_t registro_direccion = (uintptr_t)direccion_del_registro(instruccion_ejecutando[2]);
-    uintptr_t tamanio_a_leer = (uintptr_t)direccion_del_registro(instruccion_ejecutando[3]);
+    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
+    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
-    traducir_direcciones((int)tamanio_a_leer, (uint32_t)registro_direccion);
+    int tamanio_a_leer = *(int*)registro_tamanio;
+    uint32_t direccion_logica = *(uint32_t*)registro_direccion;
 
-    devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, (int)tamanio_a_leer);
+    traducir_direcciones(tamanio_a_leer, direccion_logica);
+
+    devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, tamanio_a_leer);
+    se_devolvio_contexto = 1;
 }
 
 
@@ -327,3 +335,16 @@ void* obtener_direcciones_fisicas(void){
 
     return ptr_registro_datos;
 }  
+
+char *generar_cadena(void* particion, int bytes){
+    char* nueva_cadena = malloc(bytes + 1);
+    int i;
+
+    for (i = 0; i < bytes; i++){
+        nueva_cadena[i] = *(char *)(particion + i);
+    }
+
+    nueva_cadena[i]='\0';
+
+    return nueva_cadena;
+}

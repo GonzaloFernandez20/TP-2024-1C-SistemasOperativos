@@ -32,7 +32,7 @@ int obtener_marco(int nro_pagina) {
     int nro_marco;
 
     if (MAX_ENTRADAS > 0) { 
-        tlb_res tlb_busqueda = consultar_marco_en_TLB(nro_pagina, &nro_marco);
+        tlb_respuesta tlb_busqueda = consultar_marco_en_TLB(nro_pagina, &nro_marco);
 
         if (tlb_busqueda == MISS) { // si no se encuentra en la TLB, entonces busco en la TP del PID actual en Memoria
             nro_marco = consultar_marco_en_TP(nro_pagina);

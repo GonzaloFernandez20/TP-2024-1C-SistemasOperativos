@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config","Interfaz1"],
+      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config","TECLADO"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

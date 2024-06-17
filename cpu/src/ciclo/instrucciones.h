@@ -26,7 +26,9 @@ void mov_out(void);
 void resize(void);
 
 void copy_string(void);
+
 void* leer_string(int cantidad_de_bytes);
+
 void escribir_string(void* string_leido);
 
 void io_stdin_read(void);
@@ -46,5 +48,7 @@ void* direccion_del_registro(char* nombre_registro);
 int tamanio_de_registro(char* registro);
 
 void* obtener_direcciones_fisicas(void);
+
+char *generar_cadena(void* particion, int bytes);
 
 #endif

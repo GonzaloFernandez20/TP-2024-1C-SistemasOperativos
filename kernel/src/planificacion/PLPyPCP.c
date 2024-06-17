@@ -96,6 +96,7 @@ void *planificador_largo_plazo(void){ // DIVIDIDO EN 2 PARTES: UNA PARA LLEVAR P
 
         t_pcb* pcb_a_cargar = list_get(new->cola, 0);
 
+        verificar_estado_planificacion();
         // ------------------ COMUNICACION CON MEMORIA
         
         enviar_path_seudocodigo(pcb_a_cargar->path_pseudocodigo, pcb_a_cargar->pid);
@@ -109,7 +110,6 @@ void *planificador_largo_plazo(void){ // DIVIDIDO EN 2 PARTES: UNA PARA LLEVAR P
         } 
 
         // ------------------ AGREGA A COLA READY
-        verificar_estado_planificacion();
         trasladar(pcb_a_cargar->pid, new, ready);
     }
 } 

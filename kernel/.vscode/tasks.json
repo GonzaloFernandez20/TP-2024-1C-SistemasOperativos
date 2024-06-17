@@ -10,21 +10,6 @@
     "cwd": "${workspaceFolder}"
   },
   "tasks": [
-    /* {
-      "label": "touch logs", // crea los archivos log si todavia no fueron creados
-      "command": "touch ${this_module}.log ; touch ${this_module}_debug.log",
-      "type": "shell",
-      "group": {
-        "kind": "none",
-        "isDefault": true
-      },
-      "problemMatcher": [
-        "$gcc"
-      ], 
-      "dependsOn":[
-        "touch logs"
-      ]
-    }, */
     {
       "label": "build kernel",
       "command": "make all",
@@ -35,10 +20,7 @@
       },
       "problemMatcher": [
         "$gcc"
-      ],
-      // "dependsOn":[
-      //   "tail logs"
-      // ]
+      ]
     },
     {
       "label": "clean kernel",
@@ -47,9 +29,7 @@
       "group": {
         "kind": "none"
       },
-      "problemMatcher": [
-        "$gcc"
-      ]
+      "problemMatcher": ["$gcc"]
     },
     {
       "label": "valgrind-leak-check",
@@ -73,9 +53,7 @@
       "args": [
         "${log_file}"
       ],
-      "group": {
-        "kind": "test"
-      },
+      "group": "test",
       "dependsOn": [
         "valgrind-leak-check"
       ],

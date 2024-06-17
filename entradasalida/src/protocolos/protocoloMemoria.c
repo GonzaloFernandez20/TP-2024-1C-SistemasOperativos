@@ -33,7 +33,7 @@ void enviar_a_memoria(int PID, void* particion, int bytes, int direccion_fisica)
 
     t_paquete* paquete = crear_paquete(ESCRITURA);
 
-    int buffer_size = bytes + 2 * sizeof(int);
+    int buffer_size = bytes + 3 * sizeof(int);
 
     crear_buffer(paquete, buffer_size);
     buffer_add_int(paquete->buffer, PID);

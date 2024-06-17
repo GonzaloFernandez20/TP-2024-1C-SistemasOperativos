@@ -8,6 +8,7 @@ void init(){
     init_opCodes_dictionary();
     init_registros_dictionary();
     inicializar_TLB();
+    direcciones = list_create();
 }
 
 void inicializar_semaforos(void){

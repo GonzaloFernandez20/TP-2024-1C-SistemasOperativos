@@ -14,31 +14,21 @@ void inicializar_TLB(void) {
 /**
  * @brief Guardamos número de página, número de marco y PID en el diccionario de la TLB.
 */
-void agregar_a_TLB(uint32_t nro_pagina, uint32_t nro_marco) {
+void agregar_a_TLB(int nro_pagina, int nro_marco) {
     if (list_size(tabla_tlb) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las entradas (independientemente del PID).
         _eliminar_una_entrada_con_algoritmo();
     }
-    
-    _agregar_nueva_entrada(PID, nro_pagina, nro_marco);
+    _agregar_nueva_entrada(nro_pagina, nro_marco);
 }
-
-// void liberar_entrada(t_entrada_tlb* entrada) {
-
-//     free(entrada->pid);
-//     free(entrada->nro_pagina);
-//     free(entrada->nro_marco);
-//     free(entrada->usos);
-//     free(entrada);
-// }
 
 void _eliminar_una_entrada_con_algoritmo(void){
 
-    if(!strcmp(ALGORITMO_TLB, FIFO))  // saco el primero que se metió a la lista, osea el que está en indice 0
+    if(string_equals_ignore_case(ALGORITMO_TLB, FIFO))  // saco el primero que se metió a la lista, osea el que está en indice 0
     {
-        int indice = 0;
-        list_remove(tabla_tlb, indice);
+        t_entrada_tlb* entrada_remover = list_remove(tabla_tlb, 0);
+        free(entrada_remover);
     }
-    else if(!strcmp(ALGORITMO_TLB, LRU))  // saco la entrada menos consultada.
+    else if(string_equals_ignore_case(ALGORITMO_TLB, LRU))  // saco la entrada menos consultada.
     {
         t_entrada_tlb* entrada_menos_consultada = list_get_minimum(tabla_tlb, menos_consultado);
         int indice = entrada_menos_consultada->index_in_table;
@@ -60,58 +50,27 @@ void* menos_consultado(void* entrada1, void* entrada2) {
     return entrada2;
 }
 
-// Malloc'ea t_entrada_tlb y le asigna valores iniciales a sus miembros
-t_entrada_tlb* crear_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco){
-
-    t_entrada_tlb* entrada = malloc(sizeof(t_entrada_tlb));
-    entrada->pid = pid;
-    entrada->nro_pagina = nro_pagina;
-    entrada->nro_marco = nro_marco;
-    entrada->usos = 0;
-    return entrada;
-}
-
 
 // imposible que le llegue una entrada que ya existía en tabla, xq debía pasar por la busqueda en tlb antes de llegar a este punto, que es después de haber buscado en la TP en Memoria.
-void _agregar_nueva_entrada(int pid, uint32_t nro_pagina, uint32_t nro_marco) {
-    int indice = 0;
-    t_entrada_tlb entrada;
+void _agregar_nueva_entrada(int nro_pagina, int nro_marco) {
 
-    switch (_buscar_entrada_tlb(&entrada, &indice, PID, nro_pagina)) // buscamos si la [pid, nro_pagina] ya tiene un marco asignado.
-    {
-    case SEARCH_OK:
-        // actualizo los valores de nro_marco
-        entrada.nro_marco = nro_marco;
-        return;
+    t_entrada_tlb* entrada_nueva = malloc(sizeof(t_entrada_tlb));
+    entrada_nueva->pid = PID;
+    entrada_nueva->nro_pagina = nro_pagina;
+    entrada_nueva->nro_marco = nro_marco;
+    entrada_nueva->usos = 1;
+    entrada_nueva->index_in_table = list_size(tabla_tlb);
 
-    case SEARCH_ERROR:
-        t_entrada_tlb* entrada_nueva = crear_entrada(PID, nro_pagina, nro_marco);
-        entrada_nueva->usos = 1;
-        entrada_nueva->index_in_table = list_size(tabla_tlb);
-        list_add(tabla_tlb, (void*)entrada_nueva);
-        return;
-    }
+    list_add(tabla_tlb, entrada_nueva);
 }
 
+respuesta_busqueda _buscar_entrada_tlb(int *marco, int nro_pagina) {
+    int cant_entradas = list_size(tabla_tlb);    
 
-// res_tabla_tlb _eliminar_entrada_donde(int pid, uint32_t nro_pagina) {
-//     size_t i = 0;
-//     t_entrada_tlb entrada;
-//     res_tabla_tlb res = buscar_entrada_tlb(&entrada, &indice, pid, nro_pagina) {
-    
-//     if (res == SEARCH_OK) {
-//         list_remove(tabla_tlb, indice);
-//         return REMOVE_OK;
-//     } 
-    
-//     return REMOVE_ERROR;
-// }
-
-res_busqueda _buscar_entrada_tlb(t_entrada_tlb *ptr_entrada, int *ptr_indice, int pid, uint32_t nro_pagina) {
-    for(; *ptr_indice<MAX_ENTRADAS; (*ptr_indice)++) {
-        t_entrada_tlb* ptr_elemento = list_get(tabla_tlb, *ptr_indice);
-        if(ptr_elemento->pid == pid && ptr_elemento->nro_pagina == nro_pagina) {
-            ptr_entrada = ptr_elemento;   // el puntero "entrada" ahora apunta a lo mismo que el puntero "elemento". OJO CON MEMORY LEAKS
+    for(int i = 0; i < cant_entradas; i++) {
+        t_entrada_tlb* entrada = list_get(tabla_tlb, i);
+        if(entrada->pid == PID && entrada->nro_pagina == nro_pagina) {
+            *marco = entrada->nro_marco;
             return SEARCH_OK;
         }
     }
@@ -125,14 +84,10 @@ res_busqueda _buscar_entrada_tlb(t_entrada_tlb *ptr_entrada, int *ptr_indice, in
  * @param nro_marco Un puntero a una variable en donde se guardará el nro de marco encontrado.
  * 
 */
-tlb_res consultar_marco_en_TLB(uint32_t nro_pagina, int *nro_marco) {
-
-    int indice = 0; // empezar desde el indice 0 a buscar
-    t_entrada_tlb entrada;
-    res_busqueda res = _buscar_entrada_tlb(&entrada, &indice, PID, nro_pagina);
+tlb_respuesta consultar_marco_en_TLB(int nro_pagina, int *nro_marco) {
+    respuesta_busqueda respuesta = _buscar_entrada_tlb(nro_marco, nro_pagina);
     // SI LA ENCUENTRA
-    if(res == SEARCH_OK) {
-       *nro_marco = entrada.nro_marco;
+    if(respuesta == SEARCH_OK) {
        log_info(cpu_log, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
     }

@@ -27,7 +27,7 @@ typedef enum RESPUESTA_DE_CONSULTA_A_TLB
 {
     HIT,
     MISS
-}tlb_res;
+}tlb_respuesta;
 
 
 //REGISTROS GENERALES
