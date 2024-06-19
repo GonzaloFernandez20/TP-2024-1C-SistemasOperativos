@@ -10,7 +10,7 @@ void set(void){
 
     //necesito hacer el cast a uint8_t o uint32_t por el void* que no se puede desreferenciar
     if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
-        *(uint8_t*)ptr_registro = valor;  // convierte el puntero void* a tipo uint8_t* y lo desreferencia para poder cambiar el valor del espacio de memoria al que apunta.
+        *(uint8_t*)ptr_registro = (uint8_t)valor; 
     }
     else {
         *(uint32_t*)ptr_registro = valor; // idem pero para uint32_t
@@ -75,13 +75,13 @@ void jnz(void){
 //MOV_IN/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Lee el valor de memoria correspondiente a la DL que se encuentra en el Registro Dirección y lo almacena en el Registro Datos. 
 void mov_in(void) {
-    void* ptr_registro_datos = obtener_direcciones_fisicas();
+    void* ptr_registro_datos = obtener_direcciones_fisicas(2,1);
     
     int cantidad_direcciones = list_size(direcciones);
     int offset = 0;
     
     for(int i = 0; i < cantidad_direcciones; i++){
-        t_datos_acceso* datos =list_remove(direcciones, 0);
+        t_datos_acceso* datos = list_remove(direcciones, 0);
         int bytes = datos->bytes;
         int DF = datos->direccion_fisica;
         free(datos);
@@ -91,7 +91,17 @@ void mov_in(void) {
         offset += bytes;
 
         pthread_mutex_lock(&mutex_log);
-            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(int*)particion);
+        if(bytes == 1){
+            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint8_t*)particion);
+        }
+        else if (bytes == 4)
+        {
+            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint32_t*)particion);
+        }
+        else{
+             log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint16_t*)particion);
+        }
+        
         pthread_mutex_unlock(&mutex_log);
 
         free(particion);
@@ -102,13 +112,13 @@ void mov_in(void) {
 //MOV_OUT///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Lee el valor del Registro Datos y lo escribe en la dirección física de memoria obtenida a partir de la DL almacenada en el Registro Dirección. 
 void mov_out(void) {
-    void* ptr_registro_datos = obtener_direcciones_fisicas();
+    void* ptr_registro_datos = obtener_direcciones_fisicas(1,2);
 
     int cantidad_direcciones = list_size(direcciones);
     int offset = 0;
     
     for(int i = 0; i < cantidad_direcciones; i++){
-        t_datos_acceso* datos =list_remove(direcciones, 0);
+        t_datos_acceso* datos = list_remove(direcciones, 0);
         int bytes = datos->bytes;
         int DF = datos->direccion_fisica;
         free(datos);
@@ -120,7 +130,16 @@ void mov_out(void) {
         escribir_en_memoria(particion, bytes, DF);
 
         pthread_mutex_lock(&mutex_log);
-            log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(int*)particion);
+        if(bytes == 1){
+            log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint8_t*)particion);
+        }
+        else if (bytes == 4)
+        {
+            log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint32_t*)particion);
+        }
+        else{
+             log_info(cpu_log,"PID: < %d > - Acción: < ESCRIBIR > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(uint16_t*)particion);
+        }
         pthread_mutex_unlock(&mutex_log);
 
         free(particion);
@@ -235,8 +254,14 @@ void io_stdin_read(void) {
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
     int tamanio_a_leer = *(int*)registro_tamanio;
-    uint32_t direccion_logica = *(uint32_t*)registro_direccion;
+    uint32_t direccion_logica;
 
+    if(tamanio_de_registro(registro_direccion) == sizeof(uint8_t)) {
+        direccion_logica = *(uint8_t*)registro_direccion;    
+    }
+    else {
+        direccion_logica  = *(uint32_t*)registro_direccion;
+    } 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 
     devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
@@ -260,7 +285,14 @@ void io_stdout_write(void) {
     void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
 
     int tamanio_a_leer = *(int*)registro_tamanio;
-    uint32_t direccion_logica = *(uint32_t*)registro_direccion;
+    uint32_t direccion_logica;
+
+    if(tamanio_de_registro(registro_direccion) == sizeof(uint8_t)) {
+        direccion_logica = *(uint8_t*)registro_direccion;    
+    }
+    else {
+        direccion_logica  = *(uint32_t*)registro_direccion;
+    } 
 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 
@@ -318,18 +350,25 @@ int tamanio_de_registro(char* registro){
     }
 }
 
-void* obtener_direcciones_fisicas(void){
-    char* registro_datos = instruccion_ejecutando[1];
-    char* registro_direccion = instruccion_ejecutando[2];    
+void* obtener_direcciones_fisicas(int indice1, int indice2){
+    char* registro_direccion = instruccion_ejecutando[indice1];    
+    char* registro_datos = instruccion_ejecutando[indice2];
     
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
 
-    uint32_t direccion_logica = *(uint32_t*)ptr_registro_direccion; // puede almacenar uint8_t también
+    uint32_t direccion_logica;
+
+    if(tamanio_de_registro(ptr_registro_direccion) == sizeof(uint8_t)) {
+        direccion_logica = *(uint8_t*)ptr_registro_direccion;    
+    }
+    else {
+        direccion_logica  = *(uint32_t*)ptr_registro_direccion;
+    }
     int tamanio;
 
-    if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {tamanio = 1; }// tamaño a leer/escribir es de 1 byte 
-    else {tamanio = 4;} // tamaño a leer/escribir es de 4 byte 
+    if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {tamanio = sizeof(uint8_t); }// tamaño a leer/escribir es de 1 byte 
+    else {tamanio = sizeof(uint32_t);} // tamaño a leer/escribir es de 4 byte 
      
     traducir_direcciones(tamanio, direccion_logica); // genera la lista global con los datos para el acceso a cada pagina
 

@@ -63,7 +63,7 @@ void traducir_direcciones(int tamanio, uint32_t direccion_logica){
             bytes_consumidos = tamanio;
         }
         bytes_restantes -= bytes_consumidos; // LE SACO LOS BYTES QUE ESCRIBO EN LA PRIMER PAGINA
-        agregar_direccion(direccion_fisica, bytes_consumidos);
+        agregar_direccion(bytes_consumidos, direccion_fisica);
     }
 
     while (bytes_restantes > 0){
