@@ -134,6 +134,76 @@ void _imprimir_estados_procesos(void){
     imprimir_cola(estado_exit);
 }
 
+void ejecutar_script(char *path){
+    char* path_codigo = string_duplicate("/home/utnso/scripts-pruebas/");
+    string_append(&path_codigo, path);
+
+    char *leido = NULL; 
+    size_t length = 0;    
+
+    FILE* archivo = fopen(path_codigo, "r");
+    pausar_planificacion();
+
+    int caracteres_leidos = getline(&leido, &length, archivo);
+    
+    while (caracteres_leidos != (-1)){ 
+        
+        if (leido[caracteres_leidos - 1] == '\n') { leido[caracteres_leidos - 1] = '\0'; }
+        char **array_del_comando = _interpretar(leido);
+        t_comandos_consola opCode = _obtener_enum_comando(array_del_comando[0]);
+
+        switch (opCode)
+        {
+            case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
+
+                char * path_proceso = array_del_comando[1];
+                crear_proceso(path_proceso);
+                free(path_proceso);
+
+                break;
+
+            case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
+                int pid_proceso = atoi(array_del_comando[1]);
+                extraer_proceso(pid_proceso);
+                
+                break;
+
+            case DETENER_PLANIFICACION:
+                pausar_planificacion();
+
+                break;
+
+            case INICIAR_PLANIFICACION:
+                retomar_planificacion();
+
+                break;
+
+            case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]           
+                int nuevo_valor_grado = atoi(array_del_comando[1]);
+                actualizar_grado_multiprog(nuevo_valor_grado);
+
+                break;
+
+            case PROCESO_ESTADO:
+                _imprimir_estados_procesos();
+
+                break;
+            default:
+                printf("El comando que ingresaste no es valido\n");
+                break;
+            }
+
+        free(array_del_comando);
+        caracteres_leidos = getline(&leido, &length, archivo);
+    }
+
+    free(leido);
+    fclose(archivo);
+    free(path_codigo);
+
+    retomar_planificacion();
+}
+
 // ------------------------ FUNCIONES AUXILIARES
 
 int _asignar_PID(void){
