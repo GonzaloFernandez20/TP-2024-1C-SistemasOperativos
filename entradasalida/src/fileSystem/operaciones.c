@@ -1,17 +1,16 @@
 // instrucciones
-#include <stdio.h>
-
+#include <fileSystem/operaciones.h>
 
 // Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde el archivo a partir del valor del Registro Puntero Archivo la cantidad de bytes indicada por Registro Tamaño y se escriban en la Memoria a partir de la dirección lógica indicada en el Registro Dirección.
 
-void realizar_un_fs_read(){
+void realizar_un_fs_read(void){
 
     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
 	void* stream = buffer->stream;
 	int PID = buffer_read_int(&stream);
 
     int size_nombre_archivo = buffer_read_int(&stream);
-    int nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
+    char *nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
 
     int tamanio_a_leer = buffer_read_int(&stream);
     int puntero_archivo = buffer_read_int(&stream);
@@ -25,15 +24,17 @@ void realizar_un_fs_read(){
     pthread_mutex_unlock(&mutex_log);
 
     FILE *archivo = fopen(nombre_archivo, "r"); // se lea desde el archivo...
-    char cadena_leida[tamanio_a_leer]; // Buffer para almacenar los caracteres leídos
+    char *cadena_leida = malloc(tamanio_a_leer); // Buffer para almacenar los caracteres leídos
     
-    if (!archivo) { // Capaz es innecesario...
-        printf("No se pudo abrir el archivo %s", nombre_archivo);
-        return EXIT_FAILURE;
+    // Capaz es innecesario...
+    if (!archivo) { 
+        pthread_mutex_lock(&mutex_log);
+	        log_info(IO_log,"No se pudo abrir el archivo %s", nombre_archivo);
+        pthread_mutex_unlock(&mutex_log);    
     }
 
     fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
-    size_t leidos = fread(cadena_leida, 1, tamanio_a_leer, archivo); // lea desde el archivo [...] la cantidad de bytes indicada por Registro Tamaño
+    fread(cadena_leida, 1, tamanio_a_leer, archivo); // lea desde el archivo [...] la cantidad de bytes indicada por Registro Tamaño
 
     fclose(archivo);
     // Escritura de los bytes leidos en memoria: 
@@ -75,14 +76,14 @@ void realizar_un_fs_read(){
 }
 
  //Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde Memoria la cantidad de bytes indicadas por el Registro Tamaño a partir de la dirección lógica que se encuentra en el Registro Dirección y se escriban en el archivo a partir del valor del Registro Puntero Archivo.
-void realizar_un_fs_write(){
+void realizar_un_fs_write(void){
 
     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
 	void* stream = buffer->stream;
 	int PID = buffer_read_int(&stream);
 
     int size_nombre_archivo = buffer_read_int(&stream);
-    int nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
+    char *nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
 
     int tamanio_a_leer = buffer_read_int(&stream);
     int puntero_archivo = buffer_read_int(&stream);
@@ -125,7 +126,6 @@ void realizar_un_fs_write(){
 
     FILE *archivo = fopen(nombre_archivo, "r+"); // se lea desde el archivo... -> Modo lectura y escritura pero sin borrar su contenido
     fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
-
     fwrite(cadena, sizeof(char), sizeof(cadena) - 1, archivo);
 
     fclose(archivo);

@@ -2,6 +2,7 @@
 #define IO_PROTOCOLO_KERNEL_H_
 
 #include <protocolos/protocoloMemoria.h>
+#include <fileSystem/operaciones.h>
 #include <include/estructuras.h>
 #include <utils/serializacion/serializacion.h>
 #include <utils/hilos/hilos.h>
