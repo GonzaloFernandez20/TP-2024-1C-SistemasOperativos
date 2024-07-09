@@ -389,9 +389,10 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
-        nueva_peticion->registro_direccion = buffer_read_int(&stream);
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
         nueva_peticion->reg_puntero_archivo = buffer_read_int(&stream);
+        nueva_peticion->cant_direcciones = buffer_read_int(&stream);
+        recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->tipo_operacion = operacion;
         nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ;
 

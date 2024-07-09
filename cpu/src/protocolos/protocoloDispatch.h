@@ -18,7 +18,7 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamani
 void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tamanio);
 void devolver_contexto_ejecucion_IO_FS(char* nombre_interfaz, char* nombre_archivo, int operacion);
 void devolver_contexto_ejecucion_IO_FS_TRUNCATE(char* nombre_interfaz, char* nombre_archivo, int tamanio_truncado);
-void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* nombre_archivo, int registro_direccion, int registro_tamanio, int reg_puntero, int operacion);
+void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* nombre_archivo, int registro_tamanio, int reg_puntero, int operacion);
 
 void _cargar_pcb(t_paquete* paquete, int motivo);
 #endif 

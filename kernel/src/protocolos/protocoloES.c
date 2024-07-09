@@ -161,15 +161,23 @@ void solicitar_operacion_IO_FS_WRITE_READ(t_peticion* peticion, int PID, int fd)
 	t_paquete* paquete = crear_paquete(peticion->tipo_operacion);
 	int size = strlen(peticion->nombre_archivo) + 1;
 
-	int buffer_size = 5 * sizeof(int) + size; 
+	int buffer_size = (5 + 2*peticion->cant_direcciones) * sizeof(int) + size; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
 	buffer_add_int(paquete->buffer, size);
 	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
-	buffer_add_int(paquete->buffer, peticion->registro_direccion);
 	buffer_add_int(paquete->buffer, peticion->registro_tamanio);
 	buffer_add_int(paquete->buffer, peticion->reg_puntero_archivo);
+	buffer_add_int(paquete->buffer, peticion->cant_direcciones);
+
+	for (int i = 0; i < peticion->cant_direcciones; i++)
+    {
+        t_datos_acceso *dato = list_remove(peticion->direcciones, 0);
+        buffer_add_int(paquete->buffer, dato->bytes);
+        buffer_add_int(paquete->buffer, dato->direccion_fisica);
+        free(dato);
+    }
 
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);

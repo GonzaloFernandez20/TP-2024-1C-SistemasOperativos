@@ -26,11 +26,11 @@ void sum(void){
     void* ptr_registro_destino = direccion_del_registro(registro_destino);
     void* ptr_registro_origen = direccion_del_registro(registro_origen);
 
-    if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
-        *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
+    if(es_registro_8_bits(registro_destino)) { //tamanio_de_registro(registro) == sizeof(uint8_t)
+        *(uint8_t*)ptr_registro = (uint8_t)valor; 
     }
-    else{
-        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
+    else {
+        *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
     }
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////
@@ -42,7 +42,7 @@ void sub(void){
     void* ptr_registro_destino = direccion_del_registro(registro_destino);
     void* ptr_registro_origen = direccion_del_registro(registro_origen);
 
-    if(tamanio_de_registro(registro_destino) == sizeof(uint8_t)){
+    if(es_registro_8_bits(registro_destino)){
         *(uint8_t*)ptr_registro_destino -= *(uint8_t*)ptr_registro_origen;
     }
     else{
@@ -59,7 +59,7 @@ void jnz(void){
 
     void* ptr_registro = direccion_del_registro(registro);
 
-    if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
+    if(es_registro_8_bits(registro)) {
         valor_del_registro = *(uint8_t*)ptr_registro;    
     }
     else {
@@ -248,7 +248,7 @@ void io_stdin_read(void) {
     int tamanio_a_leer = *(int*)registro_tamanio;
     uint32_t direccion_logica;
 
-    if(tamanio_de_registro(registro_direccion) == sizeof(uint8_t)) {
+    if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)registro_direccion;    
     }
     else {
@@ -271,7 +271,7 @@ void io_stdout_write(void) {
     int tamanio_a_leer = *(int*)registro_tamanio;
     uint32_t direccion_logica;
 
-    if(tamanio_de_registro(registro_direccion) == sizeof(uint8_t)) {
+    if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)registro_direccion;    
     }
     else {
@@ -336,10 +336,21 @@ void io_fs_truncate(void){
 void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
     char* interfaz = instruccion_ejecutando[1];
     char* nombre_archivo = instruccion_ejecutando[2];
-    int registro_direccion = atoi(instruccion_ejecutando[3]);
-    int registro_tamanio = atoi(instruccion_ejecutando[4]);
-    int reg_puntero_archivo = atoi(instruccion_ejecutando[5]);
-    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, registro_direccion, registro_tamanio, reg_puntero_archivo, IO_FS_WRITE);
+    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[3]);
+    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[4]);
+    void* reg_puntero_archivo = direccion_del_registro(instruccion_ejecutando[5]);
+
+    int tamanio_a_leer = *(int*)registro_tamanio;
+    uint32_t direccion_logica;
+
+    if(es_registro_8_bits(registro_direccion)) {
+        direccion_logica = *(uint8_t*)registro_direccion;    
+    }
+    else {
+        direccion_logica  = *(uint32_t*)registro_direccion;
+    } 
+    traducir_direcciones(tamanio_a_leer, direccion_logica);
+    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, *(int*)reg_puntero_archivo, IO_FS_WRITE);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
 }
@@ -347,10 +358,21 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
 void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
     char* interfaz = instruccion_ejecutando[1];
     char* nombre_archivo = instruccion_ejecutando[2];
-    int registro_direccion = atoi(instruccion_ejecutando[3]);
-    int registro_tamanio = atoi(instruccion_ejecutando[4]);
-    int reg_puntero_archivo = atoi(instruccion_ejecutando[5]);
-    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, registro_direccion, registro_tamanio, reg_puntero_archivo, IO_FS_READ);
+    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[3]);
+    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[4]);
+    void* reg_puntero_archivo = direccion_del_registro(instruccion_ejecutando[5]);
+
+    int tamanio_a_leer = *(int*)registro_tamanio;
+    uint32_t direccion_logica;
+
+    if(es_registro_8_bits(registro_direccion)) {
+        direccion_logica = *(uint8_t*)registro_direccion;    
+    }
+    else {
+        direccion_logica  = *(uint32_t*)registro_direccion;
+    } 
+    traducir_direcciones(tamanio_a_leer, direccion_logica);
+    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, *(int*)reg_puntero_archivo, IO_FS_READ);    
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
 }

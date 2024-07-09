@@ -206,10 +206,11 @@ void devolver_contexto_ejecucion_IO_FS_TRUNCATE(char* nombre_interfaz, char* nom
 	eliminar_paquete(paquete);
 }
 // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
-void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* nombre_archivo, int registro_direccion, int registro_tamanio, int reg_puntero, int operacion){
+void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* nombre_archivo, int registro_tamanio, int reg_puntero, int operacion){
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+    int cant_direcciones = list_size(direcciones);
 
-    int buffer_size = 8 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(nombre_archivo) + 2; 
+    int buffer_size = (8 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(nombre_archivo) + 2; 
 	crear_buffer(paquete, buffer_size);
 
 	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
@@ -218,10 +219,18 @@ void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* n
 	buffer_add_string(paquete->buffer, nombre_interfaz);
     buffer_add_int(paquete->buffer, strlen(nombre_archivo) + 1);
 	buffer_add_string(paquete->buffer, nombre_archivo);
-    buffer_add_int(paquete->buffer, registro_direccion);
     buffer_add_int(paquete->buffer, registro_tamanio);
     buffer_add_int(paquete->buffer, reg_puntero);
-    
+    buffer_add_int(paquete->buffer, cant_direcciones);
+
+    for (int i = 0; i < cant_direcciones; i++)
+    {
+        t_datos_acceso *dato = list_remove(direcciones, 0);
+        buffer_add_int(paquete->buffer, dato->bytes);
+        buffer_add_int(paquete->buffer, dato->direccion_fisica);
+        free(dato);
+    }
+
     enviar_paquete(paquete, fd_dispatch);
 
     log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);

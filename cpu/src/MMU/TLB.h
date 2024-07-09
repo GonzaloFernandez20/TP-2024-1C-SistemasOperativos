@@ -20,8 +20,6 @@ typedef struct ENTRADA_DE_TLB {
     int pid;
     int nro_pagina;
     int nro_marco;
-    int usos;
-    int index_in_table;
 }t_entrada_tlb;
 
 void inicializar_TLB(void);

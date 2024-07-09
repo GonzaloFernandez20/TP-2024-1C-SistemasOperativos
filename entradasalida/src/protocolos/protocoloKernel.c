@@ -15,6 +15,21 @@ void atender_peticiones_kernel(void){
         case IO_STDOUT_WRITE:
                 realizar_un_stdout_write();
 			break;
+        case IO_FS_CREATE:
+                
+			break;
+        case IO_FS_DELETE:
+                
+			break;
+        case IO_FS_TRUNCATE:
+                
+			break;
+        case IO_FS_READ:
+                realizar_un_fs_read();
+			break;
+        case IO_FS_WRITE:
+                realizar_un_fs_write();
+			break;
         default:
             pthread_mutex_lock(&mutex_log_debug);
             log_warning(IO_log_debug,"Instruccion desconocida\n");

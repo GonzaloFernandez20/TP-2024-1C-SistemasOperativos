@@ -25,17 +25,7 @@ void _eliminar_una_entrada_con_algoritmo(void){
     list_remove_and_destroy_element(tabla_tlb, 0, free);
     // SI EL ALGORITMO ES FIFO: TOMO EL PRIMERO DE LA LISTA, QUE FUE EL QUE PRIMERO PUSE.
     // SI EL ALGORITMO ES LRU, TOMO EL PRIMERO DE LA LISTA PORQUE ANTE CADA REFERENCIA, SE REMUEVE EL ELEMENTO Y SE LO INSERTA AL FINAL, POR ENDE EL ULTIMO ELEMENTO DE LA LISTA SIEMPRE ES EL MAS RECIENTEMENTE REFERENCIADO Y EL PRIMERO ES EL MAS LEJANO, PORQUE SIGNIFICA QUE NO SE SACO HACE MUCHO DE LA LISTA, POR ENDE HACE MUCHO NO SE REFERENCIA. 
-
     // LIST_ADD AGREGA SIEMPRE AL FINAL DE LA LISTA, POR ESO. 
-
-/*     if(algoritmo_es_LRU()){   
-        t_entrada_tlb *victima = list_remove_and_destroy_element(tabla_tlb, 0, free);
-        // Remuevo el ultimo (el que mas lejano fue referenciado) -> Es decir, el que primero figure en la lista.
-    }
-    else { // SIGNIFICA QUE EL ALGORITMO ES FIFO
-        t_entrada_tlb* entrada_remover = list_remove(tabla_tlb, 0);
-        free(entrada_remover);
-    } */
 }
 
 // imposible que le llegue una entrada que ya existía en tabla, xq debía pasar por la busqueda en tlb antes de llegar a este punto, que es después de haber buscado en la TP en Memoria.
@@ -45,8 +35,6 @@ void _agregar_nueva_entrada(int nro_pagina, int nro_marco) {
     entrada_nueva->pid = PID;
     entrada_nueva->nro_pagina = nro_pagina;
     entrada_nueva->nro_marco = nro_marco;
-    entrada_nueva->usos = 1;
-    entrada_nueva->index_in_table = list_size(tabla_tlb);
 
     list_add(tabla_tlb, entrada_nueva);
 }
