@@ -5,6 +5,7 @@
 #include <commons/string.h>
 #include <commons/config.h>
 #include <include/estructuras.h>
+#include <fileSystem/estructurasFS.h>
 #include <utils/inicializaciones/inicializar.h>
 
 

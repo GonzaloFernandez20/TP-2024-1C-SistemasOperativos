@@ -15,6 +15,10 @@ void init(void){
     IO_log_debug = iniciar_logger("debug.log", "ENTRADASALIDA", 1, LOG_LEVEL_DEBUG);
     leer_configuracion();
     inicializar_semaforos();
+
+    if(string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "DIALFS")){
+       levantar_filesystem();
+    }
 }
 
 void leer_configuracion(){
