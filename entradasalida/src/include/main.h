@@ -20,8 +20,16 @@ t_log* IO_log;
 t_log* IO_log_debug;
 
 char* path_config;
-char* nombre_Interfaz;//no entiendo el uso
+char* nombre_Interfaz;
 t_config_IO config_IO;
+
+char* path_archivo_bloques;
+char* path_archivo_bitmap;
+int tamanio_bitmap;
+FILE* archivo_bloques;
+FILE* archivo_bitmap;
+void* memoria_mapeada;
+t_bitarray* bitarray;
 
 int fd_conexion_memoria; 
 int fd_conexion_kernel; 

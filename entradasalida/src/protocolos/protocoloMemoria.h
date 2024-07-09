@@ -6,6 +6,6 @@
 #include <utils/hilos/hilos.h>
 
 void enviar_a_memoria(int PID, void* particion, int bytes, int direccion_fisica);
-char* leer_direccion_fisica(uint32_t direccionFisica, int* resultado_de_operacion);
+//char* leer_direccion_fisica(uint32_t direccionFisica, int* resultado_de_operacion);
 
 #endif

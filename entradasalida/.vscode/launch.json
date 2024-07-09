@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config","SLP1"],
+      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config","DIALFS"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],
