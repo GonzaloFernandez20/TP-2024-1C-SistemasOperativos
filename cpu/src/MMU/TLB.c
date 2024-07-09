@@ -22,34 +22,21 @@ void agregar_a_TLB(int nro_pagina, int nro_marco) {
 }
 
 void _eliminar_una_entrada_con_algoritmo(void){
+    list_remove_and_destroy_element(tabla_tlb, 0, free);
+    // SI EL ALGORITMO ES FIFO: TOMO EL PRIMERO DE LA LISTA, QUE FUE EL QUE PRIMERO PUSE.
+    // SI EL ALGORITMO ES LRU, TOMO EL PRIMERO DE LA LISTA PORQUE ANTE CADA REFERENCIA, SE REMUEVE EL ELEMENTO Y SE LO INSERTA AL FINAL, POR ENDE EL ULTIMO ELEMENTO DE LA LISTA SIEMPRE ES EL MAS RECIENTEMENTE REFERENCIADO Y EL PRIMERO ES EL MAS LEJANO, PORQUE SIGNIFICA QUE NO SE SACO HACE MUCHO DE LA LISTA, POR ENDE HACE MUCHO NO SE REFERENCIA. 
 
-    if(string_equals_ignore_case(ALGORITMO_TLB, FIFO))  // saco el primero que se metió a la lista, osea el que está en indice 0
-    {
+    // LIST_ADD AGREGA SIEMPRE AL FINAL DE LA LISTA, POR ESO. 
+
+/*     if(algoritmo_es_LRU()){   
+        t_entrada_tlb *victima = list_remove_and_destroy_element(tabla_tlb, 0, free);
+        // Remuevo el ultimo (el que mas lejano fue referenciado) -> Es decir, el que primero figure en la lista.
+    }
+    else { // SIGNIFICA QUE EL ALGORITMO ES FIFO
         t_entrada_tlb* entrada_remover = list_remove(tabla_tlb, 0);
         free(entrada_remover);
-    }
-    else if(string_equals_ignore_case(ALGORITMO_TLB, LRU))  // saco la entrada menos consultada.
-    {
-        t_entrada_tlb* entrada_menos_consultada = list_get_minimum(tabla_tlb, menos_consultado);
-        int indice = entrada_menos_consultada->index_in_table;
-        list_remove_and_destroy_element(tabla_tlb, indice, free);
-    }
-    else {
-        log_error(cpu_log_debug, "Algoritmo de sustitución de TLB inválido.");
-    }
+    } */
 }
-
-void* menos_consultado(void* entrada1, void* entrada2) {
-
-    size_t usos1 = ((t_entrada_tlb*)entrada1)->usos;
-    size_t usos2 = ((t_entrada_tlb*)entrada2)->usos;
-
-    if (usos1 <= usos2) {
-        return entrada1;  
-    } 
-    return entrada2;
-}
-
 
 // imposible que le llegue una entrada que ya existía en tabla, xq debía pasar por la busqueda en tlb antes de llegar a este punto, que es después de haber buscado en la TP en Memoria.
 void _agregar_nueva_entrada(int nro_pagina, int nro_marco) {
@@ -66,11 +53,15 @@ void _agregar_nueva_entrada(int nro_pagina, int nro_marco) {
 
 respuesta_busqueda _buscar_entrada_tlb(int *marco, int nro_pagina) {
     int cant_entradas = list_size(tabla_tlb);    
-
+    // SI LA ENCUENTRA, IMPLICA QUE LA REFERENCIA, SI EL ALGORITMO ES LRU, ENTONCES LA REFERENCIA QUEDA COMO CABEZA DE LISTA.
     for(int i = 0; i < cant_entradas; i++) {
         t_entrada_tlb* entrada = list_get(tabla_tlb, i);
         if(entrada->pid == PID && entrada->nro_pagina == nro_pagina) {
             *marco = entrada->nro_marco;
+            if (algoritmo_es_LRU()){
+                list_remove(tabla_tlb, i); // REMUEVO DE LA LISTA
+                list_add(tabla_tlb, entrada); // AGREGO AL FINAL DE LA LISTA
+            }
             return SEARCH_OK;
         }
     }
@@ -84,9 +75,9 @@ respuesta_busqueda _buscar_entrada_tlb(int *marco, int nro_pagina) {
  * @param nro_marco Un puntero a una variable en donde se guardará el nro de marco encontrado.
  * 
 */
-tlb_respuesta consultar_marco_en_TLB(int nro_pagina, int *nro_marco) {
+tlb_respuesta consultar_marco_en_TLB(int nro_pagina, int *nro_marco) { 
     respuesta_busqueda respuesta = _buscar_entrada_tlb(nro_marco, nro_pagina);
-    // SI LA ENCUENTRA
+    // SI LA ENCUENTRA, IMPLICA QUE LA REFERENCIA, SI EL ALGORITMO ES LRU, ENTONCES LA REFERENCIA QUEDA COMO CABEZA DE LISTA.
     if(respuesta == SEARCH_OK) {
        log_info(cpu_log, "PID: %d - TLB HIT - Pagina: %d", PID, nro_pagina);
        return HIT;
@@ -94,6 +85,10 @@ tlb_respuesta consultar_marco_en_TLB(int nro_pagina, int *nro_marco) {
     // SI NO LA ENCUENTRA
     log_info(cpu_log, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
     return MISS;
+}
+
+int algoritmo_es_LRU(void){
+    return string_equals_ignore_case(ALGORITMO_TLB, LRU);
 }
 
 

@@ -26,6 +26,7 @@ void iniciar_colas_planificacion(void){
     pthread_mutex_init(&(estado_exit->mutex_cola), NULL); 
     estado_exit->cola = list_create();
     estado_exit->nombre = string_duplicate("EXIT");
+    procesos_terminados = list_create();
 
     // READY +
     if (algoritmo_es_VRR()){   
@@ -105,6 +106,8 @@ void *limpieza_cola_exit(){
         finalizar_proceso(pcb_basura->pid); // MEMORIA LIBERA RECURSOS DEL PROCESO
 
         liberar_recursos(pcb_basura->pid); // LIBERO LOS RECURSOS QUE HAYA PEDIDO EL PROCESO
+
+        list_add(procesos_terminados, (int*)(pcb_basura->pid));
 
         free(pcb_basura->path_pseudocodigo);
         free(pcb_basura);

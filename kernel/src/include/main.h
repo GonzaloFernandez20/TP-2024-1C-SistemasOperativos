@@ -70,5 +70,6 @@ int planificacion_pausada;
 int contador_bloqueados;
 
 t_list *recursos_usados;
+t_list *procesos_terminados;
 
 #endif

@@ -47,12 +47,12 @@ void init_opCodes_dictionary(void){
     dictionary_put(opCodes_diccionario, "IO_GEN_SLEEP",   (void*)io_gen_sleep);
     dictionary_put(opCodes_diccionario, "IO_STDIN_READ",  (void*)io_stdin_read);
     dictionary_put(opCodes_diccionario, "IO_STDOUT_WRITE",(void*)io_stdout_write);
-    // dictionary_put(opCodes_diccionario, IO_FS_CREATE,   (void*)io_fs_create);
-    // dictionary_put(opCodes_diccionario, IO_FS_DELETE,   (void*)io_fs_delete);
-    // dictionary_put(opCodes_diccionario, IO_FS_TRUNCATE, (void*)io_fs_truncate);
-    // dictionary_put(opCodes_diccionario, IO_FS_WRITE,    (void*)io_fs_write);
-    // dictionary_put(opCodes_diccionario, IO_FS_READ,     (void*)io_fs_read);
-    dictionary_put(opCodes_diccionario, "EXIT",        (void*)exit_os);
+    dictionary_put(opCodes_diccionario, "IO_FS_CREATE",   (void*)io_fs_create);
+    dictionary_put(opCodes_diccionario, "IO_FS_DELETE",   (void*)io_fs_delete);
+    dictionary_put(opCodes_diccionario, "IO_FS_TRUNCATE", (void*)io_fs_truncate);
+    dictionary_put(opCodes_diccionario, "IO_FS_WRITE",    (void*)io_fs_write);
+    dictionary_put(opCodes_diccionario, "IO_FS_READ",     (void*)io_fs_read);
+    dictionary_put(opCodes_diccionario, "EXIT",           (void*)exit_os);
 }
 /* Cada nombre de registro tiene asociado la dirección de memoria*/
 void init_registros_dictionary(void){
@@ -68,4 +68,5 @@ void init_registros_dictionary(void){
     dictionary_put(registros_diccionario, "EDX", (void*)(&registros.EDX));
     dictionary_put(registros_diccionario, "SI",  (void*)(&registros.SI));
     dictionary_put(registros_diccionario, "DI",  (void*)(&registros.DI));
+    dictionary_put(registros_diccionario, "PC",  (void*)(&registros.PC));
 }

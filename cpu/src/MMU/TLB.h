@@ -27,7 +27,7 @@ typedef struct ENTRADA_DE_TLB {
 void inicializar_TLB(void);
 void agregar_a_TLB(int nro_pagina, int nro_marco);
 void _eliminar_una_entrada_con_algoritmo(void);
-void* menos_consultado(void* entrada1, void* entrada2);
+int algoritmo_es_LRU(void);
 int _elegir_entrada_victima(void);
 int elegir_con_algoritmo_LRU();
 void _agregar_nueva_entrada(int nro_pagina, int nro_marco);

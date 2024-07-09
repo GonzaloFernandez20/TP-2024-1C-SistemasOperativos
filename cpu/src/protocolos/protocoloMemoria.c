@@ -28,8 +28,7 @@ char* _recibir_instruccion(void){
 
 	int length = buffer_read_int(&stream);
 
-    char* instruccion = malloc(length);
-	strcpy(instruccion, buffer_read_string(&stream, length));
+    char* instruccion = buffer_read_string(&stream, length);
 
 	eliminar_buffer(buffer);
 

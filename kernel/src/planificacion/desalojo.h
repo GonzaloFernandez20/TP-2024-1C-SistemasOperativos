@@ -21,7 +21,9 @@ void case_IO_STDIN_READ(t_pcb* pcb, void* stream);
 void case_WAIT(int PID, t_recurso *recurso);
 void case_SIGNAL(int PID, t_recurso *recurso);
 void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream);
-
+void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion);
+void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream);
+void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion);
 
 int validar_peticion(char* interfaz, op_code_instruccion llamada);
 int admite_operacion_solicitada(op_code_instruccion instruccion, char* tipo);

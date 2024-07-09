@@ -129,13 +129,16 @@ void _imprimir_estados_procesos(void){
     
     puts("Cola BLOCKED: ");
     imprimir_cola_bloqueados();
+    imprimir_lista(recursos_usados);
 
     puts("Cola EXIT: ");
     imprimir_cola(estado_exit);
+
+    listar_procesos_finalizados(procesos_terminados);
 }
 
 void ejecutar_script(char *path){
-    char* path_codigo = string_duplicate("/home/utnso/scripts-pruebas/");
+    char* path_codigo = string_duplicate("/home/utnso/c-comenta-pruebas/");
     string_append(&path_codigo, path);
 
     char *leido = NULL; 
@@ -212,7 +215,9 @@ int _asignar_PID(void){
 
 // CAPAZ ESTAS 3 FUNCIONES DEBERIAN IR EN colasEstados.c
 void imprimir_cola(t_estado *estado) {
-    list_iterate(estado->cola, _mostrar_pcbs);
+    if (!list_is_empty(estado->cola)){
+        list_iterate(estado->cola, _mostrar_pcbs);
+    } 
 }
 
 void _mostrar_pcbs(void *pcbDeLista) {
@@ -231,7 +236,6 @@ void imprimir_cola_bloqueados(void){
         printf("\t%s:\n", interfaz->nombre);
         imprimir_cola(interfaz->bloqueados);
     }
-
 }
 
 int _esta_ejecutando(int pid_buscado){
@@ -251,4 +255,18 @@ int _esta_ejecutando(int pid_buscado){
             }
         }
     return encontro;
+}
+
+
+void listar_procesos_finalizados(t_list *lista){
+    int cant_pids = list_size(lista);
+    if (cant_pids > 0)
+    {
+        puts("Procesos finalizados:");
+
+        for (int i = 0; i < cant_pids; i++)
+        {
+            printf(" %d ", *(int*)list_get(lista, i)); 
+        }
+    }
 }

@@ -104,7 +104,7 @@ void *planificador_largo_plazo(void){ // DIVIDIDO EN 2 PARTES: UNA PARA LLEVAR P
 
         if (!rta_memoria){
             pthread_mutex_lock(&mutex_log_debug); 
-                log_error(kernel_log_debugg, "No se pudo crear el proceso :( ");
+                log_info(kernel_log_debugg, "\033[0;31mNo se pudo crear el proceso :( \033[0m");
             pthread_mutex_lock(&mutex_log_debug); 
             return NULL; 
         } 
@@ -171,7 +171,7 @@ void *iniciar_quantum(void* PID_PROCESO){
 
     quantum_proceso = temporal_create(); // INICIO EL CONTADOR DEL QUANTUM
 
-    usleep(pcb->quantum * 2000); // DEBERIA SER * 1000
+    usleep(pcb->quantum * 1000); // DEBERIA SER * 1000
     termino_quantum = 1;
     enviar_interrupcion(FIN_DE_QUANTUM);
 

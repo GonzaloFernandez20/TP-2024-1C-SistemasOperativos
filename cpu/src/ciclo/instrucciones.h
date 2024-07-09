@@ -41,6 +41,16 @@ void wait_kernel(void);
 
 void signal_kernel(void);
 
+void io_fs_create(void);
+
+void io_fs_delete(void);
+
+void io_fs_truncate(void);
+
+void io_fs_write(void);
+
+void io_fs_read(void);
+
 void exit_os(void);
 
 void* direccion_del_registro(char* nombre_registro);
@@ -50,5 +60,7 @@ int tamanio_de_registro(char* registro);
 void* obtener_direcciones_fisicas(int indice1, int indice2);
 
 char *generar_cadena(void* particion, int bytes);
+
+int es_registro_8_bits(char *registro);
 
 #endif

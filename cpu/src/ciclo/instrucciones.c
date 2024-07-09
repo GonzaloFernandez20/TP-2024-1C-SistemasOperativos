@@ -9,11 +9,11 @@ void set(void){
     void* ptr_registro = direccion_del_registro(registro);
 
     //necesito hacer el cast a uint8_t o uint32_t por el void* que no se puede desreferenciar
-    if(tamanio_de_registro(registro) == sizeof(uint8_t)) {
+    if(es_registro_8_bits(registro)) { //tamanio_de_registro(registro) == sizeof(uint8_t)
         *(uint8_t*)ptr_registro = (uint8_t)valor; 
     }
     else {
-        *(uint32_t*)ptr_registro = valor; // idem pero para uint32_t
+        *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
     }
 }
 //SUM////////////////////////////////////////////////////////////////////////////////////
@@ -238,15 +238,7 @@ void escribir_string(void* string_leido){
 }
 
 //IO_STDIN_READ//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/** 
- * IO_STDIN_READ (Interfaz, Registro Dirección, Registro Tamaño): 
- * Esta instrucción solicita al Kernel que mediante la interfaz ingresada 
- * se lea desde el STDIN (Teclado) un valor cuyo tamaño está delimitado 
- * por el valor del Registro Tamaño y el mismo se guarde a partir 
- * de la Dirección Lógica almacenada en el Registro Dirección.
- *
- * Ej: IO_STDIN_READ Int2 EAX AX
- * */ 
+
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
 
@@ -269,15 +261,7 @@ void io_stdin_read(void) {
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/**
- * IO_STDOUT_WRITE (Interfaz, Registro Dirección, Registro Tamaño): 
- * Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, 
- * se lea desde la posición de memoria indicada por la Dirección Lógica 
- * almacenada en el Registro Dirección, un tamaño indicado por 
- * el Registro Tamaño y se imprima por pantalla.
- * 
- * Ej: IO_STDOUT_WRITE Int3 BX EAX
- * */ 
+
 void io_stdout_write(void) {
     char* interfaz = instruccion_ejecutando[1];
     
@@ -299,20 +283,11 @@ void io_stdout_write(void) {
     devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, tamanio_a_leer);
     se_devolvio_contexto = 1;
 }
-
-
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
 void io_gen_sleep(void){
-    char* interfaz =instruccion_ejecutando[1];
+    char* interfaz = instruccion_ejecutando[1];
     int unidades_de_trabajo = atoi(instruccion_ejecutando[2]);
-    devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz,unidades_de_trabajo);
-    se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-}
-
-//EXIT////////////////////////////////////////////////////////////////////////////////////////////////
-void exit_os(void){
-    devolver_contexto_ejecucion(EXIT);
+    devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz, unidades_de_trabajo);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
 }
@@ -332,8 +307,60 @@ void signal_kernel(void){
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
 }
-
-//Auxiliares
+//IO_FS_CREATE////////////////////////////////////////////////////////////////////////////////////////////////
+void io_fs_create(void){ // (Interfaz, Nombre Archivo)
+    char* interfaz = instruccion_ejecutando[1];
+    char* nombre_archivo = instruccion_ejecutando[2];
+    devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_CREATE);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//IO_FS_DELETE////////////////////////////////////////////////////////////////////////////////////////////////
+void io_fs_delete(void){
+    char* interfaz = instruccion_ejecutando[1];
+    char* nombre_archivo = instruccion_ejecutando[2];
+    devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_DELETE);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//IO_FS_TRUNCATE////////////////////////////////////////////////////////////////////////////////////////////////
+void io_fs_truncate(void){
+    char* interfaz = instruccion_ejecutando[1];
+    char* nombre_archivo = instruccion_ejecutando[2];
+    int registro_tamanio = atoi(instruccion_ejecutando[3]);
+    devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, registro_tamanio);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//IO_FS_WRITE////////////////////////////////////////////////////////////////////////////////////////////////
+void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+    char* interfaz = instruccion_ejecutando[1];
+    char* nombre_archivo = instruccion_ejecutando[2];
+    int registro_direccion = atoi(instruccion_ejecutando[3]);
+    int registro_tamanio = atoi(instruccion_ejecutando[4]);
+    int reg_puntero_archivo = atoi(instruccion_ejecutando[5]);
+    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, registro_direccion, registro_tamanio, reg_puntero_archivo, IO_FS_WRITE);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//IO_FS_READ////////////////////////////////////////////////////////////////////////////////////////////////
+void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+    char* interfaz = instruccion_ejecutando[1];
+    char* nombre_archivo = instruccion_ejecutando[2];
+    int registro_direccion = atoi(instruccion_ejecutando[3]);
+    int registro_tamanio = atoi(instruccion_ejecutando[4]);
+    int reg_puntero_archivo = atoi(instruccion_ejecutando[5]);
+    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, registro_direccion, registro_tamanio, reg_puntero_archivo, IO_FS_READ);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//EXIT////////////////////////////////////////////////////////////////////////////////////////////////
+void exit_os(void){
+    devolver_contexto_ejecucion(EXIT);
+    se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+}
+//------------------------------------------------ Auxiliares ------------------------------------------------ //
 
 // Retorna la direccion casteado a void* del registro dado  
 void* direccion_del_registro(char* nombre_registro){
@@ -341,13 +368,24 @@ void* direccion_del_registro(char* nombre_registro){
 }
 
 int tamanio_de_registro(char* registro){
-
-    if(string_starts_with(registro, "E") || string_ends_with(registro, "I")) {
-        return sizeof(uint32_t);  
-    }
-    else{
+    
+    if (es_registro_8_bits(registro)){
         return sizeof(uint8_t);
+    }else{
+        return sizeof(uint32_t);
     }
+}
+
+int es_registro_8_bits(char *registro){
+    char* registros_8_bits[] = {"AX", "BX", "CX", "DX"};
+    for (int i = 0; i < 4; i++)
+    {
+        if (string_equals_ignore_case(registro, registros_8_bits[i]))
+        {
+            return 1;
+        }   
+    }
+    return 0;
 }
 
 void* obtener_direcciones_fisicas(int indice1, int indice2){

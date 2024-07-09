@@ -20,7 +20,6 @@ void *procesar_conexion_es(void *nombre_interfaz){
 			break;
 
 		case -1:
-
 			pthread_mutex_lock(&mutex_log_debug);
 			log_error(kernel_log_debugg, "%s se desconecto\n", nombre);
 			pthread_mutex_unlock(&mutex_log_debug);
@@ -125,6 +124,58 @@ void solicitar_operacion_IO_STDOUT_WRITE(t_peticion* peticion, int PID, int fd){
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
 }
+
+void solicitar_operacion_IO_FS_CREATE_DELETE(t_peticion* peticion, int PID, int fd){
+	t_paquete* paquete = crear_paquete(peticion->tipo_operacion); // PUEDE SER CREATE O DELETE, EL RESTO ES IGUAL PARA AMBOS...
+	int size = strlen(peticion->nombre_archivo) + 1;
+
+	int buffer_size = 2 * sizeof(int) + size; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, size);
+	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
+
+	enviar_paquete(paquete, fd);
+	eliminar_paquete(paquete);
+}
+
+void solicitar_operacion_IO_FS_TRUNCATE(t_peticion* peticion, int PID, int fd){
+	t_paquete* paquete = crear_paquete(IO_FS_TRUNCATE);
+	int size = strlen(peticion->nombre_archivo) + 1;
+
+	int buffer_size = 3 * sizeof(int) + size; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, size);
+	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
+	buffer_add_int(paquete->buffer, peticion->registro_tamanio);
+
+	enviar_paquete(paquete, fd);
+	eliminar_paquete(paquete);
+}
+// (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+void solicitar_operacion_IO_FS_WRITE_READ(t_peticion* peticion, int PID, int fd){
+	
+	t_paquete* paquete = crear_paquete(peticion->tipo_operacion);
+	int size = strlen(peticion->nombre_archivo) + 1;
+
+	int buffer_size = 5 * sizeof(int) + size; 
+	crear_buffer(paquete, buffer_size);
+
+	buffer_add_int(paquete->buffer, PID);
+	buffer_add_int(paquete->buffer, size);
+	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
+	buffer_add_int(paquete->buffer, peticion->registro_direccion);
+	buffer_add_int(paquete->buffer, peticion->registro_tamanio);
+	buffer_add_int(paquete->buffer, peticion->reg_puntero_archivo);
+
+	enviar_paquete(paquete, fd);
+	eliminar_paquete(paquete);
+}
+
+
 
 void recibir_aviso(char* nombre, int fd){
 	t_buffer *buffer = recibir_buffer(fd);

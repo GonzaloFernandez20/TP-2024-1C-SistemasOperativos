@@ -35,5 +35,5 @@ void imprimir_cola_bloqueados(void);
 int _asignar_PID(void);
 void _mostrar_pcbs(void *pcbDeLista); 
 int _esta_ejecutando(int pid_buscado);
-
+void listar_procesos_finalizados(t_list *lista);
 #endif

@@ -50,10 +50,44 @@ typedef struct t_peticion{
     int tamanio_a_leer;
     int cant_direcciones;
     t_list* direcciones;
-    //agregaremos los argumentos que otras funciones necesiten
+    char* nombre_archivo; 
+    int tipo_operacion;
+    int registro_tamanio;
+    int registro_direccion;
+    int reg_puntero_archivo;
+    
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;
+/*
+typedef struct t_peticion {
+    void (*funcion)(struct t_peticion*, int, int);
+    // Unión para los argumentos adicionales segun la funcion que llamemos
+    union {
+        struct {
+            int unidades_trabajo;
+        } IO_GEN_SLEEP;
+        struct {
+            int tamanio_a_leer;
+            int cant_direcciones;
+            t_list* direcciones;
+        } IO_STDOUT_WRITE;
+        struct {
+            int tamanio_a_leer;
+            int cant_direcciones;
+            t_list* direcciones;
+        } IO_STDIN_READ;
+        struct {
+            char* nombre_archivo;
+            int tipo_operacion;
+        } IO_FS_CREATE_DELETE;
+        
+    }argumentos; 
+} t_peticion;
 
+
+  t_peticion peticion;
+    peticion.argumentos.IO_GEN_SLEEP.unidades_trabajo = 10;
+    peticion.funcion = funcion_sleep; */
 typedef struct recurso{
     char* nombre_recurso;
     int instancias_recursos;
@@ -114,4 +148,5 @@ extern int planificacion_pausada;
 extern int contador_bloqueados;
 
 extern t_list *recursos_usados;
+extern t_list *procesos_terminados;
 #endif

@@ -23,7 +23,7 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
         pthread_mutex_unlock(&mutex_log);
         break;
 
-    case LLAMADA_IO: // DEBERIA LLAMARSE "OPERACION" POR EL TEMA DE WAIT Y SIGNAL?
+    case LLAMADA_IO:
         ejecutar_llamada_io(pcb, stream);
         break;
 
@@ -80,6 +80,21 @@ void ejecutar_llamada_io(t_pcb *pcb, void *stream)
         break;
     case IO_STDOUT_WRITE: // (Interfaz, Registro Dirección, Registro Tamaño)
             case_IO_STDOUT_WRITE(pcb, stream);
+        break;
+    case IO_FS_CREATE: // (Interfaz, Nombre Archivo)
+            case_IO_FS_CREATE_DELETE(pcb, stream, IO_FS_CREATE);
+        break;
+    case IO_FS_DELETE : // (Interfaz, Nombre Archivo)
+            case_IO_FS_CREATE_DELETE(pcb, stream, IO_FS_DELETE);
+        break;
+    case IO_FS_TRUNCATE: // (Interfaz, Nombre Archivo, Registro Tamaño)
+            case_IO_FS_TRUNCATE(pcb, stream);
+        break;
+    case IO_FS_WRITE: // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+            case_IO_FS_WRITE_READ(pcb, stream, IO_FS_WRITE);
+        break;
+    case IO_FS_READ: // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+            case_IO_FS_WRITE_READ(pcb, stream, IO_FS_READ);
         break;
 
     default:
@@ -255,9 +270,7 @@ void case_WAIT(int PID, t_recurso *recurso)
         enviar_interrupcion(PROCESO_BLOQUEADO);
     }
 }
-/*
-Si no hice signal antes, solamente hago un ++ a la instancia.
-*/
+
 void case_SIGNAL(int PID, t_recurso *recurso)
 {
     int hay_proceso_esperando = 0; // Supongo que inicialmente no hay procesos bloqueados
@@ -278,6 +291,126 @@ void case_SIGNAL(int PID, t_recurso *recurso)
         agregar_instancia_recurso(pcb_liberado->pid, recurso);
         trasladar(pcb_liberado->pid, recurso->cola_recurso, ready);
         // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
+    }
+}
+
+void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+
+    if (!validar_peticion(nombre_interfaz, operacion))
+    {
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        int size_nombre_archivo = buffer_read_int(&stream);
+        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->tipo_operacion = operacion;
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
+    }
+}
+
+void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo, Registro Tamaño)
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+
+    if (!validar_peticion(nombre_interfaz, IO_FS_TRUNCATE))
+    {
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        int size_nombre_archivo = buffer_read_int(&stream);
+        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->registro_tamanio = buffer_read_int(&stream);
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
+    }
+}
+
+void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
+    int size_interfaz = buffer_read_int(&stream);
+    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+
+    if (!validar_peticion(nombre_interfaz, IO_FS_TRUNCATE))
+    {
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INVALID_INTERFACE >", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
+        trasladar(pcb->pid, exec, estado_exit);
+        free(nombre_interfaz);
+    }
+    else
+    {
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        int size_nombre_archivo = buffer_read_int(&stream);
+        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->registro_direccion = buffer_read_int(&stream);
+        nueva_peticion->registro_tamanio = buffer_read_int(&stream);
+        nueva_peticion->reg_puntero_archivo = buffer_read_int(&stream);
+        nueva_peticion->tipo_operacion = operacion;
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ;
+
+        char *pid_string = string_itoa(pcb->pid);
+
+        pthread_mutex_lock(&diccionario_peticiones);
+            dictionary_put(peticiones_interfaz, pid_string, nueva_peticion);
+        pthread_mutex_unlock(&diccionario_peticiones);
+
+        pthread_mutex_lock(&diccionario_interfaces);
+            t_interfaz *interfaz = dictionary_get(interfaces_conectadas, nombre_interfaz);
+        pthread_mutex_unlock(&diccionario_interfaces);
+
+        trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        sem_post(&interfaz->hay_peticiones);
+
+        free(nombre_interfaz);
+        free(pid_string);
     }
 }
 

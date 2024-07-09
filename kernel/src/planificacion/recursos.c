@@ -98,10 +98,12 @@ void _destruir(t_recurso_usado *recurso){
 }
 
 void imprimir_lista(t_list *lista) {
-    t_link_element *elemento = lista->head;
-    while (elemento != NULL) {
+    if (!list_is_empty(lista)){
+        t_link_element *elemento = lista->head;
+        while (elemento != NULL) {
         t_recurso_usado *recurso = elemento->data;
         printf("PID: %d, Recurso: %s\n", recurso->PID, recurso->nombre_recurso);
         elemento = elemento->next;
+        }
     }
 }

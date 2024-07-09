@@ -55,19 +55,7 @@ void devolver_contexto_ejecucion(int motivo){
     int buffer_size = 2 * sizeof(int) + 4*sizeof(uint8_t) + 7*sizeof(uint32_t); 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID );
-    buffer_add_uint32(paquete->buffer, registros.PC );
-    buffer_add_uint8(paquete->buffer, registros.AX );
-    buffer_add_uint8(paquete->buffer, registros.BX );
-    buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint8(paquete->buffer, registros.DX );
-    buffer_add_uint32(paquete->buffer, registros.EAX );
-    buffer_add_uint32(paquete->buffer, registros.EBX );
-    buffer_add_uint32(paquete->buffer, registros.ECX );
-    buffer_add_uint32(paquete->buffer, registros.EDX );
-    buffer_add_uint32(paquete->buffer, registros.SI );
-    buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, motivo);
+	_cargar_pcb(paquete, motivo); // 7 UINT32, 4 UINT8 Y 2 INT
 
 	enviar_paquete(paquete, fd_dispatch);
 
@@ -82,19 +70,7 @@ void devolver_contexto_ejecucion_IO_GEN_SLEEP(char* nombre_interfaz, int unidade
     int buffer_size = 5 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID );
-    buffer_add_uint32(paquete->buffer, registros.PC );
-    buffer_add_uint8(paquete->buffer, registros.AX );
-    buffer_add_uint8(paquete->buffer, registros.BX );
-    buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint8(paquete->buffer, registros.DX );
-    buffer_add_uint32(paquete->buffer, registros.EAX );
-    buffer_add_uint32(paquete->buffer, registros.EBX );
-    buffer_add_uint32(paquete->buffer, registros.ECX );
-    buffer_add_uint32(paquete->buffer, registros.EDX );
-    buffer_add_uint32(paquete->buffer, registros.SI );
-    buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
 	buffer_add_int(paquete->buffer, IO_GEN_SLEEP);
 	buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
@@ -114,19 +90,7 @@ void devolver_contexto_ejecucion_RECURSO(char *recurso, int codigo_recurso){
     int buffer_size = 4 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(recurso) + 1; 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID );
-    buffer_add_uint32(paquete->buffer, registros.PC );
-    buffer_add_uint8(paquete->buffer, registros.AX );
-    buffer_add_uint8(paquete->buffer, registros.BX );
-    buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint8(paquete->buffer, registros.DX );
-    buffer_add_uint32(paquete->buffer, registros.EAX );
-    buffer_add_uint32(paquete->buffer, registros.EBX );
-    buffer_add_uint32(paquete->buffer, registros.ECX );
-    buffer_add_uint32(paquete->buffer, registros.EDX );
-    buffer_add_uint32(paquete->buffer, registros.SI );
-    buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
 	buffer_add_int(paquete->buffer, codigo_recurso);
 	buffer_add_int(paquete->buffer, strlen(recurso) + 1);
 	buffer_add_string(paquete->buffer, recurso);
@@ -146,19 +110,7 @@ void devolver_contexto_ejecucion_IO_STDIN_READ(char* nombre_interfaz, int tamani
     int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID );
-    buffer_add_uint32(paquete->buffer, registros.PC );
-    buffer_add_uint8(paquete->buffer, registros.AX );
-    buffer_add_uint8(paquete->buffer, registros.BX );
-    buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint8(paquete->buffer, registros.DX );
-    buffer_add_uint32(paquete->buffer, registros.EAX );
-    buffer_add_uint32(paquete->buffer, registros.EBX );
-    buffer_add_uint32(paquete->buffer, registros.ECX );
-    buffer_add_uint32(paquete->buffer, registros.EDX );
-    buffer_add_uint32(paquete->buffer, registros.SI );
-    buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
 	buffer_add_int(paquete->buffer, IO_STDIN_READ);
     buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
@@ -188,19 +140,7 @@ void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tama
     int buffer_size = (6 + 2*cant_direcciones) * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + 1; 
 	crear_buffer(paquete, buffer_size);
 
-	buffer_add_int(paquete->buffer, PID );
-    buffer_add_uint32(paquete->buffer, registros.PC );
-    buffer_add_uint8(paquete->buffer, registros.AX );
-    buffer_add_uint8(paquete->buffer, registros.BX );
-    buffer_add_uint8(paquete->buffer, registros.CX );
-    buffer_add_uint8(paquete->buffer, registros.DX );
-    buffer_add_uint32(paquete->buffer, registros.EAX );
-    buffer_add_uint32(paquete->buffer, registros.EBX );
-    buffer_add_uint32(paquete->buffer, registros.ECX );
-    buffer_add_uint32(paquete->buffer, registros.EDX );
-    buffer_add_uint32(paquete->buffer, registros.SI );
-    buffer_add_uint32(paquete->buffer, registros.DI );
-	buffer_add_int(paquete->buffer, LLAMADA_IO);
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
 	buffer_add_int(paquete->buffer, IO_STDOUT_WRITE);
     buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
 	buffer_add_string(paquete->buffer, nombre_interfaz);
@@ -222,6 +162,93 @@ void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tama
     free(nombre_interfaz);
 	eliminar_paquete(paquete);
 }
+
+void devolver_contexto_ejecucion_IO_FS(char* nombre_interfaz, char* nombre_archivo, int operacion){
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+
+    int buffer_size = 5 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(nombre_archivo) + 2; 
+	crear_buffer(paquete, buffer_size);
+
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
+	buffer_add_int(paquete->buffer, operacion);
+    buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
+	buffer_add_string(paquete->buffer, nombre_interfaz);
+    buffer_add_int(paquete->buffer, strlen(nombre_archivo) + 1);
+	buffer_add_string(paquete->buffer, nombre_archivo);
+    
+    enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
+
+    free(nombre_interfaz);
+	eliminar_paquete(paquete);
+}
+
+void devolver_contexto_ejecucion_IO_FS_TRUNCATE(char* nombre_interfaz, char* nombre_archivo, int registro_tamanio){
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+
+    int buffer_size = 6 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(nombre_archivo) + 2; 
+	crear_buffer(paquete, buffer_size);
+
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
+	buffer_add_int(paquete->buffer, IO_FS_TRUNCATE);
+    buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
+	buffer_add_string(paquete->buffer, nombre_interfaz);
+    buffer_add_int(paquete->buffer, strlen(nombre_archivo) + 1);
+	buffer_add_string(paquete->buffer, nombre_archivo);
+    buffer_add_int(paquete->buffer, registro_tamanio);
+    
+    enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
+
+    free(nombre_interfaz);
+	eliminar_paquete(paquete);
+}
+// (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
+void devolver_contexto_ejecucion_IO_FS_WRITE_READ(char* nombre_interfaz, char* nombre_archivo, int registro_direccion, int registro_tamanio, int reg_puntero, int operacion){
+    t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
+
+    int buffer_size = 8 * sizeof(int) + 4*sizeof(uint8_t) + 7*(sizeof(uint32_t)) + strlen(nombre_interfaz) + strlen(nombre_archivo) + 2; 
+	crear_buffer(paquete, buffer_size);
+
+	_cargar_pcb(paquete, LLAMADA_IO); // 7 UINT32, 4 UINT8 Y 2 INT
+	buffer_add_int(paquete->buffer, operacion);
+    buffer_add_int(paquete->buffer, strlen(nombre_interfaz) + 1);
+	buffer_add_string(paquete->buffer, nombre_interfaz);
+    buffer_add_int(paquete->buffer, strlen(nombre_archivo) + 1);
+	buffer_add_string(paquete->buffer, nombre_archivo);
+    buffer_add_int(paquete->buffer, registro_direccion);
+    buffer_add_int(paquete->buffer, registro_tamanio);
+    buffer_add_int(paquete->buffer, reg_puntero);
+    
+    enviar_paquete(paquete, fd_dispatch);
+
+    log_info(cpu_log_debug, "Enviando contexto de ejecucion PID: < %d > a KERNEL.", PID);
+
+    free(nombre_interfaz);
+	eliminar_paquete(paquete);
+}
+
+
+// -------------------------------------------------------------
+
+void _cargar_pcb(t_paquete* paquete, int motivo){ // Como solo se llama dentro de este archivo, la defino estatica para limitar su visibilidad solo a este archivo.
+    buffer_add_int(paquete->buffer, PID );
+    buffer_add_uint32(paquete->buffer, registros.PC );
+    buffer_add_uint8(paquete->buffer, registros.AX );
+    buffer_add_uint8(paquete->buffer, registros.BX );
+    buffer_add_uint8(paquete->buffer, registros.CX );
+    buffer_add_uint8(paquete->buffer, registros.DX );
+    buffer_add_uint32(paquete->buffer, registros.EAX );
+    buffer_add_uint32(paquete->buffer, registros.EBX );
+    buffer_add_uint32(paquete->buffer, registros.ECX );
+    buffer_add_uint32(paquete->buffer, registros.EDX );
+    buffer_add_uint32(paquete->buffer, registros.SI );
+    buffer_add_uint32(paquete->buffer, registros.DI );
+    buffer_add_int(paquete->buffer, motivo);
+}
+
 /* 
 int cantidad_direcciones = list_size(direcciones);
     int offset = 0;
