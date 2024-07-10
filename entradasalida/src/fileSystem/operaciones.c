@@ -21,6 +21,10 @@ void realizar_un_fs_read(void){
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_FS_READ", PID);
     pthread_mutex_unlock(&mutex_log);
 
+    pthread_mutex_lock(&mutex_log);
+	    log_info(IO_log,"PID: < %d > - Leer Archivo: < %s > - Tamaño a Leer: < %d > - Puntero Archivo: < %d >", PID, nombre_archivo, tamanio_a_leer, puntero_archivo);
+    pthread_mutex_unlock(&mutex_log);
+
     char *cadena_leida = leer_de_archivo(nombre_archivo, tamanio_a_leer, puntero_archivo); // -> Codear...
 
     enviar_cadena_memoria(PID, cadena_leida, stream);
@@ -44,6 +48,10 @@ void realizar_un_fs_write(void){
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_STDOUT_WRITE", PID);
+    pthread_mutex_unlock(&mutex_log);
+
+    pthread_mutex_lock(&mutex_log);
+	    log_info(IO_log,"PID: < %d > - Escribir Archivo: < %s > - Tamaño a Escribir: < %d > - Puntero Archivo: < %d >", PID, nombre_archivo, tamanio_a_leer, puntero_archivo);
     pthread_mutex_unlock(&mutex_log);
     
     char *cadena = traer_cadena_memoria(PID, tamanio_a_leer, stream);

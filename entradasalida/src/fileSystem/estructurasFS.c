@@ -1,6 +1,6 @@
 #include <fileSystem/estructurasFS.h>
 
-/* void levantar_filesystem(void){
+void levantar_filesystem(void){
 
     path_archivo_bloques = concatenar_rutas(config_IO.PATH_BASE_DIALFS, "bloques.dat");
     archivo_bloques = abrir_archivo(config_IO.BLOCK_COUNT * config_IO.BLOCK_SIZE, path_archivo_bloques);
@@ -38,4 +38,4 @@ char* concatenar_rutas(char* directorio, char* archivo){
 void mapear_bitmap_en_memoria(void){
     memoria_mapeada = mmap(NULL, tamanio_bitmap, PROT_READ | PROT_WRITE, MAP_SHARED, fileno(archivo_bitmap), 0);
     bitarray = bitarray_create_with_mode (memoria_mapeada, tamanio_bitmap, LSB_FIRST);
-} */
+}
