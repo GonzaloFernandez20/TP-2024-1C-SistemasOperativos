@@ -26,11 +26,11 @@ void sum(void){
     void* ptr_registro_destino = direccion_del_registro(registro_destino);
     void* ptr_registro_origen = direccion_del_registro(registro_origen);
 
-    if(es_registro_8_bits(registro_destino)) { //tamanio_de_registro(registro) == sizeof(uint8_t)
-        *(uint8_t*)ptr_registro = (uint8_t)valor; 
+    if(es_registro_8_bits(registro_destino)){
+        *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
     }
-    else {
-        *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
+    else{
+        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
     }
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////

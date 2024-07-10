@@ -74,7 +74,7 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd){
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
-	buffer_add_int(paquete->buffer, peticion->unidades_trabajo);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_GEN_SLEEP.unidades_trabajo);
 
 	enviar_paquete(paquete, fd);
 
@@ -84,17 +84,18 @@ void solicitar_operacion_IO_GEN_SLEEP(t_peticion* peticion, int PID, int fd){
 
 void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
 	t_paquete* paquete = crear_paquete(IO_STDIN_READ);
+	int cant_direcciones = peticion->argumentos.IO_STDIN_READ.cant_direcciones;
 
-	int buffer_size = 3 * sizeof(int) + 2 * peticion->cant_direcciones * sizeof(int); 
+	int buffer_size = 3 * sizeof(int) + 2 * cant_direcciones * sizeof(int); 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
-	buffer_add_int(paquete->buffer, peticion->tamanio_a_leer);
-	buffer_add_int(paquete->buffer, peticion->cant_direcciones);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_STDIN_READ.tamanio_a_leer);
+	buffer_add_int(paquete->buffer, cant_direcciones);
 
-	for (int i = 0; i < peticion->cant_direcciones; i++)
+	for (int i = 0; i < cant_direcciones; i++)
     {
-        t_datos_acceso *dato = list_remove(peticion->direcciones, 0);
+        t_datos_acceso *dato = list_remove(peticion->argumentos.IO_STDIN_READ.direcciones, 0);
         buffer_add_int(paquete->buffer, dato->bytes);
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);
@@ -105,17 +106,18 @@ void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
 
 void solicitar_operacion_IO_STDOUT_WRITE(t_peticion* peticion, int PID, int fd){
 	t_paquete* paquete = crear_paquete(IO_STDOUT_WRITE);
+	int cant_direcciones = peticion->argumentos.IO_STDOUT_WRITE.cant_direcciones;
 
-	int buffer_size = 3 * sizeof(int) + 2 * peticion->cant_direcciones * sizeof(int); 
+	int buffer_size = 3 * sizeof(int) + 2 * cant_direcciones * sizeof(int); 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
-	buffer_add_int(paquete->buffer, peticion->tamanio_a_leer);
-	buffer_add_int(paquete->buffer, peticion->cant_direcciones);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_STDOUT_WRITE.tamanio_a_leer);
+	buffer_add_int(paquete->buffer, cant_direcciones);
 
-	for (int i = 0; i < peticion->cant_direcciones; i++)
+	for (int i = 0; i < cant_direcciones; i++)
     {
-        t_datos_acceso *dato = list_remove(peticion->direcciones, 0);
+        t_datos_acceso *dato = list_remove(peticion->argumentos.IO_STDOUT_WRITE.direcciones, 0);
         buffer_add_int(paquete->buffer, dato->bytes);
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);
@@ -126,15 +128,15 @@ void solicitar_operacion_IO_STDOUT_WRITE(t_peticion* peticion, int PID, int fd){
 }
 
 void solicitar_operacion_IO_FS_CREATE_DELETE(t_peticion* peticion, int PID, int fd){
-	t_paquete* paquete = crear_paquete(peticion->tipo_operacion); // PUEDE SER CREATE O DELETE, EL RESTO ES IGUAL PARA AMBOS...
-	int size = strlen(peticion->nombre_archivo) + 1;
+	t_paquete* paquete = crear_paquete(peticion->argumentos.IO_FS_CREATE_DELETE.tipo_operacion); // PUEDE SER CREATE O DELETE, EL RESTO ES IGUAL PARA AMBOS...
+	int size = strlen(peticion->argumentos.IO_FS_CREATE_DELETE.nombre_archivo) + 1;
 
 	int buffer_size = 2 * sizeof(int) + size; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
 	buffer_add_int(paquete->buffer, size);
-	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
+	buffer_add_string(paquete->buffer, peticion->argumentos.IO_FS_CREATE_DELETE.nombre_archivo);
 
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
@@ -142,15 +144,15 @@ void solicitar_operacion_IO_FS_CREATE_DELETE(t_peticion* peticion, int PID, int 
 
 void solicitar_operacion_IO_FS_TRUNCATE(t_peticion* peticion, int PID, int fd){
 	t_paquete* paquete = crear_paquete(IO_FS_TRUNCATE);
-	int size = strlen(peticion->nombre_archivo) + 1;
+	int size = strlen(peticion->argumentos.IO_FS_TRUNCATE.nombre_archivo) + 1;
 
 	int buffer_size = 3 * sizeof(int) + size; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
 	buffer_add_int(paquete->buffer, size);
-	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
-	buffer_add_int(paquete->buffer, peticion->registro_tamanio);
+	buffer_add_string(paquete->buffer, peticion->argumentos.IO_FS_TRUNCATE.nombre_archivo);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_FS_TRUNCATE.registro_tamanio);
 
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
@@ -158,22 +160,22 @@ void solicitar_operacion_IO_FS_TRUNCATE(t_peticion* peticion, int PID, int fd){
 // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
 void solicitar_operacion_IO_FS_WRITE_READ(t_peticion* peticion, int PID, int fd){
 	
-	t_paquete* paquete = crear_paquete(peticion->tipo_operacion);
-	int size = strlen(peticion->nombre_archivo) + 1;
-
-	int buffer_size = (5 + 2*peticion->cant_direcciones) * sizeof(int) + size; 
+	t_paquete* paquete = crear_paquete(peticion->argumentos.IO_FS_WRITE_READ.tipo_operacion);
+	int size = strlen(peticion->argumentos.IO_FS_WRITE_READ.nombre_archivo) + 1;
+	int cant_direcciones = peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones;
+	int buffer_size = (5 + 2 * cant_direcciones) * sizeof(int) + size; 
 	crear_buffer(paquete, buffer_size);
 
 	buffer_add_int(paquete->buffer, PID);
 	buffer_add_int(paquete->buffer, size);
-	buffer_add_string(paquete->buffer, peticion->nombre_archivo);
-	buffer_add_int(paquete->buffer, peticion->registro_tamanio);
-	buffer_add_int(paquete->buffer, peticion->reg_puntero_archivo);
-	buffer_add_int(paquete->buffer, peticion->cant_direcciones);
+	buffer_add_string(paquete->buffer, peticion->argumentos.IO_FS_WRITE_READ.nombre_archivo);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_FS_WRITE_READ.registro_tamanio);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_FS_WRITE_READ.reg_puntero_archivo);
+	buffer_add_int(paquete->buffer, peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones);
 
-	for (int i = 0; i < peticion->cant_direcciones; i++)
+	for (int i = 0; i < cant_direcciones; i++)
     {
-        t_datos_acceso *dato = list_remove(peticion->direcciones, 0);
+        t_datos_acceso *dato = list_remove(peticion->argumentos.IO_FS_WRITE_READ.direcciones, 0);
         buffer_add_int(paquete->buffer, dato->bytes);
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);

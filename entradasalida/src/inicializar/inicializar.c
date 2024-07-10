@@ -17,7 +17,7 @@ void init(void){
     inicializar_semaforos();
 
     if(string_equals_ignore_case(config_IO.TIPO_INTERFAZ, "DIALFS")){
-       levantar_filesystem();
+       //levantar_filesystem();
     }
 }
 

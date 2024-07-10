@@ -183,8 +183,6 @@ void *iniciar_quantum(void* PID_PROCESO){
 }  
 
 void verificar_estado_planificacion(void){
-    // OPCION 1: TENER UN WHILE (1) CON UN SLEEP DONDE CHEQUEE CADA 1SEG EL ESTADO DE LA PLANI
-    // OPCION 2: TENER 1 SEMAFORO PLANIFICACION PAUSADA
     if (planificacion_pausada)
     {
         contador_bloqueados++;

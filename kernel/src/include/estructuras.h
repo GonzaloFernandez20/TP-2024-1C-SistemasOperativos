@@ -45,7 +45,7 @@ typedef struct interfaz_conectada{
     pthread_mutex_t interfaz_en_uso;
 } t_interfaz;
 
-typedef struct t_peticion{
+/* typedef struct t_peticion{
     int unidades_trabajo;
     int tamanio_a_leer;
     int cant_direcciones;
@@ -57,37 +57,47 @@ typedef struct t_peticion{
     int reg_puntero_archivo;
     
     void (*funcion)(struct t_peticion*, int, int);
-}t_peticion;
-/*
+}t_peticion; */
 typedef struct t_peticion {
     void (*funcion)(struct t_peticion*, int, int);
     // Unión para los argumentos adicionales segun la funcion que llamemos
-    union {
-        struct {
+    union argumentos_peticiones{
+        struct IO_GEN_SLEEP{
             int unidades_trabajo;
         } IO_GEN_SLEEP;
-        struct {
-            int tamanio_a_leer;
-            int cant_direcciones;
-            t_list* direcciones;
-        } IO_STDOUT_WRITE;
-        struct {
+        struct IO_STDIN_READ{
             int tamanio_a_leer;
             int cant_direcciones;
             t_list* direcciones;
         } IO_STDIN_READ;
-        struct {
+        struct IO_STDOUT_WRITE{
+            int tamanio_a_leer;
+            int cant_direcciones;
+            t_list* direcciones;
+        } IO_STDOUT_WRITE;
+        struct IO_FS_CREATE_DELETE{
             char* nombre_archivo;
             int tipo_operacion;
-        } IO_FS_CREATE_DELETE;
-        
+        } IO_FS_CREATE_DELETE; //
+        struct IO_FS_TRUNCATE{
+            char* nombre_archivo;
+            int registro_tamanio;
+        } IO_FS_TRUNCATE;
+        struct IO_FS_WRITE_READ{
+            char* nombre_archivo;
+            int tipo_operacion;
+            int registro_tamanio;
+            int reg_puntero_archivo;
+            int cant_direcciones;
+            t_list* direcciones;
+        } IO_FS_WRITE_READ;
     }argumentos; 
 } t_peticion;
 
 
-  t_peticion peticion;
+/*   t_peticion peticion;
     peticion.argumentos.IO_GEN_SLEEP.unidades_trabajo = 10;
-    peticion.funcion = funcion_sleep; */
+    peticion.funcion = funcion_sleep;  */
 typedef struct recurso{
     char* nombre_recurso;
     int instancias_recursos;

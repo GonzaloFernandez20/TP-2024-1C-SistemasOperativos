@@ -213,7 +213,25 @@ int _asignar_PID(void){
     return pid_nuevo_proceso++;
 }//Lo uso y lo incremento para que otro PCB tenga un pid distinto.
 
-// CAPAZ ESTAS 3 FUNCIONES DEBERIAN IR EN colasEstados.c
+int _esta_ejecutando(int pid_buscado){
+    int size = list_size(exec->cola);
+    int encontro = 0;
+
+    for (int i = 0; i < size; i++) {
+            pthread_mutex_lock(&(exec->mutex_cola));
+                t_pcb *pcb = list_get(exec->cola, i);
+            pthread_mutex_unlock(&(exec->mutex_cola));
+
+            if (pcb->pid == pid_buscado)
+            {   
+                free(pcb);
+                encontro = 1;
+                break;
+            }
+        }
+    return encontro;
+}
+
 void imprimir_cola(t_estado *estado) {
     if (!list_is_empty(estado->cola)){
         list_iterate(estado->cola, _mostrar_pcbs);
@@ -238,35 +256,16 @@ void imprimir_cola_bloqueados(void){
     }
 }
 
-int _esta_ejecutando(int pid_buscado){
-    int size = list_size(exec->cola);
-    int encontro = 0;
-
-    for (int i = 0; i < size; i++) {
-            pthread_mutex_lock(&(exec->mutex_cola));
-                t_pcb *pcb = list_get(exec->cola, i);
-            pthread_mutex_unlock(&(exec->mutex_cola));
-
-            if (pcb->pid == pid_buscado)
-            {   
-                free(pcb);
-                encontro = 1;
-                break;
-            }
-        }
-    return encontro;
-}
-
 
 void listar_procesos_finalizados(t_list *lista){
     int cant_pids = list_size(lista);
+    printf("Procesos finalizados:");
     if (cant_pids > 0)
     {
-        puts("Procesos finalizados:");
-
-        for (int i = 0; i < cant_pids; i++)
-        {
-            printf(" %d ", *(int*)list_get(lista, i)); 
+        for (int i = 0; i < cant_pids; i++){   
+            int pid = *(int*)(list_get(lista, i));
+            printf(" %d ", pid); 
         }
+        puts("");
     }
 }

@@ -107,7 +107,9 @@ void *limpieza_cola_exit(){
 
         liberar_recursos(pcb_basura->pid); // LIBERO LOS RECURSOS QUE HAYA PEDIDO EL PROCESO
 
-        list_add(procesos_terminados, (int*)(pcb_basura->pid));
+        int *pid_ptr = malloc(sizeof(int));
+        *pid_ptr = pcb_basura->pid;
+        list_add(procesos_terminados, pid_ptr);
 
         free(pcb_basura->path_pseudocodigo);
         free(pcb_basura);
