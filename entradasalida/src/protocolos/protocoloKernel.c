@@ -16,10 +16,10 @@ void atender_peticiones_kernel(void){
                 realizar_un_stdout_write();
 			break;
         case IO_FS_CREATE:
-                
+                realizar_un_fs_create();
 			break;
         case IO_FS_DELETE:
-                
+                realizar_un_fs_delete();
 			break;
         case IO_FS_TRUNCATE:
                 

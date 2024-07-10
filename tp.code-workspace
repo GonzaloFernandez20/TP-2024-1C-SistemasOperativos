@@ -14,7 +14,11 @@
 			"atomic": "c",
 			"*.tcc": "c",
 			"cstdint": "c",
-			"random": "c"
+			"random": "c",
+			"ratio": "c",
+			"system_error": "c",
+			"tuple": "c",
+			"type_traits": "c"
 		},
 		"C_Cpp.errorSquiggles": "disabled",
 	},
