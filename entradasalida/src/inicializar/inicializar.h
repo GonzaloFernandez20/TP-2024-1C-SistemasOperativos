@@ -3,10 +3,8 @@
 
 #include <commons/log.h>
 #include <commons/string.h>
-#include <commons/config.h>
 #include <include/estructuras.h>
 #include <fileSystem/estructurasFS.h>
-#include <utils/inicializaciones/inicializar.h>
 
 
 void chequear_parametros_inicio_interfaz(int argc, char* argv[]);

@@ -1,6 +1,89 @@
 // instrucciones
 #include <fileSystem/operaciones.h>
 
+
+/// IO FS CREATE /////////////////////////////////////////////////////////////////////////////////////
+void realizar_un_fs_create(void){
+     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
+	void* stream = buffer->stream;
+    
+	int PID = buffer_read_int(&stream);
+    int length_nombre = buffer_read_int(&stream);
+    char* nombre_archivo = malloc(length_nombre);
+	strcpy(nombre_archivo, buffer_read_string(&stream, length_nombre));
+
+	eliminar_buffer(buffer);
+    
+    pthread_mutex_lock(&mutex_log);
+	    log_info(IO_log,"PID: < %d > - Operacion: IO_FS_CREATE", PID);
+        log_info(IO_log,"PID: < %d > - Crear Archivo: %s", PID, nombre_archivo);
+    pthread_mutex_unlock(&mutex_log);
+
+    crear_archivo(nombre_archivo);
+    free(nombre_archivo);
+}
+
+void crear_archivo(char* nombre_archivo){
+    
+    int bloque_inicial = asignar_primer_bloque_libre();
+    char* path = concatenar_rutas(config_IO.PATH_BASE_DIALFS, nombre_archivo);
+    
+    t_config *config = malloc(sizeof(t_config));
+	config->path = strdup(path);
+	config->properties = dictionary_create(); 
+    config_set_value(config, "BLOQUE_INICIAL", string_itoa(bloque_inicial));
+    config_set_value(config, "TAMANIO_ARCHIVO", "0");
+    config_save(config); // se crea en el directorio el archivo de metadata con los valores
+    config_destroy(config);
+
+    t_FCB* metadata = malloc(sizeof(t_FCB));
+    metadata->archivo = strdup(nombre_archivo);
+    metadata->path = strdup(path);
+    metadata->bloque_inicial = bloque_inicial;
+    metadata->tamanio_archivo = 0;
+    list_add_sorted(archivos_metadata, metadata, comparar_por_bloque_inicial);
+
+    free(path);
+}
+
+
+
+///// IO FS DELETE ///////////////////////////////////////////////////////////////////////////
+void realizar_un_fs_delete(void){
+     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
+	void* stream = buffer->stream;
+    
+	int PID = buffer_read_int(&stream);
+    int length_nombre = buffer_read_int(&stream);
+    char* nombre_archivo = malloc(length_nombre);
+	strcpy(nombre_archivo, buffer_read_string(&stream, length_nombre));
+
+	eliminar_buffer(buffer);
+    
+    pthread_mutex_lock(&mutex_log);
+	    log_info(IO_log,"PID: < %d > - Operacion: IO_FS_DELETE", PID);
+        log_info(IO_log,"PID: < %d > - Eliminar Archivo: %s", PID, nombre_archivo);
+    pthread_mutex_unlock(&mutex_log);
+
+    eliminar_archivo(nombre_archivo);
+    free(nombre_archivo);
+}
+
+void eliminar_archivo(char* nombre_archivo){
+    int indice = buscar_FCB_en_archivos_metadata(nombre_archivo);
+    t_FCB* FCB_eliminar = list_remove(archivos_metadata, indice);
+
+    remove(FCB_eliminar->path);
+    free(FCB_eliminar->path);
+    free(FCB_eliminar->archivo);
+
+    int cantidad_bloques = (FCB_eliminar->tamanio_archivo+(config_IO.BLOCK_SIZE-1))/config_IO.BLOCK_SIZE;
+
+    liberar_bloques(FCB_eliminar->bloque_inicial, FCB_eliminar->bloque_inicial+cantidad_bloques);
+    free(FCB_eliminar);
+}
+
+
 // Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde el archivo a partir del valor del Registro Puntero Archivo la cantidad de bytes indicada por Registro Tamaño y se escriban en la Memoria a partir de la dirección lógica indicada en el Registro Dirección.
 
 void realizar_un_fs_read(void){
