@@ -13,12 +13,11 @@ void set(void){
         *(uint8_t*)ptr_registro = (uint8_t)valor; 
     }
     else {
-        *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
+        *(uint32_t*)ptr_registro = (uint8_t)valor; // idem pero para uint32_t
     }
 }
 //SUM////////////////////////////////////////////////////////////////////////////////////
 //Suma al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
-    //Vale sumar un registro de 32bits a uno de 8bits   
 void sum(void){
     char* registro_destino =  (instruccion_ejecutando[1]);
     char* registro_origen =  (instruccion_ejecutando[2]);
@@ -34,7 +33,6 @@ void sum(void){
     }
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////
-//Resta al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
 void sub(void){
     char* registro_destino =  (instruccion_ejecutando[1]);
     char* registro_origen =  (instruccion_ejecutando[2]);
@@ -238,21 +236,22 @@ void escribir_string(void* string_leido){
 }
 
 //IO_STDIN_READ//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void io_stdin_read(void) {
     char* interfaz = instruccion_ejecutando[1];
+    char* registro_direccion = instruccion_ejecutando[2];    
+    char* registro_tamanio = instruccion_ejecutando[3];
+    
+    void* ptr_registro_direccion = direccion_del_registro(registro_direccion);
+    void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
 
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
-
-    int tamanio_a_leer = *(int*)registro_tamanio;
+    int tamanio_a_leer = *(int*)ptr_registro_tamanio;
     uint32_t direccion_logica;
 
     if(es_registro_8_bits(registro_direccion)) {
-        direccion_logica = *(uint8_t*)registro_direccion;    
+        direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
     else {
-        direccion_logica  = *(uint32_t*)registro_direccion;
+        direccion_logica  = *(uint32_t*)ptr_registro_direccion;
     } 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 
@@ -261,22 +260,23 @@ void io_stdin_read(void) {
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
 void io_stdout_write(void) {
-    char* interfaz = instruccion_ejecutando[1];
+    char* interfaz = instruccion_ejecutando[1];  
+    char* registro_direccion = instruccion_ejecutando[2];    
+    char* registro_tamanio = instruccion_ejecutando[3];
     
-    void* registro_direccion = direccion_del_registro(instruccion_ejecutando[2]);
-    void* registro_tamanio = direccion_del_registro(instruccion_ejecutando[3]);
+    void* ptr_registro_direccion = direccion_del_registro(registro_direccion);
+    void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
 
-    int tamanio_a_leer = *(int*)registro_tamanio;
+    int tamanio_a_leer = *(int*)ptr_registro_tamanio;
     uint32_t direccion_logica;
 
     if(es_registro_8_bits(registro_direccion)) {
-        direccion_logica = *(uint8_t*)registro_direccion;    
+        direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
     else {
-        direccion_logica  = *(uint32_t*)registro_direccion;
-    } 
+        direccion_logica  = *(uint32_t*)ptr_registro_direccion;
+    }
 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 

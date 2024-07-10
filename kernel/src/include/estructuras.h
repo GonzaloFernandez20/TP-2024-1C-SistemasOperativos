@@ -45,7 +45,7 @@ typedef struct interfaz_conectada{
     pthread_mutex_t interfaz_en_uso;
 } t_interfaz;
 
-/* typedef struct t_peticion{
+typedef struct t_peticion{
     int unidades_trabajo;
     int tamanio_a_leer;
     int cant_direcciones;
@@ -57,8 +57,8 @@ typedef struct interfaz_conectada{
     int reg_puntero_archivo;
     
     void (*funcion)(struct t_peticion*, int, int);
-}t_peticion; */
-typedef struct t_peticion {
+}t_peticion;
+/* typedef struct t_peticion {
     void (*funcion)(struct t_peticion*, int, int);
     // Unión para los argumentos adicionales segun la funcion que llamemos
     union argumentos_peticiones{
@@ -92,7 +92,7 @@ typedef struct t_peticion {
             t_list* direcciones;
         } IO_FS_WRITE_READ;
     }argumentos; 
-} t_peticion;
+} t_peticion; */
 
 
 /*   t_peticion peticion;

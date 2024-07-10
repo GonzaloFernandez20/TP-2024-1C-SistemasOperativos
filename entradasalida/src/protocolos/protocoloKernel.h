@@ -28,4 +28,8 @@ void* leer_de_memoria(int PID, int direccion_fisica, int bytes);
 void peticion_lectura_memoria(int PID, int direccion_fisica, int bytes);
 
 char *generar_cadena(void* particion, int bytes);
+
+void enviar_cadena_memoria(int PID, char* cadena_leida, void *stream);
+
+char *traer_cadena_memoria(int PID, int tamanio_a_leer, void *stream);
 #endif

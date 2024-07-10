@@ -69,7 +69,6 @@ void realizar_un_stdin_read(){
 	int PID = buffer_read_int(&stream);
 
     int tamanio_a_leer = buffer_read_int(&stream);
-    int cant_direcciones = buffer_read_int(&stream);
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_STDIN_READ", PID);
@@ -79,40 +78,8 @@ void realizar_un_stdin_read(){
 
     char* cadena_truncada = truncar_cadena(cadena_ingresada, tamanio_a_leer);
 
-    int desplazamiento = 0;
-    int bytes;
-    int direccion_fisica;
-
-    for (int i = 0; i < cant_direcciones; i++)
-    {
-        bytes = buffer_read_int(&stream);
-        direccion_fisica = buffer_read_int(&stream);
-
-        void* particion = malloc(bytes);
-
-        void* valor = cadena_truncada;
-
-        memcpy(particion, valor + desplazamiento, bytes);
-
-        desplazamiento += bytes;
-
-        enviar_a_memoria(PID, particion, bytes, direccion_fisica);
-
-        char* cadena = generar_cadena(particion, bytes);
-
-        free(particion);
-
-        pthread_mutex_lock(&mutex_log_debug);
-            log_info(IO_log_debug,"PID: < %d > - Accion: < ESCRIBIR > - Direccion Fisica: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
-        pthread_mutex_unlock(&mutex_log_debug);
-
-        free(cadena);
-    }
-    // ACA YA RECIBI TODO EL BUFFER ENVIADO DESDE KERNEL
+    enviar_cadena_memoria(PID, cadena_truncada, stream);
     eliminar_buffer(buffer);
-    free(cadena_truncada);
-
-    mandar_aviso_kernel(PID);
 }
 
 void realizar_un_stdout_write(){
@@ -126,43 +93,11 @@ void realizar_un_stdout_write(){
     pthread_mutex_unlock(&mutex_log);
 
     int tamanio_a_leer = buffer_read_int(&stream);
-    int cant_direcciones = buffer_read_int(&stream);
 
-    int offset = 0;
-    int bytes;
-    int direccion_fisica;
-    
-    void* cadena_rearmada = malloc(tamanio_a_leer);
+    char *cadena = traer_cadena_memoria(PID, tamanio_a_leer, stream);
 
-    for(int i = 0; i < cant_direcciones; i++){
-        bytes = buffer_read_int(&stream);
-        direccion_fisica = buffer_read_int(&stream);
-    
-        void* particion = leer_de_memoria(PID, direccion_fisica, bytes);
-        memcpy(cadena_rearmada + offset, particion, bytes);
-        offset += bytes;
-
-        char* cadena = generar_cadena(particion, bytes);
-    
-        pthread_mutex_lock(&mutex_log_debug);
-            log_info(IO_log_debug,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
-        pthread_mutex_unlock(&mutex_log_debug);
-        
-        free(particion);
-        free(cadena);
-    }
-    
-    eliminar_buffer(buffer);
-
-    char* cadena = generar_cadena(cadena_rearmada, tamanio_a_leer);
-
-    pthread_mutex_lock(&mutex_log_debug);
-        log_info(IO_log_debug,"PID: < %d > - Cadena: < %s >", PID, cadena);
-    pthread_mutex_unlock(&mutex_log_debug);
-    
-    free(cadena_rearmada);
     free(cadena);
-
+    eliminar_buffer(buffer);
     mandar_aviso_kernel(PID);
 }
     
@@ -235,4 +170,81 @@ char *generar_cadena(void* particion, int bytes){
     nueva_cadena[i]='\0';
 
     return nueva_cadena;
+}
+
+void enviar_cadena_memoria(int PID, char* cadena_leida, void *stream){
+
+    int cant_direcciones = buffer_read_int(&stream);
+
+    int desplazamiento = 0;
+    int bytes;
+    int direccion_fisica;
+
+    for (int i = 0; i < cant_direcciones; i++)
+    {
+        bytes = buffer_read_int(&stream);
+        direccion_fisica = buffer_read_int(&stream);
+
+        void* particion = malloc(bytes);
+
+        void* valor = cadena_leida;
+
+        memcpy(particion, valor + desplazamiento, bytes);
+
+        desplazamiento += bytes;
+
+        enviar_a_memoria(PID, particion, bytes, direccion_fisica);
+
+        char* cadena = generar_cadena(particion, bytes);
+
+        free(particion);
+
+        pthread_mutex_lock(&mutex_log_debug);
+            log_info(IO_log_debug,"PID: < %d > - Accion: < ESCRIBIR > - Direccion Fisica: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
+        pthread_mutex_unlock(&mutex_log_debug);
+
+        free(cadena);
+    }
+
+    free(cadena_leida);
+    mandar_aviso_kernel(PID);
+}
+
+char *traer_cadena_memoria(int PID, int tamanio_a_leer, void *stream){
+    
+    int cant_direcciones = buffer_read_int(&stream);
+    
+    int offset = 0;
+    int bytes;
+    int direccion_fisica;
+    
+    void* cadena_rearmada = malloc(tamanio_a_leer);
+
+    for(int i = 0; i < cant_direcciones; i++){
+        bytes = buffer_read_int(&stream);
+        direccion_fisica = buffer_read_int(&stream);
+    
+        void* particion = leer_de_memoria(PID, direccion_fisica, bytes);
+        memcpy(cadena_rearmada + offset, particion, bytes);
+        offset += bytes;
+
+        char* cadena = generar_cadena(particion, bytes);
+    
+        pthread_mutex_lock(&mutex_log_debug);
+            log_info(IO_log_debug,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
+        pthread_mutex_unlock(&mutex_log_debug);
+        
+        free(particion);
+        free(cadena);
+    }
+
+    char* cadena = generar_cadena(cadena_rearmada, tamanio_a_leer);
+    
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(IO_log_debug,"PID: < %d > - Cadena: < %s >", PID, cadena);
+    pthread_mutex_unlock(&mutex_log_debug);
+    
+    free(cadena_rearmada);
+
+    return cadena;
 }

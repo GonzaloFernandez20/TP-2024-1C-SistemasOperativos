@@ -15,64 +15,16 @@ void realizar_un_fs_read(void){
     int tamanio_a_leer = buffer_read_int(&stream);
     int puntero_archivo = buffer_read_int(&stream);
 
-    int cant_direcciones = buffer_read_int(&stream);
-
     // RECIBI TODOS LOS DATOS EXCEPTO LAS DIRECCIONES COMO TAL
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_FS_READ", PID);
     pthread_mutex_unlock(&mutex_log);
 
-    FILE *archivo = fopen(nombre_archivo, "r"); // se lea desde el archivo...
-    char *cadena_leida = malloc(tamanio_a_leer); // Buffer para almacenar los caracteres leídos
-    
-    // Capaz es innecesario...
-    if (!archivo) { 
-        pthread_mutex_lock(&mutex_log);
-	        log_info(IO_log,"No se pudo abrir el archivo %s", nombre_archivo);
-        pthread_mutex_unlock(&mutex_log);    
-    }
+    char *cadena_leida = leer_de_archivo(nombre_archivo, tamanio_a_leer, puntero_archivo); // -> Codear...
 
-    fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
-    fread(cadena_leida, 1, tamanio_a_leer, archivo); // lea desde el archivo [...] la cantidad de bytes indicada por Registro Tamaño
-
-    fclose(archivo);
-    // Escritura de los bytes leidos en memoria: 
-
-    int desplazamiento = 0;
-    int bytes;
-    int direccion_fisica;
-
-    for (int i = 0; i < cant_direcciones; i++)
-    {
-        bytes = buffer_read_int(&stream);
-        direccion_fisica = buffer_read_int(&stream);
-
-        void* particion = malloc(bytes);
-
-        void* valor = cadena_leida;
-
-        memcpy(particion, valor + desplazamiento, bytes);
-
-        desplazamiento += bytes;
-
-        enviar_a_memoria(PID, particion, bytes, direccion_fisica);
-
-        char* cadena = generar_cadena(particion, bytes);
-
-        free(particion);
-
-        pthread_mutex_lock(&mutex_log_debug);
-            log_info(IO_log_debug,"PID: < %d > - Accion: < ESCRIBIR > - Direccion Fisica: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
-        pthread_mutex_unlock(&mutex_log_debug);
-
-        free(cadena);
-    }
-    // ACA YA RECIBI TODO EL BUFFER ENVIADO DESDE KERNEL
+    enviar_cadena_memoria(PID, cadena_leida, stream);
     eliminar_buffer(buffer);
-    free(cadena_leida);
-
-    mandar_aviso_kernel(PID);
 }
 
  //Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde Memoria la cantidad de bytes indicadas por el Registro Tamaño a partir de la dirección lógica que se encuentra en el Registro Dirección y se escriban en el archivo a partir del valor del Registro Puntero Archivo.
@@ -88,54 +40,46 @@ void realizar_un_fs_write(void){
     int tamanio_a_leer = buffer_read_int(&stream);
     int puntero_archivo = buffer_read_int(&stream);
 
-    int cant_direcciones = buffer_read_int(&stream);
-
     // RECIBI TODOS LOS DATOS EXCEPTO LAS DIRECCIONES COMO TAL
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_STDOUT_WRITE", PID);
     pthread_mutex_unlock(&mutex_log);
     
-    int offset = 0;
-    int bytes;
-    int direccion_fisica;
-    
-    void* cadena_rearmada = malloc(tamanio_a_leer);
+    char *cadena = traer_cadena_memoria(PID, tamanio_a_leer, stream);
 
-    for(int i = 0; i < cant_direcciones; i++){
-        bytes = buffer_read_int(&stream);
-        direccion_fisica = buffer_read_int(&stream);
-    
-        void* particion = leer_de_memoria(PID, direccion_fisica, bytes);
-        memcpy(cadena_rearmada + offset, particion, bytes);
-        offset += bytes;
+    escribir_en_archivo(nombre_archivo, puntero_archivo, cadena);
 
-        char* cadena = generar_cadena(particion, bytes);
-    
-        pthread_mutex_lock(&mutex_log_debug);
-            log_info(IO_log_debug,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %s >", PID, direccion_fisica, cadena);
-        pthread_mutex_unlock(&mutex_log_debug);
-        
-        free(particion);
-        free(cadena);
-    }
-    
-    eliminar_buffer(buffer);
-
-    char* cadena = generar_cadena(cadena_rearmada, tamanio_a_leer);
-
-    FILE *archivo = fopen(nombre_archivo, "r+"); // se lea desde el archivo... -> Modo lectura y escritura pero sin borrar su contenido
-    fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
-    fwrite(cadena, sizeof(char), sizeof(cadena) - 1, archivo);
-
-    fclose(archivo);
-    
-    pthread_mutex_lock(&mutex_log_debug);
-        log_info(IO_log_debug,"PID: < %d > - Cadena: < %s >", PID, cadena);
-    pthread_mutex_unlock(&mutex_log_debug);
-    
-    free(cadena_rearmada);
     free(cadena);
-
+    eliminar_buffer(buffer);
     mandar_aviso_kernel(PID);
+}
+
+
+// <--------------------------- FUNCIONES AUXILIARES ---------------------------> // 
+char *leer_de_archivo(char *nombre_archivo, int tamanio_a_leer, int puntero_archivo){
+    char *cadena_leida = malloc(tamanio_a_leer);
+
+    // LOGICA DE ENCONTRAR EL BLOQUE RESPECTO AL BYTE Y LEER DESDE AHI EN BLOQUES.DAT
+
+    /* FILE *archivo = fopen(nombre_archivo, "r"); // se lea desde el archivo...
+    char *cadena_leida = malloc(tamanio_a_leer); // Buffer para almacenar los caracteres leídos
+    
+    // Capaz es innecesario...
+    if (!archivo) { 
+        pthread_mutex_lock(&mutex_log);
+	        log_info(IO_log,"No se pudo abrir el archivo %s", nombre_archivo);
+        pthread_mutex_unlock(&mutex_log);    
+    } 
+
+    fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
+    fread(cadena_leida, 1, tamanio_a_leer, archivo); // lea desde el archivo [...] la cantidad de bytes indicada por Registro Tamaño
+
+    fclose(archivo);*/
+
+    return cadena_leida;
+}
+
+void escribir_en_archivo(char *nombre_archivo, int puntero_archivo, char *cadena){
+    // LOGICA DE ENCONTRAR EL BLOQUE RESPECTO AL BYTE Y ESCRIBIR DESDE AHI EN BLOQUES.DAT
 }

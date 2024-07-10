@@ -118,14 +118,15 @@ void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->unidades_trabajo = unidades_trabajo;
-        nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP; */
         int unidades_trabajo = buffer_read_int(&stream);
 
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->argumentos.IO_GEN_SLEEP.unidades_trabajo = unidades_trabajo;
+        nueva_peticion->unidades_trabajo = unidades_trabajo;
         nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
+
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->argumentos.IO_GEN_SLEEP.unidades_trabajo = unidades_trabajo;
+        nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -161,17 +162,19 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         nueva_peticion->tamanio_a_leer = buffer_read_int(&stream);
         nueva_peticion->cant_direcciones = buffer_read_int(&stream);
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ; */
-        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->argumentos.IO_STDIN_READ.tamanio_a_leer = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones = buffer_read_int(&stream);
-        recibir_paquete_direcciones(nueva_peticion->argumentos.IO_STDIN_READ.direcciones, nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones, stream);
         nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ;
 
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->argumentos.IO_STDIN_READ.tamanio_a_leer = buffer_read_int(&stream);
+        nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones = buffer_read_int(&stream);
+        t_list * direcciones = nueva_peticion->argumentos.IO_STDIN_READ.direcciones;
+        direcciones = list_create();
+        recibir_paquete_direcciones(direcciones, nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones, stream);
+        nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -207,16 +210,17 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         nueva_peticion->tamanio_a_leer = buffer_read_int(&stream);
         nueva_peticion->cant_direcciones = buffer_read_int(&stream);
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE; */
-        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE;
+
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         nueva_peticion->argumentos.IO_STDOUT_WRITE.tamanio_a_leer = buffer_read_int(&stream);
         nueva_peticion->argumentos.IO_STDOUT_WRITE.cant_direcciones = buffer_read_int(&stream);
         recibir_paquete_direcciones(nueva_peticion->argumentos.IO_STDOUT_WRITE.direcciones, nueva_peticion->argumentos.IO_STDOUT_WRITE.cant_direcciones, stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE;
+        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -322,16 +326,17 @@ void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE; */
-        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE;
+
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->argumentos.IO_FS_CREATE_DELETE.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->argumentos.IO_FS_CREATE_DELETE.tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE;
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -366,16 +371,17 @@ void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE; */
-        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE;
+
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->argumentos.IO_FS_TRUNCATE.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->argumentos.IO_FS_TRUNCATE.registro_tamanio = buffer_read_int(&stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE;
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -410,7 +416,7 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
     }
     else
     {
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
@@ -418,8 +424,9 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
         nueva_peticion->cant_direcciones = buffer_read_int(&stream);
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ; */
-        t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ;
+        
+        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
         nueva_peticion->argumentos.IO_FS_WRITE_READ.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
         nueva_peticion->argumentos.IO_FS_WRITE_READ.registro_tamanio = buffer_read_int(&stream);
@@ -427,7 +434,7 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
         nueva_peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones = buffer_read_int(&stream);
         recibir_paquete_direcciones(nueva_peticion->argumentos.IO_FS_WRITE_READ.direcciones, nueva_peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones, stream);
         nueva_peticion->argumentos.IO_FS_WRITE_READ.tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ;
+        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -507,8 +514,8 @@ int _puede_realizar_operacion(op_code_instruccion numero, op_code_instruccion ar
     return 0;
 }
 
-void recibir_paquete_direcciones(t_list* lista_direcciones, int cant_direcciones, void *stream){
-    lista_direcciones = list_create();
+void recibir_paquete_direcciones(t_peticion* peticion, int cant_direcciones, void *stream){
+    peticion->direcciones = list_create();
 
     for (int i = 0; i < cant_direcciones; i++)
     {
@@ -516,7 +523,7 @@ void recibir_paquete_direcciones(t_list* lista_direcciones, int cant_direcciones
         nueva_direccion->bytes = buffer_read_int(&stream);
         nueva_direccion->direccion_fisica = buffer_read_int(&stream);
 
-        list_add(lista_direcciones, nueva_direccion);
+        list_add(peticion->direcciones, nueva_direccion);
     }
         
 }
