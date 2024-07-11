@@ -149,24 +149,32 @@ char *leer_de_archivo(char *nombre_archivo, int tamanio_a_leer, int puntero_arch
 
     // LOGICA DE ENCONTRAR EL BLOQUE RESPECTO AL BYTE Y LEER DESDE AHI EN BLOQUES.DAT
 
-    /* FILE *archivo = fopen(nombre_archivo, "r"); // se lea desde el archivo...
-    char *cadena_leida = malloc(tamanio_a_leer); // Buffer para almacenar los caracteres leídos
-    
-    // Capaz es innecesario...
-    if (!archivo) { 
-        pthread_mutex_lock(&mutex_log);
-	        log_info(IO_log,"No se pudo abrir el archivo %s", nombre_archivo);
-        pthread_mutex_unlock(&mutex_log);    
-    } 
+    int indice_FCB = buscar_FCB_en_archivos_metadata(nombre_archivo);
+    t_FCB *FCB_archivo = list_get(archivos_metadata, indice_FCB);
+    archivo_bloques = fopen(path_archivo_bloques, "rb");
 
-    fseek(archivo, puntero_archivo, SEEK_SET); // a partir del valor del Registro Puntero Archivo... -> Posiciono el puntero en dicho valor
-    fread(cadena_leida, 1, tamanio_a_leer, archivo); // lea desde el archivo [...] la cantidad de bytes indicada por Registro Tamaño
+    int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
 
-    fclose(archivo);*/
+    fseek(archivo_bloques, byte_del_archivo_bloques, SEEK_SET);
+    fread(cadena_leida, 1, tamanio_a_leer, archivo_bloques);
+
+    fclose(archivo_bloques);
 
     return cadena_leida;
 }
 
 void escribir_en_archivo(char *nombre_archivo, int puntero_archivo, char *cadena){
+
     // LOGICA DE ENCONTRAR EL BLOQUE RESPECTO AL BYTE Y ESCRIBIR DESDE AHI EN BLOQUES.DAT
+
+    int indice_FCB = buscar_FCB_en_archivos_metadata(nombre_archivo);
+    t_FCB *FCB_archivo = list_get(archivos_metadata, indice_FCB);
+    archivo_bloques = fopen(path_archivo_bloques, "r+");
+
+    int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
+
+    fseek(archivo_bloques, byte_del_archivo_bloques, SEEK_SET);
+    fwrite(cadena, 1, strlen(cadena), archivo_bloques);
+
+    fclose(archivo_bloques);
 }
