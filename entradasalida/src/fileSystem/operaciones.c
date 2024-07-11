@@ -1,4 +1,3 @@
-// instrucciones
 #include <fileSystem/operaciones.h>
 
 
@@ -48,7 +47,7 @@ void crear_archivo(char* nombre_archivo){
 
 
 
-///// IO FS DELETE ///////////////////////////////////////////////////////////////////////////
+/// IO FS DELETE ///////////////////////////////////////////////////////////////////////////
 void realizar_un_fs_delete(void){
      t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
 	void* stream = buffer->stream;
@@ -85,6 +84,7 @@ void eliminar_archivo(char* nombre_archivo){
 
 
 // Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde el archivo a partir del valor del Registro Puntero Archivo la cantidad de bytes indicada por Registro Tamaño y se escriban en la Memoria a partir de la dirección lógica indicada en el Registro Dirección.
+/// IO FS READ ///////////////////////////////////////////////////////////////////////////
 
 void realizar_un_fs_read(void){
 
@@ -102,9 +102,6 @@ void realizar_un_fs_read(void){
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_FS_READ", PID);
-    pthread_mutex_unlock(&mutex_log);
-
-    pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Leer Archivo: < %s > - Tamaño a Leer: < %d > - Puntero Archivo: < %d >", PID, nombre_archivo, tamanio_a_leer, puntero_archivo);
     pthread_mutex_unlock(&mutex_log);
 
@@ -115,6 +112,8 @@ void realizar_un_fs_read(void){
 }
 
  //Esta instrucción solicita al Kernel que mediante la interfaz seleccionada, se lea desde Memoria la cantidad de bytes indicadas por el Registro Tamaño a partir de la dirección lógica que se encuentra en el Registro Dirección y se escriban en el archivo a partir del valor del Registro Puntero Archivo.
+/// IO FS WRITE ///////////////////////////////////////////////////////////////////////////
+
 void realizar_un_fs_write(void){
 
     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
@@ -131,9 +130,6 @@ void realizar_un_fs_write(void){
 
     pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Operacion: IO_STDOUT_WRITE", PID);
-    pthread_mutex_unlock(&mutex_log);
-
-    pthread_mutex_lock(&mutex_log);
 	    log_info(IO_log,"PID: < %d > - Escribir Archivo: < %s > - Tamaño a Escribir: < %d > - Puntero Archivo: < %d >", PID, nombre_archivo, tamanio_a_leer, puntero_archivo);
     pthread_mutex_unlock(&mutex_log);
     
