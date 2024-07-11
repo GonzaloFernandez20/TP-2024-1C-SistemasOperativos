@@ -8,6 +8,7 @@
 #include <protocolos/protocoloKernel.h>
 #include <fileSystem/estructurasFS.h>
 #include <commons/string.h>
+#include <math.h>
 
 
 #include <stdio.h>
