@@ -77,9 +77,9 @@ void eliminar_archivo(char* nombre_archivo){
     free(FCB_eliminar->path);
     free(FCB_eliminar->archivo);
 
-    int cantidad_bloques = (FCB_eliminar->tamanio_archivo+(config_IO.BLOCK_SIZE-1))/config_IO.BLOCK_SIZE;
-
+    int cantidad_bloques = ceil(((double)FCB_eliminar->tamanio_archivo) / config_IO.BLOCK_SIZE);
     liberar_bloques(FCB_eliminar->bloque_inicial, FCB_eliminar->bloque_inicial+cantidad_bloques);
+    
     free(FCB_eliminar);
 }
 
