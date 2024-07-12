@@ -77,7 +77,9 @@ void realizar_un_stdin_read(){
     char* cadena_truncada = truncar_cadena(cadena_ingresada, tamanio_a_leer);
 
     enviar_cadena_memoria(PID, cadena_truncada, stream);
+    mandar_aviso_kernel(PID);
     eliminar_buffer(buffer);
+
 }
 
 void realizar_un_stdout_write(){
@@ -205,7 +207,6 @@ void enviar_cadena_memoria(int PID, char* cadena_leida, void *stream){
     }
 
     free(cadena_leida);
-    mandar_aviso_kernel(PID);
 }
 
 char *traer_cadena_memoria(int PID, int tamanio_a_leer, void *stream){

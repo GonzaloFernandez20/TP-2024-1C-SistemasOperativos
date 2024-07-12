@@ -262,6 +262,8 @@ void realizar_un_fs_read(void){
     char *cadena_leida = leer_de_archivo(nombre_archivo, tamanio_a_leer, puntero_archivo);
 
     enviar_cadena_memoria(PID, cadena_leida, stream);
+    usleep(1000*config_IO.TIEMPO_UNIDAD_TRABAJO);
+    mandar_aviso_kernel(PID);
     eliminar_buffer(buffer);
 }
 
@@ -293,9 +295,10 @@ void realizar_un_fs_write(void){
 
     free(cadena);
     eliminar_buffer(buffer);
+
+    usleep(1000*config_IO.TIEMPO_UNIDAD_TRABAJO);
     mandar_aviso_kernel(PID);
 }
-
 
 // <--------------------------- FUNCIONES AUXILIARES ---------------------------> // 
 char *leer_de_archivo(char *nombre_archivo, int tamanio_a_leer, int puntero_archivo){
@@ -328,7 +331,7 @@ void escribir_en_archivo(char *nombre_archivo, int puntero_archivo, char *cadena
     int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
 
     fseek(archivo_bloques, byte_del_archivo_bloques, SEEK_SET);
-    fwrite(cadena, 1, strlen(cadena), archivo_bloques);
+    fwrite(cadena, 1, (strlen(cadena) - 1), archivo_bloques);
 
     fclose(archivo_bloques);
 }

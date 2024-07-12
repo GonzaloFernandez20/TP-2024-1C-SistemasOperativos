@@ -60,12 +60,14 @@ void conectar_memoria(void){
 
 }
 void enviar_handshake_de_CPU(int fd_conexion, char* modulo, t_log* logger){
+    int respuesta_servidor;
 
     enviar_presentacion(modulo,fd_conexion);
-    recv(fd_conexion, &TAM_PAGINA, sizeof(int), MSG_WAITALL);
+    recv(fd_conexion, &respuesta_servidor, sizeof(int), MSG_WAITALL);
 
     if (respuesta_servidor > 0) {
         log_info(logger, "Handshake exitoso: comunicacion con servidor establecida\n");
+        TAM_PAGINA = respuesta_servidor;
     } 
     else {
         log_error(logger, "Error handshake: no se establecio comunicacion con servidor");

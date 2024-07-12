@@ -11,6 +11,8 @@ void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
     while(cliente_conectado){
         int cod_op = recibir_operacion(fd_IO);
 
+		usleep(1000*config_memoria.RETARDO_RESPUESTA);
+
 		switch (cod_op) {
 		case LECTURA:
 			realizar_lectura(fd_IO);
