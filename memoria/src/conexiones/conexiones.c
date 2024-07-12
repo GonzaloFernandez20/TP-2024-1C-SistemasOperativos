@@ -24,9 +24,38 @@ void gestionar_conexiones_clientes(void){
 }
 
 void atender_cpu(void){
-    atender_cliente(fd_server_memoria, (void *)procesar_operacion_cpu, memoria_log_debugg, "CPU");
-    //send(fd_cpu, &config_memoria.TAM_PAGINA, sizeof(int), 0);
+    int *fd_cliente = malloc(sizeof(int));
+        *fd_cliente = esperar_cliente(fd_server_memoria);
+    
+    
+    log_info(memoria_log_debugg, "Se conecto %s", "CPU");
+
+    recibir_handshake_cpu(*fd_cliente, memoria_log_debugg);
+
+    asignar_hilo(fd_cliente, (void *)procesar_operacion_cpu);
+
+
+   
 }
+
+void recibir_handshake_cpu(int fd_cliente, t_log* logger){
+    
+    int handshake_ok = config_memoria.TAM_PAGINA;
+    int handshake_error = -1;
+    
+    int handshake = recibir_operacion(fd_cliente);
+
+    if(handshake == 1){
+        send(fd_cliente, &handshake_ok, sizeof(int), 0);
+        recibir_presentacion(fd_cliente, logger);
+    }
+    else{
+        send(fd_cliente, &handshake_error, sizeof(int), 0);
+        log_error(logger, "No se puedo establecer comuniciacion con el cliente");
+    }
+}
+
+
 void atender_kernel(void){
     atender_cliente(fd_server_memoria, (void *)procesar_operacion_kernel, memoria_log_debugg, "KERNEL");
 }

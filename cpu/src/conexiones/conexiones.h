@@ -20,6 +20,8 @@ void iniciar_servidor_interrupt(void);
 
 void conectar_memoria(void);
 
+void enviar_handshake_de_CPU(int fd_conexion, char* modulo, t_log* logger);
+
 void gestionar_conexiones_kernel(void);
 
 void atender_dispatch(void);
