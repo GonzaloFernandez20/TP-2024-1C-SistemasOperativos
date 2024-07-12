@@ -17,6 +17,7 @@ void iniciar_servidor_memoria(void);
 void gestionar_conexiones_clientes(void);
 
 void atender_cpu(void);
+void recibir_handshake_cpu(int fd_cliente, t_log* logger);
 
 void atender_kernel(void);
 

@@ -52,14 +52,24 @@ void conectar_memoria(void){
     }
     else{
         log_info(cpu_log_debug, "CPU conectado a MEMORIA en %s:%s", IP, PUERTO);
-        enviar_handshake(fd_conexion_memoria, "CPU", cpu_log_debug);
-        //recv(fd_conexion_memoria, &TAM_PAGINA, sizeof(int), MSG_WAITALL);
-        TAM_PAGINA = 32;
+        enviar_handshake_de_CPU(fd_conexion_memoria, "CPU", cpu_log_debug);
     }
 
     free(IP);
     free(PUERTO);
 
+}
+void enviar_handshake_de_CPU(int fd_conexion, char* modulo, t_log* logger){
+
+    enviar_presentacion(modulo,fd_conexion);
+    recv(fd_conexion, &TAM_PAGINA, sizeof(int), MSG_WAITALL);
+
+    if (respuesta_servidor > 0) {
+        log_info(logger, "Handshake exitoso: comunicacion con servidor establecida\n");
+    } 
+    else {
+        log_error(logger, "Error handshake: no se establecio comunicacion con servidor");
+    }
 }
 
 void gestionar_conexiones_kernel(void){
