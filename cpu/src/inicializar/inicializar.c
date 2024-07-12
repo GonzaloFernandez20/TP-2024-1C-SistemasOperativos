@@ -9,6 +9,7 @@ void init(){
     init_registros_dictionary();
     inicializar_TLB();
     direcciones = list_create();
+    lista_interrupciones = list_create();
 }
 
 void inicializar_semaforos(void){
