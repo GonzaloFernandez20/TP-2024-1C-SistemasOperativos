@@ -22,7 +22,13 @@ bool comparar_por_bloque_inicial(void *FCB_1, void *FCB_2);
 
 int asignar_primer_bloque_libre(void);
 
+int obtener_primer_bloque_libre(void);
+
 void liberar_bloques(int bloque_inicial, int bloque_final_mas_uno);
+
+void ocupar_bloques(int bloque_inicial, int bloque_final_mas_uno);
+
+int hay_suficientes_bloques_contiguos(int primer_bloque, int ultimo_bloque_mas_uno);
 
 int buscar_FCB_en_archivos_metadata(char* archivo_buscado);
 

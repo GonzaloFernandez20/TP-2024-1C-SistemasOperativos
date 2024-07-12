@@ -82,6 +82,14 @@ bool comparar_por_bloque_inicial(void *FCB_1, void *FCB_2){
 }
 
 int asignar_primer_bloque_libre(void){
+    int bloque_libre = obtener_primer_bloque_libre();
+    
+    bitarray_set_bit(bitarray, bloque_libre);
+    msync(memoria_mapeada, tamanio_bitmap, MS_SYNC);
+
+    return bloque_libre;
+}
+int obtener_primer_bloque_libre(void){
     int bloque_libre;
 
     for(int i = 0; i < config_IO.BLOCK_COUNT; i++){
@@ -90,9 +98,6 @@ int asignar_primer_bloque_libre(void){
           break;
         }
     }
-    bitarray_set_bit(bitarray, bloque_libre);
-    msync(memoria_mapeada, tamanio_bitmap, MS_SYNC);
-
     return bloque_libre;
 }
 
@@ -102,6 +107,20 @@ void liberar_bloques(int bloque_inicial, int bloque_final_mas_uno){
         bitarray_clean_bit(bitarray, i);
     }
      msync(memoria_mapeada, tamanio_bitmap, MS_SYNC);
+}
+
+void ocupar_bloques(int bloque_inicial, int bloque_final_mas_uno){
+    for(int i = bloque_inicial; i < bloque_final_mas_uno; i++){
+        bitarray_set_bit(bitarray, i);
+    }
+     msync(memoria_mapeada, tamanio_bitmap, MS_SYNC);
+}
+
+int hay_suficientes_bloques_contiguos(int primer_bloque, int ultimo_bloque_mas_uno){
+    for(int i = primer_bloque; i < ultimo_bloque_mas_uno; i++){
+       if(bitarray_test_bit(bitarray, i)){return 0;}
+    }
+    return 1;
 }
 
 int buscar_FCB_en_archivos_metadata(char* archivo_buscado){

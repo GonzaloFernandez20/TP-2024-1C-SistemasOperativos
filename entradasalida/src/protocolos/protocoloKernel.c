@@ -22,7 +22,7 @@ void atender_peticiones_kernel(void){
                 realizar_un_fs_delete();
 			break;
         case IO_FS_TRUNCATE:
-                
+                realizar_un_fs_truncate();
 			break;
         case IO_FS_READ:
                 realizar_un_fs_read();
@@ -44,23 +44,21 @@ void realizar_un_sleep(void){
 	void* stream = buffer->stream;
     
 	int PID = buffer_read_int(&stream);
-
 	int unidades_de_trabajo = buffer_read_int(&stream);
 
 	eliminar_buffer(buffer);
     
     pthread_mutex_lock(&mutex_log);
-	log_info(IO_log,"PID: < %d > - Operacion: IO_GEN_SLEEP", PID);
+	    log_info(IO_log,"PID: < %d > - Operacion: IO_GEN_SLEEP", PID);
     pthread_mutex_unlock(&mutex_log);
 
     usleep(1000*unidades_de_trabajo*config_IO.TIEMPO_UNIDAD_TRABAJO);
 
-    pthread_mutex_lock(&mutex_log);
-	log_info(IO_log,"PID: < %d > - Operacion: IO_GEN_SLEEP -> COMPLETADA", PID);
-    pthread_mutex_unlock(&mutex_log);
+    pthread_mutex_lock(&mutex_log_debug);
+	    log_info(IO_log_debug,"PID: < %d > - Operacion: IO_GEN_SLEEP -> COMPLETADA", PID);
+    pthread_mutex_unlock(&mutex_log_debug);
 
     mandar_aviso_kernel(PID);
-    
 }
 
 void realizar_un_stdin_read(){
