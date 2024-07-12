@@ -16,7 +16,7 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
         trasladar(pcb->pid, exec, ready);
         break;
 
-    case INTERRUPCION:
+    case FIN_DE_PROCESO:
         trasladar(pcb->pid, exec, estado_exit);
         pthread_mutex_lock(&mutex_log);
         log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
@@ -34,7 +34,7 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
         pthread_mutex_unlock(&mutex_log);
         break;
 
-    case PROCESO_BLOQUEADO:
+    case PETICION_RECURSO:
         pthread_mutex_lock(&mutex_log);
         log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED: RECURSO >", pcb->pid);
         pthread_mutex_unlock(&mutex_log);
@@ -285,7 +285,7 @@ void case_WAIT(int PID, t_recurso *recurso)
         t_pcb *pcb = pop_estado(exec);
         push_estado(recurso->cola_recurso, pcb);
 
-        enviar_interrupcion(PROCESO_BLOQUEADO);
+        enviar_interrupcion(PETICION_RECURSO);
     }
 }
 

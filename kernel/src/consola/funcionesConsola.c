@@ -36,7 +36,7 @@ void extraer_proceso(int pid){
 
     if ((_esta_ejecutando(pid)))
     {
-        enviar_interrupcion(INTERRUPCION); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
+        enviar_interrupcion(FIN_DE_PROCESO); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
     }else
     {
         for (int i = 0; i < cant_elementos; i++)

@@ -46,12 +46,14 @@ typedef struct
 
 
 typedef enum motivo_desalojo{
-    FIN_DE_QUANTUM,
-    INTERRUPCION,
-    LLAMADA_IO,
-    OUT_OF_MEMORY,
+    // DESALOJOS POR PETICION DE KERNEL
+    FIN_DE_PROCESO,
     RECURSO_INVALIDO,
-    PROCESO_BLOQUEADO,
+    FIN_DE_QUANTUM,
+    // DESALOJOS POR EJECUCION DE CPU
+    OUT_OF_MEMORY,
+    LLAMADA_IO,
+    PETICION_RECURSO,
     EXIT
 }t_motivo_desalojo;
 

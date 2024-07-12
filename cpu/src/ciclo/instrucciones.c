@@ -156,6 +156,7 @@ void resize(void) {
         devolver_contexto_ejecucion(OUT_OF_MEMORY);
         se_devolvio_contexto = 1;
         hay_interrupcion = 0;
+        list_clean_and_destroy_elements(lista_interrupciones, free);
     }
 }
 
@@ -257,6 +258,8 @@ void io_stdin_read(void) {
 
     devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
     se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -282,6 +285,8 @@ void io_stdout_write(void) {
 
     devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, tamanio_a_leer);
     se_devolvio_contexto = 1;
+    hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
 void io_gen_sleep(void){
@@ -290,6 +295,7 @@ void io_gen_sleep(void){
     devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz, unidades_de_trabajo);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //WAIT////////////////////////////////////////////////////////////////////////////////////////////////
 void wait_kernel(void){
@@ -314,6 +320,7 @@ void io_fs_create(void){ // (Interfaz, Nombre Archivo)
     devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_CREATE);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //IO_FS_DELETE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_delete(void){
@@ -322,6 +329,7 @@ void io_fs_delete(void){
     devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_DELETE);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //IO_FS_TRUNCATE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_truncate(void){
@@ -331,6 +339,7 @@ void io_fs_truncate(void){
     devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, registro_tamanio);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //IO_FS_WRITE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
@@ -353,6 +362,7 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, *(int*)reg_puntero_archivo, IO_FS_WRITE);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //IO_FS_READ////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
@@ -375,12 +385,14 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, *(int*)reg_puntero_archivo, IO_FS_READ);    
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //EXIT////////////////////////////////////////////////////////////////////////////////////////////////
 void exit_os(void){
     devolver_contexto_ejecucion(EXIT);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
+    list_clean_and_destroy_elements(lista_interrupciones, free);
 }
 //------------------------------------------------ Auxiliares ------------------------------------------------ //
 

@@ -21,6 +21,8 @@ void checkInterrupt(void);
 
 char* _armado_parametros(char**);
 
-char* _enum_interrupcion_string();
+char* _enum_interrupcion_string(int tipo_interrupcion);
+
+void *elemento_minimo(void *elem1, void *elem2);
 
 #endif

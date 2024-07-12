@@ -64,7 +64,6 @@ extern int fd_dispatch;
 extern int fd_interrupt;
 
 extern int hay_interrupcion;
-extern int tipo_interrupcion;
 
 extern t_registros_cpu registros;
 
@@ -83,6 +82,8 @@ extern t_dictionary* registros_diccionario;
 extern int se_devolvio_contexto;
 
 extern t_list *direcciones;
+
+extern t_list* lista_interrupciones;
 
 extern int PID;
 

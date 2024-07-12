@@ -35,7 +35,6 @@ int fd_dispatch;
 int fd_interrupt;
 
 int hay_interrupcion;
-int tipo_interrupcion; 
 
 t_registros_cpu registros;
 
@@ -54,6 +53,7 @@ t_dictionary* registros_diccionario;
 int se_devolvio_contexto;
 
 t_list *direcciones;
+t_list* lista_interrupciones;
 
 int PID;
 
