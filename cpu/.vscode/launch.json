@@ -10,7 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/${workspaceFolderBasename}.config"],
+      "args": ["${workspaceFolder}/pruebaFS.config"],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,
