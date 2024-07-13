@@ -54,4 +54,5 @@ void inicializar_semaforos(void){
     pthread_mutex_init(&mutex_espacio_usuario, NULL);
     pthread_mutex_init(&mutex_bitarray, NULL);
     pthread_mutex_init(&mutex_tablas_de_paginas, NULL);
+    pthread_mutex_init(&diccionario_interfaces, NULL);
 }

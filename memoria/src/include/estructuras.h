@@ -10,6 +10,7 @@
 #include <commons/collections/list.h>
 #include <commons/collections/node.h>
 #include <commons/bitarray.h>
+#include <commons/collections/dictionary.h>
 
 #include <pthread.h>
 
@@ -47,6 +48,11 @@ typedef struct page
     
 }t_pagina;
 
+typedef struct interfaz_conectada{
+    char* nombre;
+    int fd;
+} t_interfaz;
+
 
 // ---------- VARIABLES GLOBALES
 extern t_log* memoria_log;
@@ -58,7 +64,9 @@ extern t_config_memoria config_memoria;
 extern int fd_server_memoria;
 extern int fd_kernel;
 extern int fd_cpu;
-extern int fd_IO;
+
+extern t_dictionary *interfaces_conectadas;
+extern pthread_mutex_t diccionario_interfaces;
 
 extern t_list* memoria_de_instrucciones;
 extern t_list* tablas_de_paginas;

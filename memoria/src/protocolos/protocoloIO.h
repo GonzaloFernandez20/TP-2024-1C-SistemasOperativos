@@ -8,6 +8,7 @@
 #include <utils/hilos/hilos.h>
 
 
-void* procesar_operacion_entradaSalida(void* fd_IO_casteado);
+void* procesar_operacion_entradaSalida(void *nombre_interfaz);
+void sacar_interfaz_de_diccionario(char* nombre_interfaz);
 
 #endif

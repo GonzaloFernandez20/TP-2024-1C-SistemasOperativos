@@ -24,9 +24,11 @@ void atender_kernel(void);
 void atender_entradaSalida(void);
 
 void atender_interfaz(void (*procesar_conexion)(void*));
+void asignar_hilo_interfaz(char *nombre_interfaz,  void (*procesar_conexion)(void*));
+char* recibir_handshake_IO(int fd_cliente);
+char* recibir_presentacion_IO(int fd_cliente);
+void registrar_interfaz_conectada(char* nombre_interfaz, int fd);
 
-void recibir_handshake_IO(int fd_cliente);
 
-void recibir_presentacion_IO(int fd_cliente);
 
 #endif

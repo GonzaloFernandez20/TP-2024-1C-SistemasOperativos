@@ -6,7 +6,7 @@ t_pcb *crear_pcb(int PID, char* path_pseudocodigo){
 
     pcb_nuevo->pid = PID;
     pcb_nuevo->PC = 0;
-    pcb_nuevo->quantum = 0;
+    pcb_nuevo->quantum = config_kernel.QUANTUM;
     pcb_nuevo->path_pseudocodigo = strdup(path_pseudocodigo);
     _inicializar_registros_cpu(&pcb_nuevo->registros_cpu);
 

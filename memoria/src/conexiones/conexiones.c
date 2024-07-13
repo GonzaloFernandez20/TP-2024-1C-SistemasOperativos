@@ -61,6 +61,7 @@ void atender_kernel(void){
 }
 
 void atender_entradaSalida(void){
+    interfaces_conectadas = dictionary_create();
     while(1)
     atender_interfaz((void *)procesar_operacion_entradaSalida);
 }
@@ -74,21 +75,30 @@ void atender_interfaz(void (*procesar_conexion)(void*)){
     log_info(memoria_log_debugg, "Se conecto un modulo E/S");
     pthread_mutex_unlock(&mutex_log_debug);
 
-    recibir_handshake_IO(*fd_cliente);
+    char* nombre_interfaz = strdup(recibir_handshake_IO(*fd_cliente));
 
-    asignar_hilo(fd_cliente, procesar_conexion);
+    asignar_hilo_interfaz(nombre_interfaz, procesar_conexion);
 }
 
-void recibir_handshake_IO(int fd_cliente){
+void asignar_hilo_interfaz(char *nombre_interfaz,  void (*procesar_conexion)(void*)){
+    pthread_t thread_cliente;
+
+	pthread_create(&thread_cliente, NULL, (void *)procesar_conexion, (void *)nombre_interfaz);
+
+	pthread_detach(thread_cliente);
+}
+
+char* recibir_handshake_IO(int fd_cliente){
    
     int handshake_ok = 0;
     int handshake_error = -1;
+     char* nombre_interfaz;
     
     int handshake = recibir_operacion(fd_cliente);
 
     if(handshake == 1){
         send(fd_cliente, &handshake_ok, sizeof(int), 0);
-        recibir_presentacion_IO(fd_cliente);
+        nombre_interfaz = strdup(recibir_presentacion_IO(fd_cliente));
     }
     else{
         send(fd_cliente, &handshake_error, sizeof(int), 0);
@@ -97,9 +107,12 @@ void recibir_handshake_IO(int fd_cliente){
         log_error(memoria_log_debugg, "No se puedo establecer comuniciacion con el cliente");
         pthread_mutex_unlock(&mutex_log_debug);
     }
+
+    return nombre_interfaz;
 }
 
-void recibir_presentacion_IO(int fd_cliente){
+
+char* recibir_presentacion_IO(int fd_cliente){
 
 	t_buffer *buffer = recibir_buffer(fd_cliente);
 	void* stream = buffer->stream;
@@ -116,7 +129,21 @@ void recibir_presentacion_IO(int fd_cliente){
 	log_info(memoria_log_debugg, "Handshake exitoso: Establecida comunicacion con %s:%s\n", nombre_Interfaz, tipo_Interfaz);
     pthread_mutex_unlock(&mutex_log_debug);
 	
-	free(nombre_Interfaz);
+    registrar_interfaz_conectada(nombre_Interfaz,fd_cliente);
+
     free(tipo_Interfaz);
 	eliminar_buffer(buffer);
+
+    return nombre_Interfaz;
+}
+
+void registrar_interfaz_conectada(char* nombre_interfaz, int fd){
+    // Inicializacion de la interfaz
+    t_interfaz* interfaz = malloc(sizeof(t_interfaz));
+    interfaz->nombre = strdup(nombre_interfaz);
+    interfaz->fd = fd;
+
+    pthread_mutex_lock(&diccionario_interfaces);
+        dictionary_put(interfaces_conectadas, nombre_interfaz, interfaz);
+    pthread_mutex_unlock(&diccionario_interfaces);
 }

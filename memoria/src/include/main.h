@@ -27,8 +27,9 @@ t_config_memoria config_memoria;
 int fd_server_memoria;
 int fd_kernel;
 int fd_cpu;
-int fd_IO;
 
+t_dictionary *interfaces_conectadas;
+pthread_mutex_t diccionario_interfaces;
 
 t_list* memoria_de_instrucciones;
 t_list* tablas_de_paginas;

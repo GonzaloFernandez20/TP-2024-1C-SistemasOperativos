@@ -1,30 +1,33 @@
 #include <protocolos/protocoloIO.h>
 
 
-void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
+void* procesar_operacion_entradaSalida(void *nombre_interfaz){
 
-    fd_IO = _deshacer_casting(fd_IO_casteado);
-	free(fd_IO_casteado);
+    char* nombre = strdup((char*)nombre_interfaz);
+
+	pthread_mutex_lock(&diccionario_interfaces);
+		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
+	pthread_mutex_unlock(&diccionario_interfaces);
 
 	int cliente_conectado = 1;
 
     while(cliente_conectado){
-        int cod_op = recibir_operacion(fd_IO);
+        int cod_op = recibir_operacion(interfaz->fd);
 
 		switch (cod_op) {
 		case LECTURA:
-			realizar_lectura(fd_IO);
+			realizar_lectura(interfaz->fd);
 			break;
 			
 		case ESCRITURA:
-			realizar_escritura(fd_IO);
+			realizar_escritura(interfaz->fd);
 			break;
 		
 		case -1:
 			pthread_mutex_lock(&mutex_log_debug);
-			log_error(memoria_log_debugg, "un modulo de E/S se desconecto\n");
+			log_error(memoria_log_debugg, "%s se desconecto\n", nombre);
 			pthread_mutex_unlock(&mutex_log_debug);
-
+			sacar_interfaz_de_diccionario(nombre);
             cliente_conectado = 0;
 			break;
 			
@@ -38,3 +41,12 @@ void* procesar_operacion_entradaSalida(void* fd_IO_casteado){
 	return (void* )EXIT_FAILURE;
 }
 
+void sacar_interfaz_de_diccionario(char* nombre_interfaz){
+
+	pthread_mutex_lock(&diccionario_interfaces);
+		t_interfaz* interfaz = dictionary_remove(interfaces_conectadas, nombre_interfaz);
+	pthread_mutex_unlock(&diccionario_interfaces);
+
+	free(interfaz->nombre);
+	free(interfaz);
+}
