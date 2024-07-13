@@ -59,7 +59,7 @@
         "--leak-check=full",
         "--log-file=${log_file}",
         "./bin/${this_module}",
-        "./${this_module}.config"
+        "./pruebaFS.config"
       ],
       "type": "shell",
       "hide": true,

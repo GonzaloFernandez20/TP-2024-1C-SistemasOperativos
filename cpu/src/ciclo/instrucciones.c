@@ -335,8 +335,18 @@ void io_fs_delete(void){
 void io_fs_truncate(void){
     char* interfaz = instruccion_ejecutando[1];
     char* nombre_archivo = instruccion_ejecutando[2];
-    int registro_tamanio = atoi(instruccion_ejecutando[3]);
-    devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, registro_tamanio);
+    char* registro_tamanio = instruccion_ejecutando[3];
+    void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
+
+    int tamanio;
+     if(es_registro_8_bits(registro_tamanio)) {
+        tamanio = *(uint8_t*)ptr_registro_tamanio;    
+    }
+    else {
+        tamanio  = *(uint32_t*)ptr_registro_tamanio;
+    } 
+    
+    devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, tamanio);
     se_devolvio_contexto = 1;
     hay_interrupcion = 0;
     list_clean_and_destroy_elements(lista_interrupciones, free);

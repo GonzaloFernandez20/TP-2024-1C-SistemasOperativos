@@ -3,13 +3,12 @@
 
 /// IO FS CREATE /////////////////////////////////////////////////////////////////////////////////////
 void realizar_un_fs_create(void){
-     t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
+    t_buffer *buffer = recibir_buffer(fd_conexion_kernel);
 	void* stream = buffer->stream;
     
 	int PID = buffer_read_int(&stream);
     int length_nombre = buffer_read_int(&stream);
-    char* nombre_archivo = malloc(length_nombre);
-	strcpy(nombre_archivo, buffer_read_string(&stream, length_nombre));
+    char* nombre_archivo = buffer_read_string(&stream, length_nombre);
 
 	eliminar_buffer(buffer);
     
@@ -57,8 +56,7 @@ void realizar_un_fs_delete(void){
     
 	int PID = buffer_read_int(&stream);
     int length_nombre = buffer_read_int(&stream);
-    char* nombre_archivo = malloc(length_nombre);
-	strcpy(nombre_archivo, buffer_read_string(&stream, length_nombre));
+    char* nombre_archivo = buffer_read_string(&stream, length_nombre);
 
 	eliminar_buffer(buffer);
     
@@ -96,8 +94,7 @@ void realizar_un_fs_truncate(void){
     
 	int PID = buffer_read_int(&stream);
     int length_nombre = buffer_read_int(&stream);
-    char* nombre_archivo = malloc(length_nombre);
-	strcpy(nombre_archivo, buffer_read_string(&stream, length_nombre));
+    char* nombre_archivo = buffer_read_string(&stream, length_nombre);
     int nuevo_tamanio = buffer_read_int(&stream);
 
 	eliminar_buffer(buffer);
@@ -133,7 +130,13 @@ void achicar_archivo(t_FCB* FCB, int nuevo_tamanio){
 }
 
 void agrandar_archivo(t_FCB* FCB, int nuevo_tamanio, int PID){
-    int cantidad_bloques_actuales = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+    int cantidad_bloques_actuales;
+    if(FCB->tamanio_archivo == 0){
+        cantidad_bloques_actuales = 1;
+    } else{
+        cantidad_bloques_actuales = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+    }
+
     int nueva_cantidad_bloques = ceil(((double)nuevo_tamanio) / config_IO.BLOCK_SIZE);
     
     int primer_nuevo_bloque = FCB->bloque_inicial + cantidad_bloques_actuales;
@@ -169,6 +172,7 @@ void actualizar_tamanio_archivo(t_FCB* FCB, int nuevo_tamanio){
     FCB->tamanio_archivo = nuevo_tamanio;
     t_config* config = iniciar_config(FCB->path);
     config_set_value(config, "TAMANIO_ARCHIVO", string_itoa(nuevo_tamanio));
+    config_save(config);
     config_destroy(config);
 }
 
@@ -185,7 +189,7 @@ void compactar(t_FCB* FCB){
         t_FCB* archivo = list_get(archivos_metadata, i);
         int primer_bloque_libre = obtener_primer_bloque_libre();
 
-        if(primer_bloque_libre < FCB->bloque_inicial){// significa que hay espacio libre antes del archivo
+        if(primer_bloque_libre < archivo->bloque_inicial){// significa que hay espacio libre antes del archivo
             desplazar_metadata(primer_bloque_libre, archivo); // lo escribimos a partir de ese espacio libre
         }
     }
@@ -199,12 +203,22 @@ void compactar(t_FCB* FCB){
 char* extraer_contenido_archivo(t_FCB* FCB){
     char* buffer_lectura = malloc(FCB->tamanio_archivo);
 
-    archivo_bloques = fopen(path_archivo_bloques, "r");
-        fseek(archivo_bloques, FCB->bloque_inicial*config_IO.BLOCK_SIZE, SEEK_SET);
-        fread(buffer_lectura, sizeof(char),FCB->tamanio_archivo,archivo_bloques);
+    archivo_bloques = fopen(path_archivo_bloques, "r+b");
+    
+    fseek(archivo_bloques, FCB->bloque_inicial*config_IO.BLOCK_SIZE, SEEK_SET); 
+    fread(buffer_lectura, sizeof(char),FCB->tamanio_archivo,archivo_bloques);
     fclose(archivo_bloques);
+   
 
-    int cantidad_bloques = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+    int cantidad_bloques;
+
+    if(FCB->tamanio_archivo == 0){
+        cantidad_bloques = 1;
+    }
+    else{
+        cantidad_bloques = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+    }
+
     liberar_bloques(FCB->bloque_inicial, FCB->bloque_inicial+cantidad_bloques);
 
     return buffer_lectura;
@@ -218,12 +232,21 @@ void desplazar_metadata(int nuevo_bloque_inicial, t_FCB* FCB){
 void realocar_contenido_metadata(int nuevo_bloque_inicial, t_FCB* FCB, char* contenido_metadata){
 
     archivo_bloques = fopen(path_archivo_bloques, "r+b");
-        fseek(archivo_bloques, nuevo_bloque_inicial*config_IO.BLOCK_SIZE, SEEK_SET);
-        fwrite(contenido_metadata, sizeof(char),FCB->tamanio_archivo,archivo_bloques);
+    fseek(archivo_bloques, nuevo_bloque_inicial*config_IO.BLOCK_SIZE, SEEK_SET);
+    fwrite(contenido_metadata, sizeof(char),FCB->tamanio_archivo,archivo_bloques);
     fclose(archivo_bloques);
 
+
     actualizar_bloque_inicial(FCB, nuevo_bloque_inicial);
-    int cantidad_bloques = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+
+    int cantidad_bloques;
+    if(FCB->tamanio_archivo == 0){
+        cantidad_bloques = 1;
+    }
+    else{
+        cantidad_bloques = ceil(((double)FCB->tamanio_archivo) / config_IO.BLOCK_SIZE);
+    }
+
     ocupar_bloques(FCB->bloque_inicial, FCB->bloque_inicial+cantidad_bloques);
  }
 
@@ -231,6 +254,7 @@ void actualizar_bloque_inicial(t_FCB* FCB, int nuevo_bloque_inicial){
     FCB->bloque_inicial = nuevo_bloque_inicial;
     t_config* config = iniciar_config(FCB->path);
     config_set_value(config, "BLOQUE_INICIAL", string_itoa(nuevo_bloque_inicial));
+    config_save(config);
     config_destroy(config);
 }
 
@@ -326,7 +350,10 @@ void escribir_en_archivo(char *nombre_archivo, int puntero_archivo, char *cadena
 
     int indice_FCB = buscar_FCB_en_archivos_metadata(nombre_archivo);
     t_FCB *FCB_archivo = list_get(archivos_metadata, indice_FCB);
-    archivo_bloques = fopen(path_archivo_bloques, "r+");
+    archivo_bloques = fopen(path_archivo_bloques, "r+b");
+    if(archivo_bloques == NULL){
+        perror("aqui no hay nada");
+    }
 
     int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
 

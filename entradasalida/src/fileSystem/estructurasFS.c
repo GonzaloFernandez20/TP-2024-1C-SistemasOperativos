@@ -20,7 +20,6 @@ FILE* abrir_archivo(int bytes_tamanio, char* path){
     
     ftruncate(fileno(archivo), bytes_tamanio);
 
-    free(path);
     return archivo;
 }
 
