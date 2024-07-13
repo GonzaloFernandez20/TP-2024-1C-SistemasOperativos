@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/FSpruebaFS.config","FS"],
+      "args": ["${workspaceFolder}/TECLADOpruebaFS.config","TECLADO"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

@@ -31,7 +31,8 @@ void devolver_valor_leido(void* valor, int tamanio_bytes, int fd_cliente){
 
 	buffer_add_int(paquete->buffer, tamanio_bytes );
 	buffer_add_valor(paquete->buffer, valor,tamanio_bytes);
-	
+    
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cliente);
     
     free(valor);
@@ -60,6 +61,7 @@ void realizar_escritura(int fd_cliente){
 
     free(valor);
 
+    usleep(1000*config_memoria.RETARDO_RESPUESTA);
     int mensaje_ok = 1;
 	send(fd_cliente, &mensaje_ok, sizeof(int), 0);
 }
