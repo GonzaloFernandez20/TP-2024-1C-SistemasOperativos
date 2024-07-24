@@ -14,8 +14,7 @@ void inicializar_recursos(){
         t_estado* bloqueados_recurso = malloc(sizeof(t_estado));
         bloqueados_recurso->cola = list_create();
         pthread_mutex_init(&(bloqueados_recurso->mutex_cola),NULL); 
-        bloqueados_recurso->nombre = strdup("BLOCKED: ");
-        string_append(&(bloqueados_recurso->nombre), nuevo_recurso->nombre_recurso);
+        bloqueados_recurso->nombre = strdup("BLOCKED");
 
         nuevo_recurso->cola_recurso = bloqueados_recurso;
 

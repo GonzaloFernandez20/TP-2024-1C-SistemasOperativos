@@ -72,4 +72,5 @@ int contador_bloqueados;
 t_list *recursos_usados;
 t_list *procesos_terminados;
 
+char *recurso_que_bloquea;
 #endif

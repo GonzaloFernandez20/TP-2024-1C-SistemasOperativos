@@ -36,8 +36,10 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
 
     case PETICION_RECURSO:
         pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED: RECURSO >", pcb->pid);
+        log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXEC > - Estado Actual: < BLOCKED >", pcb->pid);
+        log_info(kernel_log, "PID: <%d> - Bloqueado por: < %s > ", pcb->pid, recurso_que_bloquea);
         pthread_mutex_unlock(&mutex_log);
+        free(recurso_que_bloquea);
         break;
     
     case OUT_OF_MEMORY:
@@ -124,10 +126,6 @@ void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
         nueva_peticion->unidades_trabajo = unidades_trabajo;
         nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP;
 
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->argumentos.IO_GEN_SLEEP.unidades_trabajo = unidades_trabajo;
-        nueva_peticion->funcion = solicitar_operacion_IO_GEN_SLEEP; */
-
         char *pid_string = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
@@ -139,6 +137,10 @@ void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log); 
 
         sem_post(&interfaz->hay_peticiones);
 
@@ -168,14 +170,6 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ;
 
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->argumentos.IO_STDIN_READ.tamanio_a_leer = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones = buffer_read_int(&stream);
-        t_list * direcciones = nueva_peticion->argumentos.IO_STDIN_READ.direcciones;
-        direcciones = list_create();
-        recibir_paquete_direcciones(direcciones, nueva_peticion->argumentos.IO_STDIN_READ.cant_direcciones, stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_STDIN_READ; */
-
         char *pid_string = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
@@ -187,6 +181,10 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log);
 
         sem_post(&interfaz->hay_peticiones);
 
@@ -216,12 +214,6 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE;
 
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        nueva_peticion->argumentos.IO_STDOUT_WRITE.tamanio_a_leer = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_STDOUT_WRITE.cant_direcciones = buffer_read_int(&stream);
-        recibir_paquete_direcciones(nueva_peticion->argumentos.IO_STDOUT_WRITE.direcciones, nueva_peticion->argumentos.IO_STDOUT_WRITE.cant_direcciones, stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_STDOUT_WRITE; */
-
         char *pid_string = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
@@ -233,6 +225,10 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log);
 
         sem_post(&interfaz->hay_peticiones);
 
@@ -284,7 +280,7 @@ void case_WAIT(int PID, t_recurso *recurso)
         // trasladar(PID, exec, recurso->cola_recurso);
         t_pcb *pcb = pop_estado(exec);
         push_estado(recurso->cola_recurso, pcb);
-
+        recurso_que_bloquea = strdup(recurso->nombre_recurso);
         enviar_interrupcion(PETICION_RECURSO);
     }
 }
@@ -332,12 +328,6 @@ void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
         nueva_peticion->tipo_operacion = operacion;
         nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE;
 
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_FS_CREATE_DELETE.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
-        nueva_peticion->argumentos.IO_FS_CREATE_DELETE.tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE; */
-
         char *pid_string = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
@@ -349,6 +339,10 @@ void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log);
 
         sem_post(&interfaz->hay_peticiones);
 
@@ -377,12 +371,6 @@ void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
         nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE;
 
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_FS_TRUNCATE.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
-        nueva_peticion->argumentos.IO_FS_TRUNCATE.registro_tamanio = buffer_read_int(&stream);
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE; */
-
         char *pid_string = string_itoa(pcb->pid);
 
         pthread_mutex_lock(&diccionario_peticiones);
@@ -394,6 +382,10 @@ void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log);
 
         sem_post(&interfaz->hay_peticiones);
 
@@ -425,16 +417,6 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
         recibir_paquete_direcciones(nueva_peticion, nueva_peticion->cant_direcciones, stream);
         nueva_peticion->tipo_operacion = operacion;
         nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ;
-        
-        /* t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
-        int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_FS_WRITE_READ.nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
-        nueva_peticion->argumentos.IO_FS_WRITE_READ.registro_tamanio = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_FS_WRITE_READ.reg_puntero_archivo = buffer_read_int(&stream);
-        nueva_peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones = buffer_read_int(&stream);
-        recibir_paquete_direcciones(nueva_peticion->argumentos.IO_FS_WRITE_READ.direcciones, nueva_peticion->argumentos.IO_FS_WRITE_READ.cant_direcciones, stream);
-        nueva_peticion->argumentos.IO_FS_WRITE_READ.tipo_operacion = operacion;
-        nueva_peticion->funcion = solicitar_operacion_IO_FS_WRITE_READ; */
 
         char *pid_string = string_itoa(pcb->pid);
 
@@ -447,6 +429,10 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
         pthread_mutex_unlock(&diccionario_interfaces);
 
         trasladar(pcb->pid, exec, interfaz->bloqueados);
+
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > - Bloqueado por: < %s >", pcb->pid, nombre_interfaz);
+        pthread_mutex_unlock(&mutex_log);
 
         sem_post(&interfaz->hay_peticiones);
 

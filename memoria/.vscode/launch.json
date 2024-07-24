@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/pruebaFS.config"],
+      "args": ["${workspaceFolder}/PRUEBA123.config"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

@@ -10,7 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/pruebaFS.config"],
+      "args": ["${workspaceFolder}/PLANI.config"],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,

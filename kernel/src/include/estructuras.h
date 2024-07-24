@@ -159,4 +159,5 @@ extern int contador_bloqueados;
 
 extern t_list *recursos_usados;
 extern t_list *procesos_terminados;
+extern char *recurso_que_bloquea;
 #endif
