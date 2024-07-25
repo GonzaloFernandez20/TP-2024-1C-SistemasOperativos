@@ -54,6 +54,19 @@ void traducir_direcciones(int tamanio, uint32_t direccion_logica){
 
     int direccion_fisica = traducir_DL_a_DF(direccion_logica);  // 1RA DIRECCION FISICA
 
+    if (direccion_fisica % TAM_PAGINA == 0){
+        if(tamanio>TAM_PAGINA){
+            bytes_restantes -= TAM_PAGINA;
+            bytes_consumidos = TAM_PAGINA;
+            cant_paginas++;
+        }
+        else{
+            bytes_restantes = 0;
+            bytes_consumidos = tamanio;
+        }
+        agregar_direccion(bytes_consumidos, direccion_fisica);
+    }
+
     if (direccion_fisica % TAM_PAGINA != 0){ // SI HAY DESPLAZAMIENTO EN LA 1RA PAGINA A LEER O ESCRIBIR
         cant_paginas++;
         int bytes_disponibles = TAM_PAGINA - (direccion_fisica % TAM_PAGINA);
