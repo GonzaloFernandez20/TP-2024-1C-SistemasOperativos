@@ -36,8 +36,12 @@ int buscar_y_trasladar_pid(t_estado *estado, int pid_buscado){
                 list_add((estado_exit->cola), pcb);
             pthread_mutex_unlock(&(estado_exit->mutex_cola));
 
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "PID: <%d> - Estado Anterior: < %s > - Estado Actual: < EXIT >", pid_buscado, estado ->nombre);
+            pthread_mutex_unlock(&mutex_log);
+
+            sem_post(&hay_proceso_exit);
             encontro = 1;
-            free(pcb);
             break;
         }
     }

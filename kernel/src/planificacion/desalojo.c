@@ -273,7 +273,9 @@ void case_WAIT(int PID, t_recurso *recurso)
     if (recurso->instancias_recursos > 0)
     {
         recurso->instancias_recursos--;
-        agregar_instancia_recurso(PID, recurso);
+        pthread_mutex_lock(&cola_recursos_usados);
+            agregar_instancia_recurso(PID, recurso);
+        pthread_mutex_unlock(&cola_recursos_usados);
     }
     else
     {
@@ -302,7 +304,10 @@ void case_SIGNAL(int PID, t_recurso *recurso)
 
     if (hay_proceso_esperando)
     {
+        pthread_mutex_lock(&cola_recursos_usados);
         agregar_instancia_recurso(pcb_liberado->pid, recurso);
+        pthread_mutex_unlock(&cola_recursos_usados);
+        recurso->instancias_recursos --;
         trasladar(pcb_liberado->pid, recurso->cola_recurso, ready);
         // Tecnicamente al poder usar el recurso, el proceso queda liberado y deberia volver a ready
     }

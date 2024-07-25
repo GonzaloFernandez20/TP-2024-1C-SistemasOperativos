@@ -50,10 +50,6 @@ void crear_proceso(void){
 	char* path_archivo = malloc(length_path);
 	strcpy(path_archivo, buffer_read_string(&stream, length_path));
 
-    pthread_mutex_lock(&mutex_log_debug);
-        log_info(memoria_log_debugg, "Cargando instrucciones del proceso <%d> desde el archivo %s\n", PID, path_archivo);
-    pthread_mutex_unlock(&mutex_log_debug);
-
 	eliminar_buffer(buffer);
 
 	crear_estructuras_administrativas(PID, path_archivo);

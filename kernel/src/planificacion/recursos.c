@@ -36,12 +36,8 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso){
     t_recurso_usado *nuevo_recurso = malloc(sizeof(t_recurso_usado));
     nuevo_recurso->PID = PID;
     nuevo_recurso->nombre_recurso = strdup(recurso->nombre_recurso);
-
-    pthread_mutex_lock(&cola_recursos_usados);
-        list_add(recursos_usados, nuevo_recurso);
-    pthread_mutex_unlock(&cola_recursos_usados);
-
-    imprimir_lista(recursos_usados);
+    list_add(recursos_usados, nuevo_recurso);
+    //imprimir_lista(recursos_usados);
 }
 
 void eliminar_instancia_recurso(int PID, t_recurso *recurso){
@@ -54,7 +50,6 @@ void eliminar_instancia_recurso(int PID, t_recurso *recurso){
     
         if (PID == recurso_usado->PID && string_equals_ignore_case(recurso->nombre_recurso, recurso_usado->nombre_recurso)){   
             t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
-            printf("Eliminada instancia del recurso: %s de PID: %d \n", recurso_usado->nombre_recurso, recurso_usado->PID);
             recurso->instancias_recursos++;
             free(instancia_recurso->nombre_recurso);
             free(instancia_recurso);
@@ -75,11 +70,24 @@ void liberar_recursos(int PID){
 
         if (PID == recurso_usado->PID) {
             t_recurso_usado *instancia_recurso = list_remove(recursos_usados, i);
-
-            printf("Eliminada instancia del recurso: %s de PID: %d\n", recurso_usado->nombre_recurso, recurso_usado->PID);
-            
+            t_recurso *recurso = dictionary_get(recursos_disponibles, instancia_recurso->nombre_recurso);
             free(instancia_recurso->nombre_recurso);
             free(instancia_recurso);
+            
+            if (!list_is_empty(recurso->cola_recurso->cola)) // Hay al menos 1 elemento bloqueado en la cola del recurso
+            {
+                pthread_mutex_lock(&recurso->cola_recurso->mutex_cola);
+                t_pcb *pcb_liberado = list_get(recurso->cola_recurso->cola, 0);
+                pthread_mutex_unlock(&recurso->cola_recurso->mutex_cola);
+
+                agregar_instancia_recurso(pcb_liberado->pid, recurso);
+                trasladar(pcb_liberado->pid, recurso->cola_recurso, ready);
+            }
+            else
+            {
+                recurso->instancias_recursos++;
+            }
+              
         } else {
             i++; // AVANZA AL SIGUIENTE SOLO SI NO ELIMINO.
         }
