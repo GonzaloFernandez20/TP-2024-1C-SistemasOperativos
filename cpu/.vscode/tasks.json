@@ -77,8 +77,9 @@
       "args": [
         "--leak-check=full",
         "--log-file=${log_file}",
+        "--show-leak-kinds=all",
         "./bin/${this_module}",
-        "./${this_module}.config"
+        "./PLANI.config"
       ],
       "type": "shell",
       "hide": true,

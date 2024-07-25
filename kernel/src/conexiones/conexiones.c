@@ -100,7 +100,7 @@ void atender_interfaz(void (*procesar_conexion)(void*)){
     log_info(kernel_log_debugg, "Se conecto un modulo E/S");
     pthread_mutex_unlock(&mutex_log_debug);
 
-    char* nombre_interfaz = strdup(recibir_handshake_IO(*fd_cliente));
+    char* nombre_interfaz = recibir_handshake_IO(*fd_cliente);
 
     asignar_hilo_interfaz(nombre_interfaz, procesar_conexion);
 }
@@ -123,7 +123,7 @@ char* recibir_handshake_IO(int fd_cliente){
 
     if(handshake == 1){
         send(fd_cliente, &handshake_ok, sizeof(int), 0);
-        nombre_interfaz = strdup(recibir_presentacion_IO(fd_cliente));
+        nombre_interfaz = recibir_presentacion_IO(fd_cliente);
     }
     else{
         send(fd_cliente, &handshake_error, sizeof(int), 0);
@@ -142,12 +142,10 @@ char* recibir_presentacion_IO(int fd_cliente){
 	void* stream = buffer->stream;
 	
 	int length_nombre = buffer_read_int(&stream);
-	char* nombre_Interfaz = malloc(length_nombre);
-	strcpy(nombre_Interfaz, buffer_read_string(&stream, length_nombre));
+	char* nombre_Interfaz = buffer_read_string(&stream, length_nombre);
 
     int length_tipo = buffer_read_int(&stream);
-	char* tipo_Interfaz = malloc(length_tipo);
-	strcpy(tipo_Interfaz, buffer_read_string(&stream, length_tipo));
+	char* tipo_Interfaz = buffer_read_string(&stream, length_tipo);
 
     pthread_mutex_lock(&mutex_log_debug);
 	log_info(kernel_log_debugg, "Handshake exitoso: Establecida comunicacion con %s:%s\n", nombre_Interfaz, tipo_Interfaz);

@@ -2,7 +2,7 @@
 
 void *procesar_conexion_es(void *nombre_interfaz){
 
-	char* nombre = strdup((char*)nombre_interfaz);
+	char* nombre = (char*)nombre_interfaz;
 
 	pthread_mutex_lock(&diccionario_interfaces);
 		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);

@@ -37,8 +37,9 @@
       "args": [
         "--leak-check=full",
         "--log-file=${log_file}",
+        "--show-leak-kinds=all",
         "./bin/${this_module}",
-        "./${this_module}.config"
+        "./PLANI_FIFO.config"
       ],
       "type": "shell",
       "hide": true,

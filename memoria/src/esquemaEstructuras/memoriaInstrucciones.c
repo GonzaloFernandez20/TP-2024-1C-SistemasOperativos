@@ -22,7 +22,7 @@ int buscar_PID_memoria_instrucciones(int PID_buscado){
 
 void mostrar_procesos_cargados(void){
     pthread_mutex_lock(&mutex_memoria_instrucciones);
-    char* lista_de_pids = string_duplicate(armar_lista_pids());
+    char* lista_de_pids = armar_lista_pids();
     pthread_mutex_unlock(&mutex_memoria_instrucciones);
 
     pthread_mutex_lock(&mutex_log_debug);
@@ -34,22 +34,31 @@ void mostrar_procesos_cargados(void){
 
 char* armar_lista_pids(void){
     int size = list_size(memoria_de_instrucciones);
-    char* lista = string_duplicate(""); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
+    char* lista = string_new(); // El máximo tamaño de un número de 2 dígitos + coma + carácter nulo 
     
     if (size < 1)
     {
-        char *vacia = string_duplicate("");
+        char *vacia = string_new();
         return vacia;
     }
 
     for (int i = 0; i < size; i++) {
-        char* cadena = malloc(sizeof(char) * 3); // Tamaño suficiente para un número de hasta 2 dígitos + carácter nulo
+        //char* cadena = malloc(sizeof(char) * 3); // Tamaño suficiente para un número de hasta 2 dígitos + carácter nulo
 
         t_proceso* proceso = list_get(memoria_de_instrucciones, i);
-        sprintf(cadena, " %d ", proceso->PID);
-        string_append(&lista, cadena);
+        
+        char* num_to_string = string_itoa(proceso->PID);
 
-        free(cadena);
+        // Agrega un espacio antes y después del número
+        string_append(&lista, " ");
+        string_append(&lista, num_to_string);
+        string_append(&lista, " ");
+        
+        /* sprintf(cadena, " %d ", proceso->PID);
+        string_append(&lista, cadena); */
+
+        //free(cadena);
+        free(num_to_string);
     }
     return lista;
 }
