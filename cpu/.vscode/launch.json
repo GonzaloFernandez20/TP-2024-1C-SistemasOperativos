@@ -10,7 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/PLANI.config"],
+      "args": ["${workspaceFolder}/PRUEBA245.config"],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,

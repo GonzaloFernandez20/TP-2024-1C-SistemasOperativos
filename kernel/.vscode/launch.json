@@ -9,7 +9,7 @@
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/PLANI_RR.config"],
+      "args": ["${workspaceFolder}/DEADLOCK.config"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
       "environment": [],

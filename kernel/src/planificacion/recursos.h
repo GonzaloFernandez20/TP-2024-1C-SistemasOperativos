@@ -4,6 +4,8 @@
 // ------------- LIBRERIAS
 #include <include/estructuras.h>
 #include <planificacion/pcb.h>
+#include <planificacion/colasEstados.h>
+
 
 #include <commons/collections/list.h>
 #include <commons/collections/dictionary.h>

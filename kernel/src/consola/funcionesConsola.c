@@ -27,17 +27,20 @@ void extraer_proceso(int pid){
     
     //t_estado *array_estados[] = {new, ready, exec, estado_exit}; -> DE EXIT NO LO PUEDO EXTRAER Y DE EJECUTANDO LO HAGO APARTE
     //pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
+
+    pausar_planificacion();
     
     t_estado *array_estados[] = {new, ready};
     pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola};
     
-    int cant_elementos = (int)(sizeof(array_estados) / sizeof(array_estados[0]));
+    int cant_elementos = 2;
     int resultado;
+    int encontro = 0;
 
     if ((_esta_ejecutando(pid)))
     {
         enviar_interrupcion(FIN_DE_PROCESO); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
-    }else
+    }else // LO BUSCO EN LAS COLAS Y SI NO LA ENCUENTRA AHI LO BUSCO EN BLOQUEADOS
     {
         for (int i = 0; i < cant_elementos; i++)
         {   
@@ -45,10 +48,24 @@ void extraer_proceso(int pid){
                 resultado = buscar_y_trasladar_pid(array_estados[i], pid);
             pthread_mutex_unlock(&array_semaforos[i]);
             
-            if(resultado != (-1)){  break;  }
+            if(resultado != (-1)){  encontro = 1; break;  }
         }
+        if (!encontro) // CHEQUEO EN LOS BLOQUEADOS POR RECURSOS
+        {
+            int cant_recursos = string_array_size(config_kernel.RECURSOS);
+
+            for (int i = 0; i < cant_recursos; i++)
+            {
+                t_recurso *recurso = dictionary_get(recursos_disponibles, config_kernel.RECURSOS[i]);
+                resultado = buscar_y_trasladar_pid(recurso->cola_recurso, pid);
+                if(resultado != (-1)){  encontro = 1; break;  }
+            }
+            
+        }
+        
     }
 
+    retomar_planificacion();
     // TODO: Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
 }
 

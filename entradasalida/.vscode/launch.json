@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
       //"args": ["${workspaceFolder}/MONITORpruebaFS.config","MONITOR"],
-      "args": ["${workspaceFolder}/SLP1.config","SLP1"],
+      "args": ["${workspaceFolder}/ESPERA.config","ESPERA"],
       //"args": ["${workspaceFolder}/TECLADOpruebaFS.config","TECLADO"],
       "stopAtEntry": false,
       "cwd": "${workspaceFolder}",
