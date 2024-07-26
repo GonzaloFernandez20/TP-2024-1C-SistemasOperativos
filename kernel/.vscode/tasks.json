@@ -39,7 +39,7 @@
         "--track-origins=yes",
         "--log-file=${log_file}",
         "./bin/${this_module}",
-        "./DEADLOCK.config"
+        "./EDGE.config"
       ],
       "type": "shell",
       "hide": true,

@@ -29,7 +29,12 @@ void sum(void){
         *(uint8_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
     }
     else{
-        *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
+        if(es_registro_8_bits(registro_origen)){
+            *(uint32_t*)ptr_registro_destino += *(uint8_t*)ptr_registro_origen;
+        }
+        else{
+            *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
+        }
     }
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////
@@ -44,7 +49,12 @@ void sub(void){
         *(uint8_t*)ptr_registro_destino -= *(uint8_t*)ptr_registro_origen;
     }
     else{
-        *(uint32_t*)ptr_registro_destino -= *(uint32_t*)ptr_registro_origen;
+        if(es_registro_8_bits(registro_origen)){
+            *(uint32_t*)ptr_registro_destino -= *(uint8_t*)ptr_registro_origen;
+        }
+        else{
+            *(uint32_t*)ptr_registro_destino -= *(uint32_t*)ptr_registro_origen;
+        }
     }
 }
 //JNZ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -535,11 +545,11 @@ void* obtener_direcciones_fisicas(int indice1, int indice2){
 
     uint32_t direccion_logica = 0;
 
-    if(tamanio_de_registro(registro_direccion) == sizeof(uint8_t)) {
+    if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
     else {
-        direccion_logica  = *(uint32_t*)ptr_registro_direccion;
+        direccion_logica = *(uint32_t*)ptr_registro_direccion;
     }
     int tamanio;
 

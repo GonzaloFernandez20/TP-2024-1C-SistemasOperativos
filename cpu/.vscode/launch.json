@@ -10,7 +10,7 @@
       "request": "launch",
       "cwd": "${workspaceFolder}",
       "program": "${workspaceFolder}/bin/${workspaceFolderBasename}",
-      "args": ["${workspaceFolder}/PRUEBA245.config"],
+      "args": ["${workspaceFolder}/EDGE.config"],
       "stopAtEntry": false,
       "environment": [],
       "externalConsole": false,
