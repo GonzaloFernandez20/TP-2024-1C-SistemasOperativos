@@ -34,8 +34,8 @@ void *planificador_corto_plazo(){
             case RR:
                     termino_quantum = 0;
                     
-                    pcb_execute = pop_estado(ready);
-                    push_estado(exec, pcb_execute);
+                    pcb_execute = pop_estado(ready); // lo saca de la cola READY
+                    push_estado(exec, pcb_execute);  // y lo pone en la cola EXEC
 
                     pthread_mutex_lock(&mutex_log);
                         log_info(kernel_log, "PID: <%d> - Estado Anterior: < READY > - Estado Actual: < EXEC >", pcb_execute->pid);
@@ -127,7 +127,7 @@ void iniciar_planificacion(void){
     log_info(kernel_log_debugg, "Iniciado planificador de corto plazo");
     pthread_mutex_unlock(&mutex_log_debug);
     // -------------------------------------------------
-    // Creamos un hilo para el planificador de largo plazo, encargado del grado de multiprogramacion 
+    // Creamos un hilo para el planificador de largo plazo, encargado del grado de multiprogramacion (cuántos procesos pueden existir en memoria simultáneamente)
     pthread_t largo_plazo;
     pthread_create(&largo_plazo, NULL, (void *)planificador_largo_plazo, NULL);
     pthread_detach(largo_plazo);

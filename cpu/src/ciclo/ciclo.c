@@ -37,7 +37,7 @@ void checkInterrupt(void){
     if(hay_interrupcion){
         
         void *ptr_tipo_interrupcion = list_get_minimum(lista_interrupciones, elemento_minimo);
-        int tipo_interrupcion = *(int *)ptr_tipo_interrupcion;
+        t_motivo_desalojo tipo_interrupcion = *(t_motivo_desalojo *)ptr_tipo_interrupcion;
 
         char* interrupcion_string = _enum_interrupcion_string(tipo_interrupcion);
 

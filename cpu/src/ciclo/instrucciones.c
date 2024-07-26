@@ -561,6 +561,7 @@ void* obtener_direcciones_fisicas(int indice1, int indice2){
     return ptr_registro_datos;
 }  
 
+
 char *generar_cadena(void* particion, int bytes){
     char* nueva_cadena = malloc(bytes + 1);
     int i;

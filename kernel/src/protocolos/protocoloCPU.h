@@ -8,7 +8,7 @@
 #include <planificacion/desalojo.h>
 
 
-// ---------- DECLARACIONES DE FUNCIONES
+
 void enviar_contexto_ejecucion(t_pcb *pcb_envio);
 void recibir_contexto_ejecucion(t_pcb* pcb);
 

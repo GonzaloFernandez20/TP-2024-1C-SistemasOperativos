@@ -1,5 +1,7 @@
 #include <protocolos/protocoloCPU.h>
 
+
+// ENVÍA CONTEXTO DE EJECUCIÓN A LA CPU
 void enviar_contexto_ejecucion(t_pcb* pcb){
     t_paquete* paquete = crear_paquete(CONTEXTO_EJECUCION);
 

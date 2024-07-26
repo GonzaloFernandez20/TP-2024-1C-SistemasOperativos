@@ -1,5 +1,13 @@
 #include <utils/hilos/hilos.h>
 
+
+/**
+ * La CPU (fd_servidor) espera que Kernel se conecte 
+ * y una vez conectado asigna un hilo para el procesamiento de operaciones dispatch.
+ * Al procesar la operación dispatch, espera recibir un contexto de ejecución,
+ * que contiene la info que necesita CPU para correr un proceso.
+ * 
+ *  */ 
 void atender_cliente(int fd_servidor, void (*procesar_conexion)(void*), t_log* logger, char* modulo){
 
     int *fd_cliente = malloc(sizeof(int));
