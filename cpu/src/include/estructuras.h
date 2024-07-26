@@ -53,6 +53,8 @@ extern t_log* cpu_log_debug;
 // SEMAFOROS
 extern pthread_mutex_t mutex_log;
 extern pthread_mutex_t mutex_log_debug;
+extern pthread_mutex_t mutex_hay_interrupcion;
+extern pthread_mutex_t mutex_lista_interrupciones;
 
 extern char *path_config;
 extern t_config_cpu config_cpu;

@@ -13,7 +13,7 @@ void set(void){
         *(uint8_t*)ptr_registro = (uint8_t)valor; 
     }
     else {
-        *(uint32_t*)ptr_registro = (uint8_t)valor; // idem pero para uint32_t
+        *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
     }
 }
 //SUM////////////////////////////////////////////////////////////////////////////////////
@@ -245,21 +245,32 @@ void io_stdin_read(void) {
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);
     void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
 
-    int tamanio_a_leer = *(int*)ptr_registro_tamanio;
     uint32_t direccion_logica;
-
     if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
     else {
         direccion_logica  = *(uint32_t*)ptr_registro_direccion;
     } 
+
+    int tamanio_a_leer;
+    if(es_registro_8_bits(registro_tamanio)) {
+        tamanio_a_leer = *(uint8_t*)ptr_registro_tamanio;    
+    }
+    else {
+        tamanio_a_leer  = *(uint32_t*)ptr_registro_tamanio;
+    } 
+
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 
     devolver_contexto_ejecucion_IO_STDIN_READ(interfaz, tamanio_a_leer);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -271,9 +282,7 @@ void io_stdout_write(void) {
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);
     void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
 
-    int tamanio_a_leer = *(int*)ptr_registro_tamanio;
     uint32_t direccion_logica;
-
     if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
@@ -281,22 +290,40 @@ void io_stdout_write(void) {
         direccion_logica  = *(uint32_t*)ptr_registro_direccion;
     }
 
+    int tamanio_a_leer;
+    if(es_registro_8_bits(registro_tamanio)) {
+        tamanio_a_leer = *(uint8_t*)ptr_registro_tamanio;    
+    }
+    else {
+        tamanio_a_leer  = *(uint32_t*)ptr_registro_tamanio;
+    } 
+
     traducir_direcciones(tamanio_a_leer, direccion_logica);
 
     devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, tamanio_a_leer);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
 void io_gen_sleep(void){
     char* interfaz = instruccion_ejecutando[1];
     int unidades_de_trabajo = atoi(instruccion_ejecutando[2]);
     devolver_contexto_ejecucion_IO_GEN_SLEEP(interfaz, unidades_de_trabajo);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //WAIT////////////////////////////////////////////////////////////////////////////////////////////////
 void wait_kernel(void){
     char* recurso = instruccion_ejecutando[1];
@@ -319,17 +346,26 @@ void io_fs_create(void){ // (Interfaz, Nombre Archivo)
     char* nombre_archivo = instruccion_ejecutando[2];
     devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_CREATE);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //IO_FS_DELETE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_delete(void){
     char* interfaz = instruccion_ejecutando[1];
     char* nombre_archivo = instruccion_ejecutando[2];
     devolver_contexto_ejecucion_IO_FS(interfaz, nombre_archivo, IO_FS_DELETE);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
 //IO_FS_TRUNCATE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_truncate(void){
@@ -348,8 +384,12 @@ void io_fs_truncate(void){
     
     devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, tamanio);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
 //IO_FS_WRITE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
@@ -390,9 +430,14 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
     traducir_direcciones(tamanio_a_leer, direccion_logica);
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_WRITE);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //IO_FS_READ////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
     char* interfaz = instruccion_ejecutando[1];
@@ -433,16 +478,26 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
     traducir_direcciones(tamanio_a_leer, direccion_logica);
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_READ);    
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //EXIT////////////////////////////////////////////////////////////////////////////////////////////////
 void exit_os(void){
     devolver_contexto_ejecucion(EXIT);
     se_devolvio_contexto = 1;
-    hay_interrupcion = 0;
-    list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+    		hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        list_clean_and_destroy_elements(lista_interrupciones, free);
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
+
 //------------------------------------------------ Auxiliares ------------------------------------------------ //
 
 // Retorna la direccion casteado a void* del registro dado  

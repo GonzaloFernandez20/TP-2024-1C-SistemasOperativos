@@ -9,6 +9,7 @@ void procesar_operacion_dispatch(void){
 		switch (cod_op) {
 			case CONTEXTO_EJECUCION:		
 				recibir_contexto_ejecucion();
+                reset_interrupciones();
 				ciclo();
 
 				break;
@@ -25,7 +26,7 @@ void procesar_operacion_dispatch(void){
 
 // --------- ENVIO Y RECEPCION DE CONTEXTO DE EJECUCION CON KERNEL
 
-void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
+void recibir_contexto_ejecucion(void) // PRIMER ENVIO DE CONTEXTO
 {	
 	t_buffer *buffer = recibir_buffer(fd_dispatch);
 	void* stream = buffer->stream;
@@ -47,6 +48,15 @@ void recibir_contexto_ejecucion() // PRIMER ENVIO DE CONTEXTO
 
     log_info(cpu_log_debug, "Se recibio contexto de ejecucion PID: < %d > desde KERNEL.\n", PID);
 
+}
+
+void reset_interrupciones(void){
+    pthread_mutex_lock(&mutex_hay_interrupcion);
+        hay_interrupcion = 0; 
+	pthread_mutex_unlock(&mutex_hay_interrupcion);
+    pthread_mutex_lock(&mutex_lista_interrupciones);
+        if(list_size(lista_interrupciones)>0){list_clean_and_destroy_elements(lista_interrupciones, free);}
+    pthread_mutex_unlock(&mutex_lista_interrupciones);
 }
 
 void devolver_contexto_ejecucion(int motivo){
@@ -257,23 +267,3 @@ void _cargar_pcb(t_paquete* paquete, int motivo){ // Como solo se llama dentro d
     buffer_add_uint32(paquete->buffer, registros.DI );
     buffer_add_int(paquete->buffer, motivo);
 }
-
-/* 
-int cantidad_direcciones = list_size(direcciones);
-    int offset = 0;
-    
-    for(int i = 0; i < cantidad_direcciones; i++){
-        t_datos_acceso* datos =list_remove(direcciones, 0);
-        int bytes = datos->bytes;
-        int DF = datos->direccion_fisica;
-        free(datos);
-    
-        void* particion = leer_de_memoria(DF,bytes);
-        memcpy(ptr_registro_datos + offset, particion, bytes);
-        offset += bytes;
-
-        pthread_mutex_lock(&mutex_log);
-            log_info(cpu_log,"PID: < %d > - Acción: < LEER > - Dirección Física: < %d > - Valor: < %d >", PID, DF, *(int*)particion);
-        pthread_mutex_unlock(&mutex_log);
-
-    } */

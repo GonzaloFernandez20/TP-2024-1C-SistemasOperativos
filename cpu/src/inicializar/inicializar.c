@@ -15,6 +15,8 @@ void init(){
 void inicializar_semaforos(void){
     pthread_mutex_init(&mutex_log_debug, NULL);
     pthread_mutex_init(&mutex_log, NULL);
+    pthread_mutex_init(&mutex_hay_interrupcion, NULL);
+    pthread_mutex_init(&mutex_lista_interrupciones, NULL);
 }
 
 void _leer_configuracion(char *path_config){

@@ -44,10 +44,12 @@ void checkInterrupt(void){
         log_info(cpu_log_debug, "Se detecto una interrupcion de tipo < %s >", interrupcion_string);
 
         devolver_contexto_ejecucion(tipo_interrupcion);
-
-        list_clean_and_destroy_elements(lista_interrupciones, free);
-
-        hay_interrupcion = 0;
+        pthread_mutex_lock(&mutex_lista_interrupciones);
+            list_clean_and_destroy_elements(lista_interrupciones, free);
+        pthread_mutex_unlock(&mutex_lista_interrupciones);
+        pthread_mutex_lock(&mutex_hay_interrupcion);
+                hay_interrupcion = 0; 
+        pthread_mutex_unlock(&mutex_hay_interrupcion);
         se_devolvio_contexto = 1;
     }else{
         log_info(cpu_log_debug, "No hay interrupciones");

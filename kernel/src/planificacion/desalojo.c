@@ -13,6 +13,9 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
     switch (op_code_motivo_desalojo)
     {
     case FIN_DE_QUANTUM:
+        pthread_mutex_lock(&mutex_log);
+            log_info(kernel_log, "PID: < %d > Desalojado por fin de Quantum", pcb->pid);
+        pthread_mutex_unlock(&mutex_log);
         trasladar(pcb->pid, exec, ready);
         break;
 
