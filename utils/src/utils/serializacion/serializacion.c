@@ -18,7 +18,7 @@ void enviar_handshake(int fd_conexion, char* modulo, t_log* logger){
     }
 }
 
-// arma el paquete (inicializa sus estructuras) con la informacion de una presentacion y lo envia
+// Opcode HANDSHAKE, buffer: nombre del módulo (string)
 void enviar_presentacion(char* nombre_modulo, int socket_cliente){
 	t_paquete* paquete = crear_paquete(HANDSHAKE);
 
@@ -116,6 +116,7 @@ void eliminar_buffer(t_buffer *buffer){
 //////////////////////////////////// RECEPCION DE MENSAJES ////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////
 
+
 void recibir_handshake(int fd_cliente, t_log* logger){
     
     int handshake_ok = 0;
@@ -123,7 +124,7 @@ void recibir_handshake(int fd_cliente, t_log* logger){
     
     int handshake = recibir_operacion(fd_cliente);
 
-    if(handshake == 1){
+    if(handshake == HANDSHAKE){
         send(fd_cliente, &handshake_ok, sizeof(int), 0);
         recibir_presentacion(fd_cliente, logger);
     }
@@ -133,6 +134,7 @@ void recibir_handshake(int fd_cliente, t_log* logger){
     }
 }
 
+// recibe el cod_op
 int recibir_operacion(int fd_cliente){
 	int cod_op;
 	if(recv(fd_cliente, &cod_op, sizeof(int), MSG_WAITALL) > 0)
