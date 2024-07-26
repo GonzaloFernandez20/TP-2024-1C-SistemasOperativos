@@ -24,6 +24,8 @@ t_log* cpu_log_debug;
 // SEMAFOROS
 pthread_mutex_t mutex_log;
 pthread_mutex_t mutex_log_debug;
+pthread_mutex_t mutex_hay_interrupcion;
+pthread_mutex_t mutex_lista_interrupciones;
 
 char *path_config;
 t_config_cpu config_cpu;

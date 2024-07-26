@@ -146,7 +146,7 @@ void _imprimir_estados_procesos(void){
     
     puts("Cola BLOCKED: ");
     imprimir_cola_bloqueados();
-    imprimir_lista(recursos_usados);
+    imprimir_bloqueados_por_recursos();
 
     puts("Cola EXIT: ");
     imprimir_cola(estado_exit);
@@ -271,6 +271,8 @@ void imprimir_cola_bloqueados(void){
         printf("\t%s:\n", interfaz->nombre);
         imprimir_cola(interfaz->bloqueados);
     }
+
+    free(interfaces);
 }
 
 

@@ -30,7 +30,7 @@ void decode_and_execute(void) {
     void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion_ejecutando[0]); // obtenemos la función a partir del string del nombre de la instrucción
     funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el array global instruccion_cpu.   
     
-    free(instruccion_ejecutando); // Debemos liberar el string_array anterior, porque cuando le reasignemos un valor a nuestro puntero "instruccion_ejecutando", el puntero al string_array anterior se perderá y generará memory leaks. 
+    free(instruccion_ejecutando); 
 } 
 
 void checkInterrupt(void){
@@ -44,10 +44,12 @@ void checkInterrupt(void){
         log_info(cpu_log_debug, "Se detecto una interrupcion de tipo < %s >", interrupcion_string);
 
         devolver_contexto_ejecucion(tipo_interrupcion);
-
-        list_clean_and_destroy_elements(lista_interrupciones, free);
-
-        hay_interrupcion = 0;
+        pthread_mutex_lock(&mutex_lista_interrupciones);
+            list_clean_and_destroy_elements(lista_interrupciones, free);
+        pthread_mutex_unlock(&mutex_lista_interrupciones);
+        pthread_mutex_lock(&mutex_hay_interrupcion);
+                hay_interrupcion = 0; 
+        pthread_mutex_unlock(&mutex_hay_interrupcion);
         se_devolvio_contexto = 1;
     }else{
         log_info(cpu_log_debug, "No hay interrupciones");

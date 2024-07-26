@@ -49,16 +49,15 @@ int obtener_marco(int nro_pagina) {
 // ARMA UNA LISTA DE LAS DIRECCIONES FISICAS NECESARIAS CON LA CANTIDAD DE BYTES QUE VA EN CADA UNA PARA LA OPERACION QUE SOLICITE
 void traducir_direcciones(int tamanio, uint32_t direccion_logica){ 
     int bytes_restantes = tamanio; // INICIALMENTE TODOS
-    int cant_paginas = 0;
     int bytes_consumidos = 0;
 
+    int pagina = direccion_logica / TAM_PAGINA;   
     int direccion_fisica = traducir_DL_a_DF(direccion_logica);  // 1RA DIRECCION FISICA
 
-    if (direccion_fisica % TAM_PAGINA == 0){
+    if (direccion_fisica % TAM_PAGINA == 0){ //SI SE ESCRIBE AL INICIO DE LA 1RA PAGINA A LEER O ESCRIBIR
         if(tamanio>TAM_PAGINA){
             bytes_restantes -= TAM_PAGINA;
             bytes_consumidos = TAM_PAGINA;
-            cant_paginas++;
         }
         else{
             bytes_restantes = 0;
@@ -68,7 +67,6 @@ void traducir_direcciones(int tamanio, uint32_t direccion_logica){
     }
 
     if (direccion_fisica % TAM_PAGINA != 0){ // SI HAY DESPLAZAMIENTO EN LA 1RA PAGINA A LEER O ESCRIBIR
-        cant_paginas++;
         int bytes_disponibles = TAM_PAGINA - (direccion_fisica % TAM_PAGINA);
         if (tamanio >= bytes_disponibles){
             bytes_consumidos = bytes_disponibles;
@@ -80,16 +78,14 @@ void traducir_direcciones(int tamanio, uint32_t direccion_logica){
     }
 
     while (bytes_restantes > 0){
-
-        direccion_fisica = traducir_DL_a_DF((uint32_t)cant_paginas * TAM_PAGINA);
+        pagina ++;
+        direccion_fisica = traducir_DL_a_DF((uint32_t)pagina * TAM_PAGINA);
 
         if ((bytes_restantes - TAM_PAGINA) >= 0){
             agregar_direccion(TAM_PAGINA, direccion_fisica);
-            cant_paginas++;
             bytes_restantes -= TAM_PAGINA;
         }else{
             agregar_direccion(bytes_restantes, direccion_fisica);
-            cant_paginas++;
             bytes_restantes -= bytes_restantes;
         }   
     }

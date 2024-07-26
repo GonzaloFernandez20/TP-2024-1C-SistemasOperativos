@@ -152,8 +152,7 @@ void recibir_presentacion(int fd_cliente, t_log* logger){
 	void* stream = buffer->stream;
 	
 	int length = buffer_read_int(&stream);
-	char* modulo = malloc(length);
-	strcpy(modulo, buffer_read_string(&stream, length));
+	char* modulo = buffer_read_string(&stream, length);
 
 	log_info(logger, "Handshake exitoso: Establecida comunicacion con %s\n", modulo);
 	

@@ -185,6 +185,7 @@ void acceso_a_tabla_paginas(void){
 		t_tabla_paginas* tabla = list_get(tablas_de_paginas, indice_tabla);
 	pthread_mutex_unlock(&mutex_tablas_de_paginas);
 
+
 	t_pagina* pagina_del_marco = list_get(tabla->tabla_paginas, pagina);
 
 	pthread_mutex_lock(&mutex_log);

@@ -39,7 +39,8 @@ void recibir_contexto_ejecucion(t_pcb* pcb){
         {   
             int64_t quantum_restante = temporal_gettime(quantum_proceso);
             pcb->quantum = (config_kernel.QUANTUM - quantum_restante);
-        }   
+        }
+        free(quantum_proceso);   
     }
 
     if(opcode != CONTEXTO_EJECUCION){perror("Rompiste todo");}
