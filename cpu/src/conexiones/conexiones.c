@@ -80,6 +80,7 @@ void gestionar_conexiones_kernel(void){
 }
 
 void atender_interrupt(void){
+    // asigna un hilo a este proceso que escucha activamente a conexiones entrantes (clientes)
     atender_cliente(fd_interrupt_server, (void *)procesar_operacion_interrupt, cpu_log_debug,"KERNEL-INTERRUPT");
 }
 void atender_dispatch(void){

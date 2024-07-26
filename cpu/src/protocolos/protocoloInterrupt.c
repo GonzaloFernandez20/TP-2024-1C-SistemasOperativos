@@ -1,6 +1,6 @@
 #include <protocolos/protocoloInterrupt.h>
 
-void *procesar_operacion_interrupt(void *fd_interrupt_casteado){
+void *	procesar_operacion_interrupt(void *fd_interrupt_casteado){
 
 	int tipo_interrupcion;
     fd_interrupt = _deshacer_casting(fd_interrupt_casteado);

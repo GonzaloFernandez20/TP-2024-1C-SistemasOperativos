@@ -1,5 +1,9 @@
 #include <protocolos/protocoloDispatch.h>
 
+
+/**
+ * Espera activamente que Kernel le envíe un Contexto de ejecución,
+ * lo cual es señal de que  */ 
 void procesar_operacion_dispatch(void){
     int cliente_conectado = 1;
 
