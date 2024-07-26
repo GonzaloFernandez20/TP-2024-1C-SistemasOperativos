@@ -37,7 +37,6 @@ void agregar_instancia_recurso(int PID, t_recurso *recurso){
     nuevo_recurso->PID = PID;
     nuevo_recurso->nombre_recurso = strdup(recurso->nombre_recurso);
     list_add(recursos_usados, nuevo_recurso);
-    //imprimir_lista(recursos_usados);
 }
 
 void eliminar_instancia_recurso(int PID, t_recurso *recurso){
@@ -104,13 +103,27 @@ void _destruir(t_recurso_usado *recurso){
     free(recurso);
 }
 
-void imprimir_lista(t_list *lista) {
-    if (!list_is_empty(lista)){
+/* void imprimir_lista(t_list *lista) {
+    if (!list_is_empty(lista)) {
         t_link_element *elemento = lista->head;
         while (elemento != NULL) {
         t_recurso_usado *recurso = elemento->data;
-        printf("PID: %d, Recurso: %s\n", recurso->PID, recurso->nombre_recurso);
+        printf("\t\tPID: %d, Recurso: %s\n", recurso->PID, recurso->nombre_recurso);
         elemento = elemento->next;
+        }
+    }
+} */
+
+void imprimir_bloqueados_por_recursos(void){
+    int cant_recursos = string_array_size(config_kernel.RECURSOS);
+    for (int i = 0; i < cant_recursos; i++)
+    {
+        t_recurso *recurso = dictionary_get(recursos_disponibles, config_kernel.RECURSOS[i]);
+        int cant_recursos_bloqueados = list_size(recurso->cola_recurso->cola);
+        for (int i = 0; i < cant_recursos_bloqueados; i++) // POR CADA RECURSO, ACCEDEMOS A SU COLA DE BLOQUEADOS E IMPRIMIMOS.
+        {   
+            t_pcb *pcb_bloqueado = list_get(recurso->cola_recurso->cola, i);
+            printf("\t%s: PID: %d\n", recurso->nombre_recurso, pcb_bloqueado->pid);
         }
     }
 }

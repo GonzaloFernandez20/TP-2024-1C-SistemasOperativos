@@ -111,7 +111,7 @@ void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
 {
 
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, IO_GEN_SLEEP))
     {
@@ -155,7 +155,7 @@ void case_IO_GEN_SLEEP(t_pcb *pcb, void *stream)
 void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
 {
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, IO_STDIN_READ))
     {
@@ -199,7 +199,7 @@ void case_IO_STDIN_READ(t_pcb *pcb, void *stream)
 void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
 {
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, IO_STDOUT_WRITE))
     {
@@ -243,7 +243,7 @@ void case_IO_STDOUT_WRITE(t_pcb *pcb, void *stream)
 void case_recurso(t_pcb *pcb, void *stream, int op_code)
 {
     int size_nombre_recurso = buffer_read_int(&stream);
-    char *nombre_recurso = strdup(buffer_read_string(&stream, size_nombre_recurso));
+    char *nombre_recurso = buffer_read_string(&stream, size_nombre_recurso);
 
     if (existe_recurso(nombre_recurso))
     {
@@ -269,6 +269,8 @@ void case_recurso(t_pcb *pcb, void *stream, int op_code)
         // send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
         recibir_contexto_ejecucion(pcb);
     }
+    
+    free(nombre_recurso);
 }
 
 void case_WAIT(int PID, t_recurso *recurso)
@@ -282,7 +284,6 @@ void case_WAIT(int PID, t_recurso *recurso)
     }
     else
     {
-        // trasladar(PID, exec, recurso->cola_recurso);
         t_pcb *pcb = pop_estado(exec);
         push_estado(recurso->cola_recurso, pcb);
         recurso_que_bloquea = strdup(recurso->nombre_recurso);
@@ -318,7 +319,7 @@ void case_SIGNAL(int PID, t_recurso *recurso)
 
 void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, operacion))
     {
@@ -332,7 +333,7 @@ void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
     {
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
         nueva_peticion->tipo_operacion = operacion;
         nueva_peticion->funcion = solicitar_operacion_IO_FS_CREATE_DELETE;
 
@@ -361,7 +362,7 @@ void case_IO_FS_CREATE_DELETE(t_pcb *pcb, void *stream, int operacion){
 
 void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo, Registro Tamaño)
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, IO_FS_TRUNCATE))
     {
@@ -375,7 +376,7 @@ void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo
     {
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
         nueva_peticion->funcion = solicitar_operacion_IO_FS_TRUNCATE;
 
@@ -404,7 +405,7 @@ void case_IO_FS_TRUNCATE(t_pcb *pcb, void *stream){ // (Interfaz, Nombre Archivo
 
 void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
     int size_interfaz = buffer_read_int(&stream);
-    char *nombre_interfaz = strdup(buffer_read_string(&stream, size_interfaz));
+    char *nombre_interfaz = buffer_read_string(&stream, size_interfaz);
 
     if (!validar_peticion(nombre_interfaz, IO_FS_TRUNCATE))
     {
@@ -418,7 +419,7 @@ void case_IO_FS_WRITE_READ(t_pcb *pcb, void *stream, int operacion){
     {
         t_peticion *nueva_peticion = malloc(sizeof(t_peticion));
         int size_nombre_archivo = buffer_read_int(&stream);
-        nueva_peticion->nombre_archivo = strdup(buffer_read_string(&stream, size_nombre_archivo));
+        nueva_peticion->nombre_archivo = buffer_read_string(&stream, size_nombre_archivo);
         nueva_peticion->registro_tamanio = buffer_read_int(&stream);
         nueva_peticion->reg_puntero_archivo = buffer_read_int(&stream);
         nueva_peticion->cant_direcciones = buffer_read_int(&stream);

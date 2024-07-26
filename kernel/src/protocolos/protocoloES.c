@@ -2,7 +2,7 @@
 
 void *procesar_conexion_es(void *nombre_interfaz){
 
-	char* nombre = strdup((char*)nombre_interfaz);
+	char* nombre = (char*)nombre_interfaz;
 
 	pthread_mutex_lock(&diccionario_interfaces);
 		t_interfaz* interfaz = dictionary_get(interfaces_conectadas, nombre);
@@ -100,6 +100,8 @@ void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);
     }
+	
+	free(peticion);
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
 }

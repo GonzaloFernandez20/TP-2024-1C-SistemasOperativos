@@ -140,8 +140,7 @@ char* __armar_lista_pids(t_estado* estado) {
     
     if (size < 1)
     {
-        char *vacia = string_new();
-        return vacia;
+        return lista;
     }
 
     for (int i = 0; i < size; i++) {

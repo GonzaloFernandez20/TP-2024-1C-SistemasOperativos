@@ -78,7 +78,7 @@
         "--leak-check=full",
         "--log-file=${log_file}",
         "./bin/${this_module}",
-        "./FSpruebaFS.config"
+        "./SLP1.config"
         //"./TECLADOpruebaFS.config"
       ],
       "type": "shell",
