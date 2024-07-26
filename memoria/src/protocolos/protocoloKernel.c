@@ -47,8 +47,7 @@ void crear_proceso(void){
 
     int PID = buffer_read_int(&stream);
     int length_path = buffer_read_int(&stream);
-	char* path_archivo = malloc(length_path);
-	strcpy(path_archivo, buffer_read_string(&stream, length_path));
+	char* path_archivo = buffer_read_string(&stream, length_path);
 
 	eliminar_buffer(buffer);
 

@@ -179,6 +179,8 @@ void *iniciar_quantum(void* PID_PROCESO){
         log_info(kernel_log, "PID: < %d > Desalojado por fin de Quantum", PID);
     pthread_mutex_unlock(&mutex_log);
 
+    free(quantum_proceso);
+
     return NULL;
 }  
 

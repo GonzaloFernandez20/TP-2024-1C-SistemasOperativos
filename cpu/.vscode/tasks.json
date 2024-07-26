@@ -76,10 +76,10 @@
       "command": "valgrind",
       "args": [
         "--leak-check=full",
+        "--track-origins=yes",
         "--log-file=${log_file}",
-        "--show-leak-kinds=all",
         "./bin/${this_module}",
-        "./PLANI.config"
+        "./PRUEBA245.config"
       ],
       "type": "shell",
       "hide": true,

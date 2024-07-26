@@ -266,6 +266,8 @@ void case_recurso(t_pcb *pcb, void *stream, int op_code)
         // send(fd_conexion_dispatch, &orden_de_desalojo, sizeof(int), 0);
         recibir_contexto_ejecucion(pcb);
     }
+    
+    free(nombre_recurso);
 }
 
 void case_WAIT(int PID, t_recurso *recurso)
@@ -279,7 +281,6 @@ void case_WAIT(int PID, t_recurso *recurso)
     }
     else
     {
-        // trasladar(PID, exec, recurso->cola_recurso);
         t_pcb *pcb = pop_estado(exec);
         push_estado(recurso->cola_recurso, pcb);
         recurso_que_bloquea = strdup(recurso->nombre_recurso);

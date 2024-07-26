@@ -57,7 +57,7 @@
       "command": "valgrind",
       "args": [
         "--leak-check=full",
-        "--show-leak-kinds=all",
+        "--track-origins=yes",
         "--log-file=${log_file}",
         "./bin/${this_module}",
         "./PRUEBA123.config"

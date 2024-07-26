@@ -27,6 +27,6 @@ void liberar_recursos(int PID);
 
 int _coincide_pid(t_recurso_usado* recurso, int PID);
 void _destruir(t_recurso_usado *recurso);
-void imprimir_lista(t_list *lista);
+void imprimir_bloqueados_por_recursos(void);
 
 #endif

@@ -146,7 +146,7 @@ void _imprimir_estados_procesos(void){
     
     puts("Cola BLOCKED: ");
     imprimir_cola_bloqueados();
-    imprimir_lista(recursos_usados);
+    imprimir_bloqueados_por_recursos();
 
     puts("Cola EXIT: ");
     imprimir_cola(estado_exit);
@@ -213,6 +213,9 @@ void ejecutar_script(char *path){
                 break;
             }
 
+        for (int i = 0; array_del_comando[i] != NULL; i++) {
+            free(array_del_comando[i]);
+        }
         free(array_del_comando);
         caracteres_leidos = getline(&leido, &length, archivo);
     }
@@ -271,6 +274,8 @@ void imprimir_cola_bloqueados(void){
         printf("\t%s:\n", interfaz->nombre);
         imprimir_cola(interfaz->bloqueados);
     }
+
+    free(interfaces);
 }
 
 

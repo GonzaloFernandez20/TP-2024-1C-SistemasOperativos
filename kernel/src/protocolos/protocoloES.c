@@ -100,6 +100,8 @@ void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);
     }
+	
+	free(peticion);
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
 }

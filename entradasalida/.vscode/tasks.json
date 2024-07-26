@@ -76,7 +76,6 @@
       "command": "valgrind",
       "args": [
         "--leak-check=full",
-        "--show-leak-kinds=all",
         "--log-file=${log_file}",
         "./bin/${this_module}",
         "./SLP1.config"
