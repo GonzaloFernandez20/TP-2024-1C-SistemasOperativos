@@ -62,9 +62,6 @@ void *iniciar_Consola(){
             }
 
 		free(comando_ingresado);
-        for (int i = 0; array_del_comando[i] != NULL; i++) {
-            free(array_del_comando[i]);
-        }
         free(array_del_comando);
 	} while(1);
 }

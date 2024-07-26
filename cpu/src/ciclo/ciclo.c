@@ -30,9 +30,6 @@ void decode_and_execute(void) {
     void (*funcion_operacion)(void) = dictionary_get(opCodes_diccionario, instruccion_ejecutando[0]); // obtenemos la función a partir del string del nombre de la instrucción
     funcion_operacion(); // ejecutamos la funcion y para los argumentos se pueden acceder a ellos desde el array global instruccion_cpu.   
     
-    for (int i = 0; instruccion_ejecutando[i] != NULL; i++) {
-        free(instruccion_ejecutando[i]);
-    }
     free(instruccion_ejecutando); 
 } 
 

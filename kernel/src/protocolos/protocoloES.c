@@ -101,7 +101,6 @@ void solicitar_operacion_IO_STDIN_READ(t_peticion* peticion, int PID, int fd){
         free(dato);
     }
 	
-	free(peticion);
 	enviar_paquete(paquete, fd);
 	eliminar_paquete(paquete);
 }

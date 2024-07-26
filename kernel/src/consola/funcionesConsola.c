@@ -213,9 +213,6 @@ void ejecutar_script(char *path){
                 break;
             }
 
-        for (int i = 0; array_del_comando[i] != NULL; i++) {
-            free(array_del_comando[i]);
-        }
         free(array_del_comando);
         caracteres_leidos = getline(&leido, &length, archivo);
     }
