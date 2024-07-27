@@ -2,7 +2,7 @@
 
 void init(){
     cpu_log = iniciar_logger("cpu.log", "CPU", 1, LOG_LEVEL_INFO);
-    cpu_log_debug = iniciar_logger("debugg.log", "CPU", 1, LOG_LEVEL_DEBUG);
+    cpu_log_debug = iniciar_logger("debugg.log", "CPU", 0, LOG_LEVEL_DEBUG);
     _leer_configuracion(path_config);
     inicializar_semaforos();
     init_opCodes_dictionary();

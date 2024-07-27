@@ -123,9 +123,9 @@ void actualizar_grado_multiprog(int nuevo_valor){
 
     config_kernel.GRADO_MULTIPROGRAMACION = nuevo_valor;
 
-    pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "Se actualizo grado de multiprogramacion a: < %d >", nuevo_valor);
-    pthread_mutex_unlock(&mutex_log);
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "Se actualizo grado de multiprogramacion a: < %d >", nuevo_valor);
+    pthread_mutex_unlock(&mutex_log_debug);
 }
 
 void _imprimir_estados_procesos(void){

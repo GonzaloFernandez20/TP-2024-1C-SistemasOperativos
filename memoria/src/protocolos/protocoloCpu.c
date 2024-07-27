@@ -10,8 +10,6 @@ void *procesar_operacion_cpu(void *fd_cpu_casteado){
     while(cliente_conectado){
         int cod_op = recibir_operacion(fd_cpu);
 
-		usleep(1000*config_memoria.RETARDO_RESPUESTA);
-
 		switch (cod_op) {
 		case OBTENER_INSTRUCCION:
 			devolver_instruccion();
@@ -69,6 +67,7 @@ void devolver_instruccion(void){
 
 	char* instruccion = proceso_ejecutando->CODE_segmento[PC];
 	
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_instruccion_serializada(instruccion);
 
 	pthread_mutex_lock(&mutex_log_debug);
@@ -149,11 +148,13 @@ void ampliar_proceso(t_list* tabla, int tamanio_a_ampliar){
 			list_add(tabla, nueva_pagina);
 		}
 
+		usleep(1000*config_memoria.RETARDO_RESPUESTA);
 		int mensaje_ok = 1;
 		send(fd_cpu, &mensaje_ok, sizeof(int), 0);
 	}
 	else{
 
+		usleep(1000*config_memoria.RETARDO_RESPUESTA);
 		int mensaje_error = 0;
 		send(fd_cpu, &mensaje_error, sizeof(int), 0);
 	}
@@ -164,6 +165,7 @@ void reducir_proceso(t_list* tabla, int tamanio_a_reducir){
 	
 	liberar_marcos(paginas_eliminar, tabla);
 
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	int mensaje_ok = 1;
 	send(fd_cpu, &mensaje_ok, sizeof(int), 0);
 }
@@ -192,6 +194,7 @@ void acceso_a_tabla_paginas(void){
 		log_info(memoria_log, "PID: < %d > - Pagina: < %d > - Marco: < %d >", PID, pagina,pagina_del_marco->marco);
 	pthread_mutex_unlock(&mutex_log);
 
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_marco(pagina_del_marco->marco);
 }
 

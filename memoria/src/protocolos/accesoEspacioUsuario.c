@@ -20,6 +20,7 @@ void realizar_lectura(int fd_cliente){
         memcpy(valor, espacio_usuario + DF, tamanio_bytes);
     pthread_mutex_unlock(&mutex_espacio_usuario);
 
+	usleep(1000*config_memoria.RETARDO_RESPUESTA);
     devolver_valor_leido(valor, tamanio_bytes, fd_cliente);
 }
 
@@ -32,7 +33,6 @@ void devolver_valor_leido(void* valor, int tamanio_bytes, int fd_cliente){
 	buffer_add_int(paquete->buffer, tamanio_bytes );
 	buffer_add_valor(paquete->buffer, valor,tamanio_bytes);
     
-	usleep(1000*config_memoria.RETARDO_RESPUESTA);
 	enviar_paquete(paquete, fd_cliente);
     
     free(valor);

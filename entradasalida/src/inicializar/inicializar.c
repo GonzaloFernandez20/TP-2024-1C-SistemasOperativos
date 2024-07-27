@@ -12,7 +12,7 @@ void chequear_parametros_inicio_interfaz(int argc, char* argv[]){
 
 void init(void){
     IO_log = iniciar_logger("entradaSalida.log", "ENTRADASALIDA", 1, LOG_LEVEL_INFO);
-    IO_log_debug = iniciar_logger("debug.log", "ENTRADASALIDA", 1, LOG_LEVEL_DEBUG);
+    IO_log_debug = iniciar_logger("debug.log", "ENTRADASALIDA", 0, LOG_LEVEL_DEBUG);
     leer_configuracion();
     inicializar_semaforos();
 
