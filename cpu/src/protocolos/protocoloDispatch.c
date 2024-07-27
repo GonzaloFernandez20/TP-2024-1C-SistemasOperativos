@@ -47,6 +47,7 @@ void recibir_contexto_ejecucion(void) // PRIMER ENVIO DE CONTEXTO
     registros.EDX  = buffer_read_uint32(&stream); 
     registros.SI   = buffer_read_uint32(&stream);
     registros.DI   = buffer_read_uint32(&stream);
+    // RECIBE PID Y TODOS LOS REGISTROS DEL PROCESO
 
 	eliminar_buffer(buffer);
 
@@ -162,8 +163,9 @@ void devolver_contexto_ejecucion_IO_STDOUT_WRITE(char* nombre_interfaz, int tama
     buffer_add_int(paquete->buffer, cant_direcciones);
 
     for (int i = 0; i < cant_direcciones; i++)
-    {
+    {   
         t_datos_acceso *dato = list_remove(direcciones, 0);
+        // mecanismo similar a lo implementado para hacer los buffers 
         buffer_add_int(paquete->buffer, dato->bytes);
         buffer_add_int(paquete->buffer, dato->direccion_fisica);
         free(dato);
