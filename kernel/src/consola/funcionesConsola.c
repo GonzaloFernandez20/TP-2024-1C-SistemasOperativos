@@ -79,11 +79,22 @@ void extraer_proceso(int pid){
                 if(resultado != (-1)){  encontro = 1; break;  }
             }
             
+        } 
+        if (!encontro) // SI TODAVIA NO LO ENCONTRO, LO BUSCO EN BLOQUEADOS
+        {
+            t_list* interfaces = dictionary_elements(interfaces_conectadas); // Lista de elementos de tipo t_interfaz*
+            int cant_interfaces = list_size(interfaces);
+
+            for (int i = 0; i < cant_interfaces; i++)
+            {
+                t_interfaz *interfaz = list_get(interfaces, 0);
+                resultado = buscar_y_trasladar_pid(interfaz->bloqueados, pid);
+                if(resultado != (-1)){  encontro = 1; break;  }
+            }
+
+            free(interfaces);
         }
-
     }
-    // TODO: Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
-
     if (!planificacion_ya_estaba_pausada) {
         retomar_planificacion();
     }

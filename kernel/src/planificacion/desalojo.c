@@ -72,6 +72,7 @@ void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
     default:
         break;
     }
+    fue_finalizado = 0;
 }
 
 void ejecutar_llamada_io(t_pcb *pcb, void *stream)

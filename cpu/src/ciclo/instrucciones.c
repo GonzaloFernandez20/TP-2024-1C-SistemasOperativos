@@ -16,8 +16,6 @@ void set(void){
         *(uint32_t*)ptr_registro = (uint32_t)valor; // idem pero para uint32_t
     }
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
 }
 //SUM////////////////////////////////////////////////////////////////////////////////////
 //Suma al Registro Destino el Registro Origen y deja el resultado en el Registro Destino.
@@ -39,8 +37,7 @@ void sum(void){
             *(uint32_t*)ptr_registro_destino += *(uint32_t*)ptr_registro_origen;
         }
     }
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
+
 }
 //SUB////////////////////////////////////////////////////////////////////////////////////
 void sub(void){
@@ -61,8 +58,7 @@ void sub(void){
             *(uint32_t*)ptr_registro_destino -= *(uint32_t*)ptr_registro_origen;
         }
     }
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
+
 }
 //JNZ//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 //Si el valor del registro es distinto de cero, actualiza el program counter al número de instrucción pasada por parámetro.
@@ -84,8 +80,7 @@ void jnz(void){
     if(valor_del_registro != 0){ // si es distinto de 0
         registros.PC = PC_de_instruccion; // salta al valor de PC indicado
     }
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
+
 }
 
 
@@ -123,8 +118,7 @@ void mov_in(void) {
 
         free(particion);
     }
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
+
 }
 
 
@@ -163,8 +157,7 @@ void mov_out(void) {
 
         free(particion);
     }
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
+
 }
 
 //RESIZE/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -181,7 +174,7 @@ void resize(void) {
         hay_interrupcion = 0;
         list_clean_and_destroy_elements(lista_interrupciones, free);
     }
-    free(instruccion_ejecutando[1]);
+
 }
 
 //COPY_STRING////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -203,7 +196,7 @@ void copy_string(void) {
     traducir_direcciones(cantidad_de_bytes, DL_destino);
     escribir_string(string_leido);
 
-    free(instruccion_ejecutando[1]);
+
 }
 
 void* leer_string(int cantidad_de_bytes){
@@ -298,9 +291,6 @@ void io_stdin_read(void) {
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
-    free(instruccion_ejecutando[3]);
 }
 
 //IO_STDOUT_WRITE////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -339,9 +329,6 @@ void io_stdout_write(void) {
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
-    free(instruccion_ejecutando[3]);
 }
 
 //IO_GEN_SLEEP////////////////////////////////////////////////////////////////////////////////////////////////
@@ -357,8 +344,6 @@ void io_gen_sleep(void){
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
 }
 
 //WAIT////////////////////////////////////////////////////////////////////////////////////////////////
@@ -369,7 +354,6 @@ void wait_kernel(void){
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
 
-    free(instruccion_ejecutando[1]);
 }
 //SIGNAL////////////////////////////////////////////////////////////////////////////////////////////////
 void signal_kernel(void){
@@ -378,7 +362,7 @@ void signal_kernel(void){
     int cod_op = recibir_operacion(fd_dispatch);
     if (cod_op != CONTEXTO_EJECUCION) { perror("Rompiste todo");}
     recibir_contexto_ejecucion();
-    free(instruccion_ejecutando[1]);
+
 }
 //IO_FS_CREATE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_create(void){ // (Interfaz, Nombre Archivo)
@@ -393,8 +377,6 @@ void io_fs_create(void){ // (Interfaz, Nombre Archivo)
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
 }
 
 //IO_FS_DELETE////////////////////////////////////////////////////////////////////////////////////////////////
@@ -410,8 +392,6 @@ void io_fs_delete(void){
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
 }
 //IO_FS_TRUNCATE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_truncate(void){
@@ -437,9 +417,6 @@ void io_fs_truncate(void){
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
-    free(instruccion_ejecutando[3]);
 }
 //IO_FS_WRITE////////////////////////////////////////////////////////////////////////////////////////////////
 void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Registro Tamaño, Registro Puntero Archivo)
@@ -487,11 +464,6 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
 
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
-    free(instruccion_ejecutando[3]);
-    free(instruccion_ejecutando[4]);
-    free(instruccion_ejecutando[5]);
 }
 
 //IO_FS_READ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -541,11 +513,6 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
         list_clean_and_destroy_elements(lista_interrupciones, free);
     pthread_mutex_unlock(&mutex_lista_interrupciones);
     
-    free(instruccion_ejecutando[1]);
-    free(instruccion_ejecutando[2]);
-    free(instruccion_ejecutando[3]);
-    free(instruccion_ejecutando[4]);
-    free(instruccion_ejecutando[5]);
 }
 
 //EXIT////////////////////////////////////////////////////////////////////////////////////////////////
