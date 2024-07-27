@@ -42,7 +42,7 @@ int obtener_marco(int nro_pagina) {
         nro_marco = consultar_marco_en_TP(nro_pagina);
     }
 
-    log_info(cpu_log, "PID: %d - OBTENER MARCO - Página: %d - Marco: %d", PID, nro_pagina, nro_marco);
+    log_info(cpu_log, "PID: < %d > - OBTENER MARCO - Página: %d - Marco: %d", PID, nro_pagina, nro_marco);
 
     return nro_marco;
 }
