@@ -19,21 +19,21 @@ void *iniciar_Consola(){
             case EJECUTAR_SCRIPT: // EJECUTAR_SCRIPT [PATH]
                 printf("Ejecutando comando: EJECUTAR_SCRIPT\n");
                 ejecutar_script(array_del_comando[1]);
-                
+                free(array_del_comando[1]);
                 break;
 
             case INICIAR_PROCESO: // INICIAR_PROCESO [PATH]
 
                 char * path_proceso = array_del_comando[1];
                 crear_proceso(path_proceso);
-                free(path_proceso);
+                free(array_del_comando[1]);
 
                 break;
 
             case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
                 int pid_proceso = atoi(array_del_comando[1]);
                 extraer_proceso(pid_proceso);
-                
+                free(array_del_comando[1]);
                 break;
 
             case DETENER_PLANIFICACION:
@@ -49,7 +49,7 @@ void *iniciar_Consola(){
             case MULTIPROGRAMACION: // MULTIPROGRAMACION [VALOR]           
                 int nuevo_valor_grado = atoi(array_del_comando[1]);
                 actualizar_grado_multiprog(nuevo_valor_grado);
-
+                free(array_del_comando[1]);
                 break;
 
             case PROCESO_ESTADO:
@@ -62,6 +62,7 @@ void *iniciar_Consola(){
             }
 
 		free(comando_ingresado);
+        free(array_del_comando[0]);
         free(array_del_comando);
 	} while(1);
 }
