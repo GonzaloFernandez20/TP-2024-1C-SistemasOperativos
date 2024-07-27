@@ -32,6 +32,14 @@ void *iniciar_Consola(){
 
             case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
                 int pid_proceso = atoi(array_del_comando[1]);
+                if ((_esta_ejecutando(pid_proceso)))
+                {
+                    fue_finalizado = 1;
+                }else
+                {
+                    fue_finalizado = 0;
+                }
+                
                 extraer_proceso(pid_proceso);
                 
                 break;

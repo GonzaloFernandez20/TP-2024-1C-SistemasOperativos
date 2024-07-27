@@ -9,6 +9,7 @@ void init(void){
     iniciar_colas_planificacion();
     inicializar_recursos();
     planificacion_pausada = 0;
+    fue_finalizado = 0;
 }
 
 void _leer_configuracion(char *path_config){

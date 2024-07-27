@@ -58,6 +58,7 @@ pthread_mutex_t diccionario_interfaces;
 pthread_mutex_t diccionario_peticiones;
 pthread_mutex_t diccionario_recursos;
 pthread_mutex_t cola_recursos_usados;
+pthread_mutex_t mutex_plani_pausada;
 
 sem_t execute_libre;
 sem_t proceso_listo;
@@ -68,7 +69,8 @@ sem_t planificacion_en_pausa;
 
 int planificacion_pausada;
 int contador_bloqueados;
-
+int fue_finalizado;
+int se_devolvio_contexto;
 t_list *recursos_usados;
 t_list *procesos_terminados;
 

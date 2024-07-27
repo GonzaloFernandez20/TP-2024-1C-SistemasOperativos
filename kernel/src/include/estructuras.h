@@ -58,46 +58,7 @@ typedef struct t_peticion{
     
     void (*funcion)(struct t_peticion*, int, int);
 }t_peticion;
-/* typedef struct t_peticion {
-    void (*funcion)(struct t_peticion*, int, int);
-    // Unión para los argumentos adicionales segun la funcion que llamemos
-    union argumentos_peticiones{
-        struct IO_GEN_SLEEP{
-            int unidades_trabajo;
-        } IO_GEN_SLEEP;
-        struct IO_STDIN_READ{
-            int tamanio_a_leer;
-            int cant_direcciones;
-            t_list* direcciones;
-        } IO_STDIN_READ;
-        struct IO_STDOUT_WRITE{
-            int tamanio_a_leer;
-            int cant_direcciones;
-            t_list* direcciones;
-        } IO_STDOUT_WRITE;
-        struct IO_FS_CREATE_DELETE{
-            char* nombre_archivo;
-            int tipo_operacion;
-        } IO_FS_CREATE_DELETE; //
-        struct IO_FS_TRUNCATE{
-            char* nombre_archivo;
-            int registro_tamanio;
-        } IO_FS_TRUNCATE;
-        struct IO_FS_WRITE_READ{
-            char* nombre_archivo;
-            int tipo_operacion;
-            int registro_tamanio;
-            int reg_puntero_archivo;
-            int cant_direcciones;
-            t_list* direcciones;
-        } IO_FS_WRITE_READ;
-    }argumentos; 
-} t_peticion; */
 
-
-/*   t_peticion peticion;
-    peticion.argumentos.IO_GEN_SLEEP.unidades_trabajo = 10;
-    peticion.funcion = funcion_sleep;  */
 typedef struct recurso{
     char* nombre_recurso;
     int instancias_recursos;
@@ -146,6 +107,7 @@ extern pthread_mutex_t diccionario_interfaces;
 extern pthread_mutex_t diccionario_peticiones;
 extern pthread_mutex_t diccionario_recursos;
 extern pthread_mutex_t cola_recursos_usados;
+extern pthread_mutex_t mutex_plani_pausada;
 
 extern sem_t proceso_listo;
 extern sem_t proceso_cargado;
@@ -156,6 +118,8 @@ extern sem_t planificacion_en_pausa;
 
 extern int planificacion_pausada;
 extern int contador_bloqueados;
+extern int fue_finalizado;
+extern int se_devolvio_contexto;
 
 extern t_list *recursos_usados;
 extern t_list *procesos_terminados;

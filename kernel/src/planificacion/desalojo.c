@@ -8,8 +8,17 @@
 // --------------- PROCESAMOS EL PEDIDO DE IO POR PARTE DE CPU
 
 void interpretar_motivo_desalojo(t_pcb *pcb, void *stream)
-{
+{   
     int op_code_motivo_desalojo = buffer_read_int(&stream);
+
+    if (fue_finalizado && op_code_motivo_desalojo != FIN_DE_PROCESO)
+    {
+        fue_finalizado = 0;
+        se_devolvio_contexto = 0;
+        op_code_motivo_desalojo = 123;
+    }
+    
+    se_devolvio_contexto = 0;
     switch (op_code_motivo_desalojo)
     {
     case FIN_DE_QUANTUM:

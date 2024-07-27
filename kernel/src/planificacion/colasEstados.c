@@ -41,7 +41,7 @@ void iniciar_colas_planificacion(void){
 void trasladar(int pid_buscado,  t_estado *origen, t_estado *destino){
     t_list *cola_origen = origen->cola;
     t_list *cola_destino = destino->cola;
-
+    
     int size_origen = list_size(cola_origen);
 
     for (int i = 0; i < size_origen; i++) {

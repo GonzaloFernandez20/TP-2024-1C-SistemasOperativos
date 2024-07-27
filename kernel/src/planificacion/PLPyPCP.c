@@ -17,7 +17,7 @@ void *planificador_corto_plazo(){
     {       
         sem_wait(&proceso_listo);
         int *pidsito = malloc(sizeof(int));
-
+        
         switch (algoritmo_planificacion)
         {
             case FIFO:
@@ -143,6 +143,7 @@ void inicializar_semaforos(void){
     // ------- SEMAFOROS DE LOGS
     pthread_mutex_init(&mutex_log_debug, NULL);
     pthread_mutex_init(&mutex_log, NULL);
+    pthread_mutex_init(&mutex_plani_pausada, NULL);
     pthread_mutex_init(&diccionario_interfaces, NULL);
     pthread_mutex_init(&diccionario_peticiones, NULL);
     pthread_mutex_init(&diccionario_recursos, NULL);

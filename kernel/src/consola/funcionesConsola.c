@@ -28,7 +28,11 @@ void extraer_proceso(int pid){
     //t_estado *array_estados[] = {new, ready, exec, estado_exit}; -> DE EXIT NO LO PUEDO EXTRAER Y DE EJECUTANDO LO HAGO APARTE
     //pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola, exec->mutex_cola, estado_exit->mutex_cola};
 
-    pausar_planificacion();
+    int planificacion_ya_estaba_pausada = 0;
+
+    if (!planificacion_pausada){
+        pausar_planificacion();
+    }else{ planificacion_ya_estaba_pausada = 1; }
     
     t_estado *array_estados[] = {new, ready};
     pthread_mutex_t array_semaforos[] = {new->mutex_cola, ready->mutex_cola};
@@ -36,10 +40,24 @@ void extraer_proceso(int pid){
     int cant_elementos = 2;
     int resultado;
     int encontro = 0;
-
+    
     if ((_esta_ejecutando(pid)))
-    {
-        enviar_interrupcion(FIN_DE_PROCESO); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
+    {   
+        if (se_devolvio_contexto)
+        {
+            t_pcb* pcb = pop_estado(exec);
+            push_estado(estado_exit, pcb);
+            pthread_mutex_lock(&mutex_log);
+                log_info(kernel_log, "PID: <%d> - Estado Anterior: < EXIT > - Estado Actual: < EXIT >", pcb->pid);
+                log_info(kernel_log, "Finaliza el proceso < %d > - Motivo: < INTERRUPTED_BY_USER >", pcb->pid);
+            pthread_mutex_unlock(&mutex_log);
+            sem_post(&hay_proceso_exit);
+        }else
+        {
+            enviar_interrupcion(FIN_DE_PROCESO); // LE MANDO A CPU LA INTERRUPCION DE FIN DE PROCESO
+        }
+        
+        
     }else // LO BUSCO EN LAS COLAS Y SI NO LA ENCUENTRA AHI LO BUSCO EN BLOQUEADOS
     {
         for (int i = 0; i < cant_elementos; i++)
@@ -62,26 +80,31 @@ void extraer_proceso(int pid){
             }
             
         }
-        
-    }
 
-    retomar_planificacion();
+    }
     // TODO: Agregar el caso de que lo busque en las colas de bloqueados y setee una variable global que tiene q chequear un proceso cuando vuelve de io para saber si puede seguir ejecutando. (punto 3 de mi lista)
+
+    if (!planificacion_ya_estaba_pausada) {
+        retomar_planificacion();
+    }
 }
 
 void pausar_planificacion(void){ // Este mensaje se encargará de pausar la planificación de corto y largo plazo
 
+    pthread_mutex_lock(&mutex_plani_pausada);
     if (!planificacion_pausada)
     {
         planificacion_pausada = true;
     }else
     {
-        puts("La planificacion ya esta pausada");
+        printf("La planificacion ya esta pausada");
     }
+    pthread_mutex_unlock(&mutex_plani_pausada);
     
 }
 
 void retomar_planificacion(void){
+    pthread_mutex_lock(&mutex_plani_pausada);
     if (planificacion_pausada)
     {   
         planificacion_pausada = false;
@@ -92,6 +115,7 @@ void retomar_planificacion(void){
         }
         contador_bloqueados = 0;
     }
+    pthread_mutex_unlock(&mutex_plani_pausada);
 }
 // El tema de esto es que la cantidad de hilos en wait puede variar porque a veces puedo tener que justo un proceso vuelve de IO
 // y el enunciado me dice: De la misma forma, los procesos bloqueados van a pausar su transición a la cola de Ready.
@@ -123,9 +147,9 @@ void actualizar_grado_multiprog(int nuevo_valor){
 
     config_kernel.GRADO_MULTIPROGRAMACION = nuevo_valor;
 
-    pthread_mutex_lock(&mutex_log);
-        log_info(kernel_log, "Se actualizo grado de multiprogramacion a: < %d >", nuevo_valor);
-    pthread_mutex_unlock(&mutex_log);
+    pthread_mutex_lock(&mutex_log_debug);
+        log_info(kernel_log_debugg, "Se actualizo grado de multiprogramacion a: < %d >", nuevo_valor);
+    pthread_mutex_unlock(&mutex_log_debug);
 }
 
 void _imprimir_estados_procesos(void){
@@ -241,7 +265,6 @@ int _esta_ejecutando(int pid_buscado){
 
             if (pcb->pid == pid_buscado)
             {   
-                free(pcb);
                 encontro = 1;
                 break;
             }
