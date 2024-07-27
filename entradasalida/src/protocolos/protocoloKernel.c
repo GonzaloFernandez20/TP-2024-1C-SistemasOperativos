@@ -95,7 +95,7 @@ void realizar_un_stdout_write(){
     int tamanio_a_leer = buffer_read_int(&stream);
 
     char *cadena = traer_cadena_memoria(PID, tamanio_a_leer, stream);
-
+    printf(" ");
     free(cadena);
     eliminar_buffer(buffer);
     mandar_aviso_kernel(PID);
@@ -240,7 +240,7 @@ char *traer_cadena_memoria(int PID, int tamanio_a_leer, void *stream){
     char* cadena = generar_cadena(cadena_rearmada, tamanio_a_leer);
     
   
-    printf("PID: < %d > - < %s >", PID, cadena);
+    printf("PID: < %d > - < %s >\n", PID, cadena);
     
     free(cadena_rearmada);
 
