@@ -337,7 +337,7 @@ char *leer_de_archivo(char *nombre_archivo, int tamanio_a_leer, int puntero_arch
     int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
 
     fseek(archivo_bloques, byte_del_archivo_bloques, SEEK_SET);
-    fread(cadena_leida, 1, tamanio_a_leer, archivo_bloques);
+    fread(cadena_leida, 1, tamanio_a_leer , archivo_bloques);
 
     fclose(archivo_bloques);
 
@@ -358,7 +358,7 @@ void escribir_en_archivo(char *nombre_archivo, int puntero_archivo, char *cadena
     int byte_del_archivo_bloques = FCB_archivo->bloque_inicial * config_IO.BLOCK_SIZE + puntero_archivo;
 
     fseek(archivo_bloques, byte_del_archivo_bloques, SEEK_SET);
-    fwrite(cadena, 1, (strlen(cadena) - 1), archivo_bloques);
+    fwrite(cadena, 1, strlen(cadena), archivo_bloques);
 
     fclose(archivo_bloques);
 }

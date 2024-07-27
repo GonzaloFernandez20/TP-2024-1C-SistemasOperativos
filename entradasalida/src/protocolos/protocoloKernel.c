@@ -239,9 +239,8 @@ char *traer_cadena_memoria(int PID, int tamanio_a_leer, void *stream){
 
     char* cadena = generar_cadena(cadena_rearmada, tamanio_a_leer);
     
-    pthread_mutex_lock(&mutex_log_debug);
-        log_info(IO_log_debug,"PID: < %d > - Cadena: < %s >", PID, cadena);
-    pthread_mutex_unlock(&mutex_log_debug);
+  
+    printf("PID: < %d > - < %s >", PID, cadena);
     
     free(cadena_rearmada);
 
