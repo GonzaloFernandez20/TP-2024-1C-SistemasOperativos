@@ -79,7 +79,7 @@
         "--track-origins=yes",
         "--log-file=${log_file}",
         "./bin/${this_module}",
-        "./PRUEBA245.config"
+        "./EDGE.config"
       ],
       "type": "shell",
       "hide": true,

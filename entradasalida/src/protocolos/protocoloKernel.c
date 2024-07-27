@@ -33,6 +33,7 @@ void atender_peticiones_kernel(void){
         default:
             pthread_mutex_lock(&mutex_log_debug);
             log_warning(IO_log_debug,"Instruccion desconocida\n");
+            sleep(10);
             pthread_mutex_unlock(&mutex_log_debug);
             break;
         }
