@@ -50,7 +50,7 @@ int obtener_marco(int nro_pagina) {
 // RECORDÁ: CADA DIRECCIÓN APUNTA A UN BYTE DE MEMORIA
 // ARMA UNA LISTA DE LAS DIRECCIONES FISICAS NECESARIAS CON LA CANTIDAD DE BYTES QUE VA EN CADA UNA PARA LA OPERACION QUE SOLICITE
 void traducir_direcciones(int tamanio, uint32_t direccion_logica){ 
-    // El parámetro tamanio son los bytes totales de la info a escribir.
+    // El parámetro tamanio 
     int bytes_restantes = tamanio; // Cuántos bytes quedan por procesar
     int bytes_consumidos = 0;      // Cuántos bytes fueron procesados
 
@@ -59,7 +59,6 @@ void traducir_direcciones(int tamanio, uint32_t direccion_logica){
 
     // Si la dirección física es el inicio de una página, es porque el desplazamiento dentro de la página es 0, es decir, dividirla por el tamaño de página da resto 0.
     if (direccion_fisica % TAM_PAGINA == 0){ //SI SE ESCRIBE DESDE EL INICIO DE LA 1RA PÁGINA A LEER O ESCRIBIR
-        // Si los bytes a escribir son mayores al tamaño de página
         if(tamanio>TAM_PAGINA){
             bytes_restantes -= TAM_PAGINA;
             bytes_consumidos = TAM_PAGINA;

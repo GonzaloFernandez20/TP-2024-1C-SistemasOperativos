@@ -88,6 +88,7 @@ void mov_in(void) {
     int cantidad_direcciones = list_size(direcciones);
     int offset = 0;
     
+    // hace algo parecido a un buffer_read pero acá tmb se desplaza sobre el espacio de memoria al que apunta el ptr_registro_datos
     for(int i = 0; i < cantidad_direcciones; i++){
         t_datos_acceso* datos = list_remove(direcciones, 0);
         int bytes = datos->bytes;
@@ -190,6 +191,7 @@ void copy_string(void) {
     escribir_string(string_leido);
 }
 
+// MECANISMO SIMILAR AL BUFFER_READ, LITERALMENTE
 void* leer_string(int cantidad_de_bytes){
     void* string_leido = malloc(cantidad_de_bytes);
 
@@ -440,7 +442,7 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
     } 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_WRITE);
-    
+
     se_devolvio_contexto = 1;
     pthread_mutex_lock(&mutex_hay_interrupcion);
     		hay_interrupcion = 0; 
@@ -553,16 +555,15 @@ void* obtener_direcciones_fisicas(int indice1, int indice2){
     void* ptr_registro_direccion = direccion_del_registro(registro_direccion);     // punteros a tipo de dato genérico
     void* ptr_registro_datos = direccion_del_registro(registro_datos);
 
-    uint32_t direccion_logica = 0;
-
+    uint32_t direccion_logica;
     if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)ptr_registro_direccion;    
     }
     else {
         direccion_logica = *(uint32_t*)ptr_registro_direccion;
     }
-    int tamanio;
 
+    int tamanio;
     if(tamanio_de_registro(registro_datos) == sizeof(uint8_t)) {tamanio = sizeof(uint8_t); }// tamaño a leer/escribir es de 1 byte 
     else {tamanio = sizeof(uint32_t);} // tamaño a leer/escribir es de 4 byte 
      
