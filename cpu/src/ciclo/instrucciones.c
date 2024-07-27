@@ -309,8 +309,8 @@ void io_stdout_write(void) {
     } 
 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
-
     devolver_contexto_ejecucion_IO_STDOUT_WRITE(interfaz, tamanio_a_leer);
+
     se_devolvio_contexto = 1;
     pthread_mutex_lock(&mutex_hay_interrupcion);
     		hay_interrupcion = 0; 
@@ -393,6 +393,7 @@ void io_fs_truncate(void){
     } 
     
     devolver_contexto_ejecucion_IO_FS_TRUNCATE(interfaz, nombre_archivo, tamanio);
+
     se_devolvio_contexto = 1;
     pthread_mutex_lock(&mutex_hay_interrupcion);
     		hay_interrupcion = 0; 
@@ -439,6 +440,7 @@ void io_fs_write(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regis
     } 
     traducir_direcciones(tamanio_a_leer, direccion_logica);
     devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_WRITE);
+    
     se_devolvio_contexto = 1;
     pthread_mutex_lock(&mutex_hay_interrupcion);
     		hay_interrupcion = 0; 
@@ -461,6 +463,9 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
     void* ptr_registro_tamanio = direccion_del_registro(registro_tamanio);
     void* ptr_reg_puntero_archivo = direccion_del_registro(reg_puntero_archivo);
 
+    // A CONTINUACIÓN SE EXTRAEN LOS VALORES CORRESPONDIENTES, INDEPENDIENTEMENTE DE SUS TAMAÑOS.
+    
+    // TAMAÑO A LEER
     int tamanio_a_leer;
      if(es_registro_8_bits(registro_tamanio)) {
         tamanio_a_leer = *(uint8_t*)ptr_registro_tamanio;    
@@ -469,6 +474,7 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
         tamanio_a_leer  = *(uint32_t*)ptr_registro_tamanio;
     } 
 
+    // PUNTERO DE ARCHIVO
     int puntero_archivo;
      if(es_registro_8_bits(reg_puntero_archivo)) {
         puntero_archivo = *(uint8_t*)ptr_reg_puntero_archivo;    
@@ -477,6 +483,7 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
         puntero_archivo  = *(uint32_t*)ptr_reg_puntero_archivo;
     } 
 
+    // DIRECCIÓN LÓGICA EN MEMORIA A PARTIR DEL CUAL COMIENZO A ESCRIBIR LO LEIDO
     uint32_t direccion_logica;
     if(es_registro_8_bits(registro_direccion)) {
         direccion_logica = *(uint8_t*)ptr_registro_direccion;    
@@ -485,8 +492,11 @@ void io_fs_read(void){ // (Interfaz, Nombre Archivo, Registro Dirección, Regist
         direccion_logica  = *(uint32_t*)ptr_registro_direccion;
     } 
 
+
     traducir_direcciones(tamanio_a_leer, direccion_logica);
-    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_READ);    
+    // REALIZAMOS UN EVENTO IO, LO CUAL SIGNIFICA DEVOLVER EL CONTEXTO DE EJECUCIÓN Y BLOQUEAR NUESTRO PROCESO.
+    devolver_contexto_ejecucion_IO_FS_WRITE_READ(interfaz, nombre_archivo, tamanio_a_leer, puntero_archivo, IO_FS_READ);   
+
     se_devolvio_contexto = 1;
     pthread_mutex_lock(&mutex_hay_interrupcion);
     		hay_interrupcion = 0; 

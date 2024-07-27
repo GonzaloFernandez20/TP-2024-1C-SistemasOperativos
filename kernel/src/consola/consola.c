@@ -33,7 +33,7 @@ void *iniciar_Consola(){
             case FINALIZAR_PROCESO: // FINALIZAR_PROCESO [PID]
                 int pid_proceso = atoi(array_del_comando[1]);
                 extraer_proceso(pid_proceso);
-                
+
                 break;
 
             case DETENER_PLANIFICACION:

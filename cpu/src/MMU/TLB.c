@@ -15,17 +15,13 @@ void inicializar_TLB(void) {
  * @brief Guardamos número de página, número de marco y PID en el diccionario de la TLB.
 */
 void agregar_a_TLB(int nro_pagina, int nro_marco) {
-    if (list_size(tabla_tlb) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sustituir alguna de las entradas (independientemente del PID).
-        _eliminar_una_entrada_con_algoritmo();
+    if (list_size(tabla_tlb) == MAX_ENTRADAS) { // si alcanzó el Máximo de Entradas , entonces hay que sacrificar a alguna de las entradas (independientemente del PID) para dar lugar a la nueva entrada.
+        list_remove_and_destroy_element(tabla_tlb, 0, free);
+        // SI EL ALGORITMO ES FIFO: TOMO EL PRIMERO DE LA LISTA, QUE FUE EL QUE PRIMERO PUSE.
+        // SI EL ALGORITMO ES LRU, TOMO EL PRIMERO DE LA LISTA PORQUE ANTE CADA REFERENCIA, SE REMUEVE EL ELEMENTO Y SE LO INSERTA AL FINAL, POR ENDE EL ULTIMO ELEMENTO DE LA LISTA SIEMPRE ES EL MAS RECIENTEMENTE REFERENCIADO Y EL PRIMERO ES EL MAS LEJANO, PORQUE SIGNIFICA QUE NO SE SACO HACE MUCHO DE LA LISTA, POR ENDE HACE MUCHO NO SE REFERENCIA. 
+        // LIST_ADD AGREGA SIEMPRE AL FINAL DE LA LISTA, POR ESO. 
     }
     _agregar_nueva_entrada(nro_pagina, nro_marco);
-}
-
-void _eliminar_una_entrada_con_algoritmo(void){
-    list_remove_and_destroy_element(tabla_tlb, 0, free);
-    // SI EL ALGORITMO ES FIFO: TOMO EL PRIMERO DE LA LISTA, QUE FUE EL QUE PRIMERO PUSE.
-    // SI EL ALGORITMO ES LRU, TOMO EL PRIMERO DE LA LISTA PORQUE ANTE CADA REFERENCIA, SE REMUEVE EL ELEMENTO Y SE LO INSERTA AL FINAL, POR ENDE EL ULTIMO ELEMENTO DE LA LISTA SIEMPRE ES EL MAS RECIENTEMENTE REFERENCIADO Y EL PRIMERO ES EL MAS LEJANO, PORQUE SIGNIFICA QUE NO SE SACO HACE MUCHO DE LA LISTA, POR ENDE HACE MUCHO NO SE REFERENCIA. 
-    // LIST_ADD AGREGA SIEMPRE AL FINAL DE LA LISTA, POR ESO. 
 }
 
 // imposible que le llegue una entrada que ya existía en tabla, xq debía pasar por la busqueda en tlb antes de llegar a este punto, que es después de haber buscado en la TP en Memoria.
@@ -41,19 +37,21 @@ void _agregar_nueva_entrada(int nro_pagina, int nro_marco) {
 
 respuesta_busqueda _buscar_entrada_tlb(int *marco, int nro_pagina) {
     int cant_entradas = list_size(tabla_tlb);    
+    
     // SI LA ENCUENTRA, IMPLICA QUE LA REFERENCIA, SI EL ALGORITMO ES LRU, ENTONCES LA REFERENCIA QUEDA COMO CABEZA DE LISTA.
-    for(int i = 0; i < cant_entradas; i++) {
-        t_entrada_tlb* entrada = list_get(tabla_tlb, i);
-        if(entrada->pid == PID && entrada->nro_pagina == nro_pagina) {
-            *marco = entrada->nro_marco;
-            if (algoritmo_es_LRU()){
-                list_remove(tabla_tlb, i); // REMUEVO DE LA LISTA
-                list_add(tabla_tlb, entrada); // AGREGO AL FINAL DE LA LISTA
+    for(int i = 0; i < cant_entradas; i++) {                                // ITERAR SOBRE TODAS LAS ENTRADAS...
+        
+        t_entrada_tlb* entrada = list_get(tabla_tlb, i);                    // OBTENEMOS LA ENTRADA 
+        if(entrada->pid == PID && entrada->nro_pagina == nro_pagina) {      // SI SU PID COINCIDE CON LA DEL PROCESO EN EJECUCIÓN Y SU NRO_PAGINA COINCIDE CON LA BUSCADA
+            *marco = entrada->nro_marco;                                    // GUARDAMOS EL MARCO CORRESPONDIENTE AL NRO_PAGINA BUSCADO
+            if (algoritmo_es_LRU()){                                        // SI SE USA LRU, ENTONCES ACTUALIZAMOS LA TABLA_TLB PORQUE HUBO UNA REFERENCIA
+                list_remove(tabla_tlb, i);                                  
+                list_add(tabla_tlb, entrada);                               // PONGO LA ENTRADA AL FINAL DE LA LISTA
             }
             return SEARCH_OK;
         }
     }
-    return SEARCH_ERROR;
+    return SEARCH_ERROR;                                                    // ITERÓ SOBRE TODAS LAS ENTRADAS PERO NO ENCONTRÓ.
 }
 
 /**
@@ -74,6 +72,7 @@ tlb_respuesta consultar_marco_en_TLB(int nro_pagina, int *nro_marco) {
     log_info(cpu_log, "PID: %d - TLB MISS - Pagina: %d", PID, nro_pagina);
     return MISS;
 }
+
 
 int algoritmo_es_LRU(void){
     return string_equals_ignore_case(ALGORITMO_TLB, LRU);

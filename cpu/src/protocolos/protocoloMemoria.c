@@ -14,7 +14,7 @@ char* solicitar_instruccion_a_memoria(){
 	enviar_paquete(paquete, fd_conexion_memoria);
 	eliminar_paquete(paquete);
 
-	return _recibir_instruccion();
+	return _recibir_instruccion(); // LUEGO DE PEDIRLE A MEMORIA, RECIBIMOS SU RESPUESTA
 }
 
 char* _recibir_instruccion(void){
@@ -49,7 +49,7 @@ int consultar_marco_en_TP(int nro_pagina) {
     
     eliminar_paquete(paquete);
 	
-	return recibir_marco();
+	return recibir_marco(); // LUEGO DE LA PETICIÓN A MEMORIA PARA OBTENER_NRO_MARCO, RECIBIMOS SU RESPUESTA.
 }
 
 int recibir_marco(void) {
@@ -90,7 +90,8 @@ int solicitar_ajustar_tamanio(int tamanio_nuevo){
 
 /////// Peticion de lectura //////////////////////////////////////////////////////////////////
 void* leer_de_memoria(int direccion_fisica, int bytes) {
-	peticion_lectura_memoria(direccion_fisica, bytes);
+	peticion_lectura_memoria(direccion_fisica, bytes); // PRIMERO PIDE 
+	// Y DESPUÉS RECIBE Y DESEREALIZA TODO
 
 	int codigo_operacion = recibir_operacion(fd_conexion_memoria); // por convención nos comunicamos usando paquetes, por eso debemos recibir la operación primero, a pesar de que no vayamos a usarlo.
     if(codigo_operacion != VALOR_LEIDO){ perror("Rompiste todo.");}
@@ -107,6 +108,7 @@ void* leer_de_memoria(int direccion_fisica, int bytes) {
 	return valor;                
 }
 
+// ENVIA PAQUETE A MEMORIA PARA PEDIRLE LEER UNA CANTIDAD DE BYTES EMPEZANDO POR LA DIRECCIÓN ESPECIFICADA
 void peticion_lectura_memoria(int direccion_fisica, int bytes) {
     t_paquete* paquete = crear_paquete(LECTURA);
 
