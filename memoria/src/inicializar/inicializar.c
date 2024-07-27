@@ -11,7 +11,7 @@ void init(void){
 
 void iniciar_loggers(void){
     memoria_log = iniciar_logger("memoria.log", "MEMORIA", 1, LOG_LEVEL_INFO);
-    memoria_log_debugg = iniciar_logger("debugg.log", "MEMORIA", 1, LOG_LEVEL_DEBUG);
+    memoria_log_debugg = iniciar_logger("debugg.log", "MEMORIA", 0, LOG_LEVEL_DEBUG);
 }
 
 void leer_configuracion(char *path_config){

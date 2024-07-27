@@ -11,7 +11,7 @@ void enviar_path_seudocodigo(char* archivo, int PID){
 	buffer_add_string(paquete->buffer, archivo);
 
     enviar_paquete(paquete, fd_conexion_memoria);
-    log_info(kernel_log_debugg, "Solicitud de creacion de proceso enviada a memoria");
+    //log_info(kernel_log_debugg, "Solicitud de creacion de proceso enviada a memoria");
 
 	eliminar_paquete(paquete);
 }

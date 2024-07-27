@@ -10,8 +10,6 @@ void *procesar_operacion_kernel(void *fd_kernel_casteado){
     while(cliente_conectado){
         int cod_op = recibir_operacion(fd_kernel);
 
-        usleep(1000*config_memoria.RETARDO_RESPUESTA); //retardo en peticiones
-
 		switch (cod_op) {
 		case CREAR_PROCESO:
             crear_proceso();
@@ -86,9 +84,10 @@ void cargar_instrucciones(int PID, char* path_archivo){
     if (archivo_pseudocodigo == NULL) {
 
         pthread_mutex_lock(&mutex_log_debug);
-            log_error(memoria_log_debugg, "No se encontro el archivo de pseudocodigo del proceso <%d>\n", PID);
+            log_info(memoria_log_debugg, "No se encontro el archivo de pseudocodigo del proceso <%d>\n", PID);
         pthread_mutex_unlock(&mutex_log_debug);
 
+        usleep(1000*config_memoria.RETARDO_RESPUESTA);
         send(fd_kernel, &pseudocodigo_error, sizeof(int), 0);
     }
     else{
@@ -108,6 +107,7 @@ void cargar_instrucciones(int PID, char* path_archivo){
 
         mostrar_procesos_cargados();
 
+        usleep(1000*config_memoria.RETARDO_RESPUESTA);
         send(fd_kernel, &pseudocodigo_ok, sizeof(int), 0);
     }
 }
@@ -173,6 +173,7 @@ void leer_almacenar_instrucciones(char** CODE_segmento, char* path_archivo){
 
 //////////////////// ELIMINAR PROCESOS //////////////////////////////////////////////////////////
 void eliminar_proceso(void){
+    usleep(1000*config_memoria.RETARDO_RESPUESTA);
     t_buffer *buffer = recibir_buffer(fd_kernel);
 	void* stream = buffer->stream;
 
