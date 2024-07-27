@@ -1,6 +1,6 @@
 #include <ciclo/ciclo.h>
 
-void ciclo(void){
+void hhciclo(void){
     se_devolvio_contexto = 0;
     
     while(1){
